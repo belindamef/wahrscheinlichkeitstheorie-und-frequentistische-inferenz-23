@@ -1,0 +1,579 @@
+---
+fontsize: 8pt
+bibliography: 1_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 1_header.tex
+---
+
+```{r, include = F}
+source("1_R_common.R")
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+ 
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+Prof. Dr. Dirk Ostwald
+
+#  {.plain}
+
+\vfill
+\center
+\Huge
+\textcolor{red}{Aufnahme läuft!}
+\vfill
+
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{(1) Einführung}
+\vfill
+
+# {.plain}
+\vfill
+\begin{large}
+Prof. Dr. Dirk Ostwald (dirk.ostwald@ovgu.de)
+\end{large}
+\vspace{.7cm}
+
+\begin{minipage}{.3\linewidth}
+\begin{center}
+\includegraphics[scale=.6]{1_Abbildungen/wtfi_1_dirk.pdf}
+\end{center}
+\end{minipage}
+\begin{minipage}{.7\linewidth}
+\begin{small}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ll}
+Seit 2021 	& W2 Professur Methodenlehre I				\\
+2014 - 2020 & W1 Professur Freie Universität Berlin 	\\
+2010 - 2014 & Postdoc BCCN \& MPIB Berlin				\\
+2007 - 2010 & PhD Psychologie Birmingham				\\
+2004 - 2006 & MSc Neurowissenschaften Tübingen			\\
+2005 - 2012 & BSc Mathematik Hagen						\\
+2000 - 2003 & BSc Medizin Hamburg						\\
+\end{tabular}
+\end{small}
+\end{minipage}
+\vspace{.7cm}
+
+\begin{large}
+\begin{tabular}{ll}
+Forschung 	& Komputationale Kognitive Neurowissenschaften	\\
+Lehre 		& Datenwissenschaft
+\end{tabular}
+\end{large}
+\vfill
+
+#
+[\textcolor{darkblue}{Homepage}](https://www.ipsy.ovgu.de/methodenlehre_I-path-980,1404.html)
+```{r, echo = FALSE, out.width = "70%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_homepage.png")
+```
+
+#
+\vfill
+\setstretch{2.3}
+\Large
+Datenwissenschaft und Statistik
+
+Formalia
+
+Studium und Diskussion
+
+Selbstkontrollfragen
+
+#
+\vfill
+\setstretch{2.3}
+\Large
+**Datenwissenschaft und Statistik**
+
+Formalia
+
+Studium und Diskussion
+
+Selbstkontrollfragen
+
+# Datenwissenschaft und Statistik
+\vfill
+
+\center
+\huge
+\textcolor{darkblue}{Datenwissenschaft}
+\vspace{5mm}
+
+\Large
+Die Kunst, aus Daten Sinn zu generieren
+
+# Datenwissenschaft und Statistik
+\vspace{2mm}
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_datenwissenschaft_komponenten.pdf")
+```
+\vfill
+
+# Datenwissenschaft und Statistik
+\Large
+Datenwissenschaft ist Datenreduktion
+
+\center
+\vspace{.4cm}
+
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_datenreduktion.pdf")
+```
+
+# Datenwissenschaft und Statistik
+\Large
+Datenwissenschaft ist Naturwissenschaft
+\vspace{3mm}
+
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_wissenschaft.pdf")
+```
+
+# Datenwissenschaft und Statistik
+\Large
+Datenwissenchaft ist Dateninterpretation
+\center
+\vspace{.5cm}
+
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_datenwissenschaftslinse.pdf")
+```
+
+
+# Datenwissenschaft und Statistik
+\Large
+Terminologie der Datenwissenschaft
+\vspace{.5cm}
+
+\center
+Statistik = Maschinelles Lernen = Künstliche Intelligenz
+\vspace{.5cm}
+
+\small
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{l|l|l}
+
+Statistik					& Maschinelles Lernen		& Künstliche Intelligenz		\\\hline
+Probabilistische Modelle	& Deterministische Modelle	& Agenten-basierte Modelle		\\
+Theoretische Analyse		& Klassifikation			& Reinforcement learning 		\\
+Optimalitätstheorie 		& Bayesianische Modelle		& Symbolik						\\
+Asymptotische Theorie		& Anwendung					& Anwendung						\\
+Wissenschaftsphilosophie	& Benchmarking				& Hype							\\
+\end{tabular}
+
+# Datenwissenschaft und Statistik
+\vfill
+
+\center
+\huge
+\textcolor{darkblue}{Datenwissenschaft in der Psychologie}
+\vspace{5mm}
+
+\Large
+
+Die Kunst, aus Verhaltens- und Neurophysiologiedaten
+
+psychologischen Sinn zu generieren
+
+
+# Datenwissenschaft und Statistik
+\center
+\huge
+\textcolor{darkblue}{Statistik}
+\vspace{5mm}
+
+\Large
+Die Kunst, aus Daten Sinn zu generieren
+
+**und seine assoziierte Unsicherheit zu quantifizieren**
+
+
+# Datenwissenschaft und Statistik
+
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_statistik_themen.pdf")
+```
+
+# Datenwissenschaft und Statistik
+\vspace{.5cm}
+
+\begin{minipage}{.6\linewidth}
+\center
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_statistik_geschichte.pdf")
+```
+
+\end{minipage}
+\hspace{.5cm}
+\begin{minipage}{.1\linewidth}
+\center
+```{r, echo = FALSE, out.width = "300%"}
+knitr::include_graphics("1_Abbildungen/wtfi_1_efron_buch.pdf")
+```
+
+\end{minipage}
+
+# Datenwissenschaft und Statistik
+\center
+\huge
+\textcolor{darkblue}{Statistik in der Psychologie}
+
+\vspace{5mm}
+\Large
+Die Kunst, aus Verhaltens- und Neurophysiologiedaten
+
+psychologischen Sinn zu generieren
+
+**und seine assoziierte Unsicherheit zu quantifizieren**
+
+# Datenwissenschaft und Statistik
+\vfill
+\setstretch{1.7}
+\textcolor{darkblue}{Klassische Partition der Statistik in der Psychologie}
+
+* Deskriptivstatistik
+* Inferenzstatistik
+* Multivariate Statistik
+
+\textcolor{darkblue}{Sinnvolle Partition der psychologischen Datenwissenschaft}
+
+* Wahrscheinlichkeitstheoretische Grundlagen
+* Frequentistische Inferenz 
+* Allgemeines Lineares Modell
+* Bayesianische Inferenz
+* Multivariate Datenanalyse
+
+\vfill
+
+# Datenwissenschaft und Statistik
+\vfill
+\setstretch{3}
+\textcolor{darkblue}{Fundamentale Annahmen der Wahrscheinlichkeitstheorie}
+\vspace{1mm}
+
+* \justifying  Zufallsprozesse können mathematisch modelliert werden.
+* Mathematik kann zur Vorhersage zufälliger Ereignisse genutzt werden.
+* Die Wahrscheinlichkeitstheorie ist mengentheoretisch begründet.
+
+# Datenwissenschaft und Statistik
+\textcolor{darkblue}{Fundamentale Annahmen der Frequentistischen Inferenz}
+\vspace{1mm}
+
+* \justifying Wahrscheinlichkeiten spiegeln die relative Frequenz des Auftretens eines
+zufälligen Ereignisses und beschreiben objektive Eigenschaften der realen Welt.
+\vspace{1mm}
+
+* Die Parameter probabilistischer Modelle sind feste, unbekannte Konstanten, die
+als *wahre, aber unbekannte, Parameterwerte* bezeichnet werden. Über Parameterwerte
+und Modelle werden keine probabilistischen Aussagen getroffen.
+\vspace{1mm}
+
+* Statistische Methoden werden so gestaltet, dass sie gute langfristige relative
+Frequenzeigenschaften besitzen und werden typischerweise anhand ihrer
+Stichprobenverteilungen bewertet.
+
+# Datenwissenschaft und Statistik
+\textcolor{darkblue}{Fundamentale Annahmen der Bayesianischen Inferenz}
+\vspace{1mm}
+
+* \justifying Wahrscheinlichkeiten werden als Grade der Sicherheit, nicht als langfristige
+relative Häufigkeiten interpretiert. Aussagen der Form "Die Wahrscheinlichkeit,
+dass das Wintersemester 2022/23 vollständig in Präsenzlehre stattfindet, ist 0.9."
+haben eine Bedeutung.
+\vspace{1mm}
+
+* Die Parameter probabilistischer Modelle sind feste, unbekannte Konstanten, die
+als *wahre, aber unbekannte, Parameterwerte* bezeichnet werden. Über
+Parameterwerte und Modelle werden probabilistische Aussagen getroffen, die unseren
+Grad an Sicherheit hinsichtlich ihrer quantitativen Ausprägung und Validität widerspiegeln.
+\vspace{1mm}
+
+* Probabilistische Aussagen über Parameter werden mithilfe von
+Wahrscheinlichkeitsverteilungen getroffen, auf deren Grundlage optimale
+Entscheidungen im Sinne von Kosten-Nutzenfunktionen getroffen werden können.
+
+
+# Datenwissenschaft und Statistik
+\textcolor{darkblue}{Datenwissenschaftliches Curriculum der OVGU Psychologie}
+
+\setstretch{1.5}
+* Mathematische Grundlagen
+    * Mengen, Funktionen, Differentialrechnung, Integralrechnung, ... 
+* Wahrscheinlichkeitstheorie
+    * Maßtheoretische Grundlagen, Zufallsvariablen, Erwarungswert, Varianz,  ... 
+* Frequentistische Inferenz
+    * Statistische Modelle, Schätztheorie, Konfidenzintervalle, Hypothesentesten,... 
+* Allgemeines Lineares Modell
+    * Matrizen, multivariate Normalverteilung, Schätztheorie, Studiendesigns, ... 
+* Bayesianische Inferenhz
+    * Konjugierte Modelle, numerische Inferenz, variational inference, ... 
+* Multivariate Methoden
+    * Multivariates ALM, Faktoranalyse, Neuronale Netze, ...  
+* Programmierung
+    * Grundlagen von R, Python, Matlab, Linux, Parallel computing, ...
+
+# Formalia 
+\textcolor{darkblue}{Modul B1 Deskriptive Statistik | Wahrscheinlichkeitstheorie und Frequentistische Inferenz}
+\setstretch{2}
+
+* \justifying Donnerstags 13-16 Uhr in Raum G40B-231
+* Kursmaterialien (Folien, Videos, RMarkdown Code) auf der [\textcolor{darkblue}{Kurswebseite}](https://bit.ly/3yT42Sj)
+* Code auf [\textcolor{darkblue}{Github}](https://github.com/dirk-ostwald/wahrscheinlichkeitstheorie-und-frequentistische-inferenz-23)
+* Ankündigungen über die [\textcolor{darkblue}{Moodleseite}](https://elearning.ovgu.de/course/view.php?id=13805)
+* Empfohlene Lektüre ist [\textcolor{darkblue}{PDWP}](https://wasd.urz.uni-magdeburg.de/dostwald/)
+* [\textcolor{darkblue}{Link zu vorheriger Iteration des Kurses}](https://bit.ly/3qJKlan)
+* [\textcolor{darkblue}{Link zum Kurs Mathematische Grundlagen}](https://bit.ly/3SNh3nR) 
+* Tutorium Mittwochs 11-13 Uhr mit Belinda Fleischmann
+
+# Formalia {.t}
+\vspace{1mm}
+\textcolor{darkblue}{Modul B1 Deskriptive Statistik | Wahrscheinlichkeitstheorie und Frequentistische Inferenz}
+\vspace{1mm}
+
+\small
+\center
+\footnotesize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lll}
+Datum        & Einheit                       & Thema					                         \\\hline
+13.10.2021   & Einführung                    & (1) Einführung 				                     \\
+20.10.2021   & Wahrscheinlichkeitstheorie    & (2) Wahrscheinlichkeitsräume 	                 \\
+27.10.2021   & Wahrscheinlichkeitstheorie    & (3) Zufallsvariablen                              \\
+03.11.2021   & Wahrscheinlichkeitstheorie    & (4) Zufallsvektoren                               \\
+10.11.2021   & Wahrscheinlichkeitstheorie    & (5) Erwartungswert und Kovarianz                  \\
+17.11.2021   & Wahrscheinlichkeitstheorie    & (6) Ungleichungen und Grenzwerte                  \\
+24.11.2021   & Wahrscheinlichkeitstheorie    & (7) Normalverteilungstransformationen             \\
+01.12.2021   & Frequentistische Inferenz     & (8) Statistische Modelle, Statistiken, Schätzer   \\
+08.12.2021   & Frequentistische Inferenz     & (9) Schätzereigenschaften                         \\
+15.12.2021   & Frequentistische Inferenz     & (10) Konfidenzintervalle                          \\
+             & \textcolor{gray}{Weihnachtspause}                                                 \\
+05.01.2022   & Frequentistische Inferenz     & (11) Hypothesentests                              \\
+12.01.2022   & Frequentistische Inferenz     & (12) T-Tests                                      \\
+19.01.2022   & Frequentistische Inferenz     & (13) Einfaktorielle Varianzanalyse                \\
+26.01.2022   & Frequentistische Inferenz     & (14) Zweifaktorielle Varianzanalyse               \\\hline
+Feb 2022     & Klausurtermin                 &                                                   \\
+Jul 2022     & Klausurwiederholungstermin    &
+\end{tabular}
+
+
+# Formalia  
+\textcolor{darkblue}{Modul B1 Deskriptive Statistik | Wahrscheinlichkeitstheorie und Frequentistische Inferenz}
+\setstretch{2.5}
+
+* Vorlesungsfolien inklusive Selbstkontrollfragen sind klausurrelevant
+* Altklausuren finden sich auf den Kurswebseiten früherer Jahre
+* Benotete Multiple Choice Klausur (30 Fragen) Ende Wintersemester 2022/23
+* Klausurwiederholungstermin am Ende des Sommersemesters 2023
+* Klausurtermin und Klausurort gemäß Prüfungsplan des [\textcolor{darkblue}{FNW Prüfungsamtes}](https://www.fnw.ovgu.de/Studium/Pr%C3%BCfungsamt.html)
+
+#
+\vfill
+\setstretch{2.3}
+\Large
+Datenwissenschaft und Statistik
+
+Formalia
+
+**Studium und Diskussion**
+
+Selbstkontrollfragen
+
+# Studium und Diskussion
+\large
+[\textcolor{darkblue}{Umfrage zum Studienstart}](https://elearning.ovgu.de/mod/feedback/view.php?id=384185)
+
+# Studium und Diskussion
+\setstretch{2.2}
+\large
+\textcolor{darkblue}{Studium $\neq$ Schule}
+\normalsize
+
+* Schule ist Pflicht, Studium ist freiwillig.
+* Sie wollen nicht studiert werden, Sie wollen studieren.
+* Sie sind motiviert.
+* Studium ist Arbeit mit 40-Stundenwoche.
+* Wir machen keinen Osterhasenunterricht.
+* Klausuren dienen Ihnen, nicht den Lehrenden.
+* Veranstaltungen dienen der Organisation, nicht des Erwerbs von Wissen.
+
+# Studium und Diskussion
+\setstretch{2.2}
+\large
+\textcolor{darkblue}{Studium $\neq$ Berufsausbildung}
+\normalsize
+
+* Das Studium dient dem Erwerb theoretischen Wissens.
+* Studium = Reproduktion, Praxis = Translation, Wissenschaft = Reflexion.
+* Sie werden nie wieder so viel Zeit zum Erwerb theoretischen Wissens haben.
+* Nach Studienabschluss sind Sie keine Psychotherapeut:in.
+* Nach Studienabschluss haben sie viel über Psychologie gelesen.
+* Praktische Fähigkeiten lernt man in der Praxis, nicht in der Theorie.
+* Denken und lernen Sie interdisziplinär, Fachgrenzen sind für Faule.
+
+
+# Studium und Diskussion
+\large
+\setstretch{1.2}
+\textcolor{darkblue}{Lernphasen}
+\small
+
+Phase 1: Überblicken
+
+* Überblick durch Vorlesung/Überfliegen der Materialien.
+* Verstehen einfacher Zusammenhänge.
+* Verstehen, was man nicht versteht.
+
+Phase 2: Verstehen
+
+* Erarbeiten des Verstehens komplexer Zusammenhänge.
+* Schriftliche Beantwortung der Selbstkontrollfragen.
+* Klärung von Details.
+
+Phase 3: Memorisieren
+
+* Auswendiglernen aller Inhalte.
+* Aktive Wiedergabe der Inhalte, schriftlich oder mündlich.
+* Teilnahme an der Klausur.
+
+Teilen Sie große Aufgaben immer in viele kleine, gut zu bewältigende Aufgaben!
+
+Sie machen Schreibtischarbeit, treiben Sie also täglich Sport!
+
+# Studium und Diskussion
+\large
+\textcolor{darkblue}{Verschiedenes}
+\vspace{2mm}
+\justifying
+\normalsize
+
+Ist Statistik schwer?
+\vspace{1mm}
+
+Ich kann kein Mathe, Statistik macht mich fertig. Was soll ich bloß tun?
+\vspace{1mm}
+
+Psychotherapeut:in wollte ich eigentlich jetzt erstmal nicht werden,
+sondern ich will Menschen verstehen. Wozu brauche ich da Statistik?
+\vspace{1mm}
+
+Ich würde gerne verstehen, wie das Gehirn funktioniert. In welchem Kurs bekomme
+ich die Antwort?
+\vspace{1mm}
+
+Warum muss ich etwas über wissenschaftliche Methoden lernen, ich will doch viel
+lieber Menschen helfen?
+
+
+# Studium und Diskussion
+\setstretch{1.1}
+\textcolor{darkblue}{Approbationsordnung für Psychotherapeutinnen und Psychotherapeuten (2020)}
+\footnotesize
+\vspace{2mm}
+
+Inhalte, die im Bachelorstudiengang im Rahmen der hochschulischen Lehre zu vermitteln
+und bei dem Antrag auf Zulassung zur psychotherapeutischen Prüfung nachzuweisen sind.
+
+\noindent \textbf{9. wissenschaftliche Methodenlehre}
+
+Die studierenden Personen (...)
+
+c) wenden Begriffe, Methoden und Ergebnisse der qualitativen und quantitativen
+Forschung in der psychologischen Grundlagen- und Anwendungsforschung an,
+
+d) beurteilen die Auswirkungen von Forschungsmethoden auf Untersuchungspopulationen
+und wenden deskriptive und inferenzstatistische Methoden sowie weitere statistische
+Verfahren zur Auswertung von Ergebnissen grundlagen- und anwendungsbezogener Studien
+in verschiedenen Bereichen der psychologischen und psychotherapeutischen Forschung an,
+
+e) planen wissenschaftliche Untersuchungen, führen diese Untersuchungen durch und werten sie aus, (...)
+
+\textcolor{darkblue}{$\quad\Rightarrow$ Bachelorarbeit}
+
+Zur Vermitllung der Inhalte der wissenschaftlichen Methodenlehre sind bei der Planung
+der hochschulischen Lehre (...) die folgenden Wissensbereiche abzudecken (...)
+
+c) deskriptive und Inferenz-Statistik (...)
+
+e) Datenerhebung und Datenanalyse unter Nutzung digitaler Technologien.
+
+# Studium und Diskussion
+\setstretch{1.1}
+\textcolor{darkblue}{Approbationsordnung für Psychotherapeutinnen und Psychotherapeuten (2020)}
+\vspace{2mm}
+
+\footnotesize
+Inhalte, die im Masterstudiengang im Rahmen der hochschulischen Lehre zu vermitteln
+und bei dem Antrag auf Zulassung zur psychotherapeutischen Prüfung nachzuweisen sind.
+\vspace{1mm}
+
+\footnotesize
+\noindent \textbf{2. vertiefte Forschungsmethodik}
+
+Die studierenden Personen
+
+a) wenden komplexe und multivariate Erhebungs- und Auswertungsmethoden zur Evaluierung
+und Qualitätssicherung von Interventionen an,
+
+b) nutzen und beurteilen einschlägige Forschungsstudien und deren Ergebnisse für die Psychotherapie
+
+c) planen selbstständig Studien zur Neu- oder Weiterentwicklung der Psychotherapieforschung
+oder der Forschung in angrenzenden Bereichen, führen solche Studien durch, werten sie aus
+und fassen sie zusammen, (...)
+
+\textcolor{darkblue}{$\quad\Rightarrow$ Masterarbeit}
+
+Zur Vermitllung der Inhalte der vertieften Forschnungsmethodik sind bei der Planung
+der hochschulischen Lehre (...) die folgenden Wissensbereiche abzudecken (...)
+
+a) multivariate Verfahren und Messtheorie
+
+
+# Studium und Diskussion
+
+\Huge
+\vfill
+\center
+Q & A
+\vfill
+
+#
+\vfill
+\setstretch{2.3}
+\Large
+Datenwissenschaft und Statistik
+
+Formalia
+
+Studium und Diskussion
+
+**Selbstkontrollfragen**
+
+# Selbstkontrollfragen
+\setstretch{3}
+1. Nennen Sie die drei Hauptkomponenten der Datenwissenschaft.
+2. Nennen Sie drei Grundannahmen der Wahrscheinlichkeitstheorie.
+3. Nennen Sie drei Grundannahmen der Frequentistischen Inferenz.
+4. Nennen Sie drei Grundannahmen der Bayesianischen Inferenz.
+
