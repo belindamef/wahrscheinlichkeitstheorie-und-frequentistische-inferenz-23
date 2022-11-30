@@ -1,0 +1,923 @@
+---
+fontsize: 8pt
+bibliography: 7_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 7_header.tex
+---
+
+```{r, include = F}
+source("7_R_common.R")
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("7_Abbildungen/wtfi_7_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+\large
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+\large
+Prof. Dr. Dirk Ostwald
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{(7) Ungleichungen und Grenzwerte}
+\vfill
+
+
+#
+\large
+\vfill
+\setstretch{2.5}
+Wahrscheinlichkeitsungleichungen
+
+Erwartungswertungleichungen
+
+Gesetze der Großen Zahl
+
+Zentrale Grenzwertsätze
+
+Selbstkontrollfragen
+\vfill
+
+
+#
+\large
+\vfill
+\setstretch{2.5}
+**Wahrscheinlichkeitsungleichungen**
+
+Erwartungswertungleichungen
+
+Gesetze der Großen Zahl
+
+Zentrale Grenzwertsätze
+
+Selbstkontrollfragen
+\vfill
+
+# Wahrscheinlichkeitsungleichungen
+\small
+\begin{theorem}[Markov Ungleichung]
+\justifying
+\normalfont
+$\xi$ sei eine Zufallsvariable mit $\mathbb{P}(\xi \ge 0) = 1$. Dann gilt für alle  $x \in \mathbb{R}$, dass
+\begin{equation}
+\mathbb{P}(\xi \ge x) \le \frac{\mathbb{E}(\xi)}{x}.
+\end{equation}
+\end{theorem}
+
+
+Bemerkungen
+
+* Weil $\mathbb{P}(\xi \ge 0) = 1$ gilt, sagt man auch, dass $\xi$ eine \textit{nicht-negative} Zufallvariable ist.
+* Die Ungleichung setzt Überschreitungswahrscheinlichkeiten und Erwartungswerte in Bezug.
+* Gilt z.B. für eine nichtnegative Zufallsvariable $\xi$, dass $\mathbb{E}(\xi) = 1$, dann ist $\mathbb{P}(\xi \ge 100) \le 0.01$.
+
+
+# Wahrscheinlichkeitsungleichungen
+\footnotesize
+\underline{Beweis}
+
+Wir betrachten den Fall einer kontinuierlichen Zufallsvariable $\xi$ mit WDF $p$. Wir halten zunächst fest, dass
+\begin{equation}
+\mathbb{E}(\xi)
+= \int_{-\infty}^\infty s \, p(s)\,ds
+= \int_0^\infty s \, p(s)\,ds
+= \int_0^x s \, p(s)\,ds + \int_x^\infty s \, p(s)\,ds,
+\end{equation}
+weil $\xi$ nicht-negativ ist. Es folgt dann
+\begin{equation}
+\mathbb{E}(\xi)
+\ge  \int_x^\infty s \, p(s)\,ds
+\ge  \int_x^\infty x \, p(s)\,ds
+=  x\int_x^\infty  p(s)\,ds
+=  x\, \mathbb{P}(\xi \ge x).
+\end{equation}
+
+Dabei gilt die erste Ungleichung weil
+\begin{equation}
+\int_{0}^x s \, p(s)\,ds \ge 0 
+\end{equation}
+und die zweite Ungleichung gilt, weil $x \le \xi$ für $\xi \in [x,\infty[$. Es folgt also, dass
+\begin{equation}
+\mathbb{E}(\xi) \ge x\, \mathbb{P}(\xi \ge x)
+\Leftrightarrow
+\mathbb{P}(\xi \ge x) \le \frac{\mathbb{E}(\xi)}{x}.
+\end{equation}
+
+$\hfill$ $\Box$
+
+# Wahrscheinlichkeitsungleichungen
+\small
+Beispiel ($\xi \sim G(\alpha,\beta)$)
+\vspace{1mm}
+\small
+\begin{itemize}
+\item Wir halten ohne Beweis fest, dass für $\xi \sim G(\alpha,\beta)$ gilt, dass $\mathbb{E}(\xi) = \alpha\beta$.
+\item Wir betrachten den Fall $\alpha := 5, \beta := 2$, so dass $G(x;5,2) = \chi^2(10)$
+\end{itemize}
+
+```{r, eval = F, echo = F}
+graphics.off()
+fdir        =  file.path(getwd(), "7_Abbildungen")
+library(latex2exp)
+
+# model formulation
+x       = 0:1                                                                    # x space
+mu      = c(.1,.5, .7)                                                           # expectation parameters
+
+# plot specifications
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,2),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            cex        = 1.1,                                                    # font scaling
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.1                                                     # title  magnification factor
+)
+
+# model formulation
+x_min   = 0                                                                      # minimum x-value
+x_max   = 10                                                                     # maximum x-value
+x_res   = 1e3                                                                    # x space resolution
+x       = seq(x_min,x_max,len = x_res)                                           # x space
+n       = 10                                                                     # df of a chi^2 variable
+shape   = n/2                                                                    # shape parameter
+scale   = 2                                                                      # scale parameters
+E_x     = shape*scale                                                            # expected value
+
+# Gamma CDF
+plot(
+        x,                                                                       # x values
+        pgamma(x,shape, scale),                                                  # y values
+        type         = "l",                                                      # line style
+        lwd          =  2,                                                       # line width
+        col          = 'Black',                                                   # line color
+        ylab         = " ",                                                      # no y-axis label
+        xlab         = "x",                                                      # x-axis label
+        ylim         = c(-.01,1.01),                                             # y-axis limits
+        main         = "P(x)")                                                   # title
+
+# Markov inequality
+miq = cbind(matrix(1 - pgamma(x,shape,scale)),                                   # \mathbb{P}(\xi \ge x)
+            matrix(E_x/x))                                                       # \mathbb{E}(\xi)/x
+
+matplot(x,                                                                       # x values
+        miq,                                                                     # y values
+        type        = "l",                                                       # line style
+        lty         = 1,                                                         # line type (solid)
+        lwd         =  2,                                                        # line width
+        col         = c("black","gray70"),                                        # line color
+        ylab        = " ",                                                       # no y-axis label
+        xlim        = c(0,10),                                                   # xlimits
+        ylim        = c(-.1,5),                                                  # ylimits
+        main        = "Markov Ungleichung")                                       # title
+
+legend(4,                                                                        # upper left corner x ordinate
+        5,                                                                       # upper left corner y ordinate
+        c("1 - P(x)",                                                            # labels
+          TeX("$E(\\xi)/x$")),
+        cex         = .9,                                                        # size of text multiplier
+        lty         = 1,                                                         # solid linetype
+        col         = c("black","gray70"),                                        # line color
+        lwd         = 2,                                                         # line width
+        y.intersp   = 1.5,                                                       # legend line spacing
+        bty         = "n")                                                       # box off
+
+
+dev.copy2pdf(                                                                    # export to PDF
+    file   = file.path(fdir, "wtfi_7_markov_ungleichung.pdf"),                   # filename
+    width  = 8,                                                                  # PDF width
+    height = 4                                                                   # PDF height
+)
+```
+
+```{r, echo = FALSE, out.width = "95%"}
+knitr::include_graphics("7_Abbildungen/wtfi_7_markov_ungleichung.pdf")
+```
+
+# Wahrscheinlichkeitsungleichungen
+\small
+\begin{theorem}[Chebyshev Ungleichung]
+\justifying
+\normalfont
+Es sei $\xi$ eine Zufallsvariable mit Varianz $\mathbb{V}(\xi)$. Dann gilt für alle $x \in \mathbb{R}$
+\begin{equation}
+\mathbb{P}(|\xi - \mathbb{E}(\xi)| \ge x) \le \frac{\mathbb{V}(\xi)}{x^2}.
+\end{equation}
+\end{theorem}
+Bemerkungen
+
+* Die Chebyshev Ungleichung setzt Abweichungen vom Erwartungswert in Bezug zur Varianz.
+* Zum Beispiel gilt
+\begin{equation}
+\mathbb{P}\left(|\xi - \mathbb{E}(\xi)| \ge 3 \sqrt{\mathbb{V}(\xi)}\right)
+\le  \frac{\mathbb{V}(\xi)}{\left(3 \sqrt{\mathbb{V}(\xi)}\right)^2} =
+\frac{1}{9}.
+\end{equation}
+
+
+# Wahrscheinlichkeitsungleichungen
+
+\footnotesize
+\underline{Beweis}
+\vspace{0.2cm}
+
+Wir halten zunächst fest, dass für $a,b \in \mathbb{R}$ gilt
+\begin{equation}
+a^2 \ge b^2 \Leftrightarrow |a| \ge b.
+\end{equation}
+Dazu betrachten wir die folgenden vier möglichen Fälle
+
+\begin{center}
+\begin{tabular}{llllll}
+$|a| \ge b \mbox{ für } a > 0, b > 0$
+& $\Leftrightarrow$
+& $\quad a \ge b$
+& $\Leftrightarrow$
+&
+& $\quad\, a^2 \ge b^2$
+\\
+$|a| \ge b \mbox{ für } a > 0, b < 0$
+& $\Leftrightarrow$
+& $\quad a \ge b$
+& $\Leftrightarrow$
+&
+& $\quad\, a^2 \ge b^2$
+\\
+$|a| \ge b \mbox{ für } a < 0, b > 0$
+& $\Leftrightarrow$
+& $-a \ge b$
+& $\Leftrightarrow$
+& $(-a)^2 \ge b^2$
+& $ = a^2 \ge b^2$
+\\
+$|a| \ge b \mbox{ für } a < 0, b < 0$
+& $\Leftrightarrow$
+& $-a \ge b$
+& $\Leftrightarrow$
+& $(-a)^2 \ge b^2$
+& $ = a^2 \ge b^2$
+\end{tabular}
+\end{center}
+Als nächstes definieren wir $\ups := (\xi - \mathbb{E}(\xi))^2$. Dann folgt aus der Markov Ungleichung
+\begin{align}
+\begin{split}
+\mathbb{P}\left(\ups \ge x^2\right)
+& \le \frac{\mathbb{E}(\ups)}{x^2} \\
+\Leftrightarrow
+\mathbb{P}\left((\xi - \mathbb{E}(\xi))^2 \ge x^2 \right)
+& \le \frac{\mathbb{E}\left((\xi - \mathbb{E}(\xi))^2 \right)}{x^2} \\
+\Leftrightarrow
+\mathbb{P}(|\xi - \mathbb{E}(\xi)| \ge x)
+& \le \frac{\mathbb{V}(\xi)}{x^2}.
+\end{split}
+\end{align}
+$\hfill$ $\Box$
+
+
+
+#
+\large
+\vfill
+\setstretch{2.5}
+Wahrscheinlichkeitsungleichungen
+
+**Erwartungswertungleichungen**
+
+Gesetze der Großen Zahl
+
+Zentrale Grenzwertsätze
+
+Selbstkontrollfragen
+\vfill
+
+# Erwartungswertungleichungen
+\small
+\begin{theorem}[Cauchy-Schwarz-Ungleichung]
+\normalfont
+\justifying
+$\xi$ und $\ups$ seien zwei Zufallsvariablen und $\mathbb{E}(\xi\ups)$ sei endlich. 
+Dann gilt
+\begin{equation}
+\mathbb{E}(\xi\ups)^2 \le \mathbb{E}\left(\xi^2\right)\mathbb{E}\left(\ups^2 \right).
+\end{equation}
+\end{theorem}
+
+Bemerkungen
+
+* Analog gilt für Vektoren $x,y \in \mathbb{R}^n$, dass $\langle x,y \rangle^2 \le \Vert x \Vert \cdot \Vert y \Vert$.
+* Die Korrelationsungleichung ist eine direkte Konsequenz der Cauchy-Schwarz-Ungleichung.
+* Für einen Beweis verweisen wir auf @degroot_probability_2012, Theorem 4.6.2.
+
+
+# Erwartungswertungleichungen
+\small
+\begin{theorem}[Korrelationsungleichung]
+\justifying
+\normalfont
+$\xi$ und $\ups$ seien Zufallsvariablen mit $\mathbb{V}(\xi), \mathbb{V}(\ups) > 0$. Dann gilt
+\begin{equation}
+\rho(\xi,\ups)^2
+= \frac{\mathbb{C}(\xi,\ups)^2}{\mathbb{V}(\xi)\mathbb{V}(\ups)}
+\le 1.
+\end{equation}
+\end{theorem}
+
+Bemerkung
+
+* Es gilt also 
+\begin{equation}
+\rho(\xi,\ups)^2 \le 1 \Leftrightarrow |\rho(\xi,\ups)| \le 1 \Leftrightarrow \rho(\xi,\ups) \in [-1,1].
+\end{equation}
+
+# Erwartungswertungleichungen
+\footnotesize
+\underline{Beweis}
+
+Mit der Cauchy-Schwarz-Ungleichung für zwei Zufallsvariablen $\alpha$ und $\beta$ gilt, dass
+\begin{equation}
+\mathbb{E}(\alpha\beta)^2 \le \mathbb{E}\left(\alpha^2\right)\mathbb{E}\left(\beta^2\right).
+\end{equation}
+
+Wir definieren nun $\alpha := \xi -\mathbb{E}(\xi)$ und $\beta := \ups - \mathbb{E}(\ups)$.
+
+Dann besagt die Cauchy-Schwarz Ungleichung, dass
+\begin{equation}
+\mathbb{E}\left((\xi -\mathbb{E}(\xi))(\ups-\mathbb{\ups}\right)^2
+\le  \mathbb{E}\left((\xi -\mathbb{E}(\xi))^2 \right) \mathbb{E}\left((\ups-\mathbb{\ups})^2 \right).
+\end{equation}
+
+Also gilt
+\begin{align}
+\begin{split}
+\mathbb{C}(\xi,\ups)^2
+\le  \mathbb{V}(\xi)\mathbb{V}(\ups)
+\Leftrightarrow \frac{\mathbb{C}(\xi,\ups)^2}{\mathbb{V}(\xi)\mathbb{V}(\ups)}
+\le 1.
+\end{split}
+\end{align}
+$\hfill \Box$
+
+
+# Erwartungswertungleichungen
+\footnotesize
+\setstretch{1.2}
+\begin{theorem}[Jensensche Ungleichung]
+\justifying
+\normalfont
+$\xi$ sei eine Zufallsvariable und $g : \mathbb{R} \to \mathbb{R}$ eine konvexe Funktion, d.h.
+\begin{equation}
+g(\lambda x_1 + (1-\lambda)x_2) \le \lambda g(x_1) + (1-\lambda)g(x_2)
+\end{equation}
+für alle $x_1,x_2 \in \mathbb{R}, \lambda \in [0,1]$. Dann gilt
+\begin{equation}
+\mathbb{E}(g(\xi)) \ge g(\mathbb{E}(\xi)).
+\end{equation}
+Analog sei $g : \mathbb{R} \to \mathbb{R}$ eine konkave Funktion, d.h.
+\begin{equation}
+g(\lambda x_1 + (1-\lambda)x_2) \ge \lambda g(x_1) + (1-\lambda)g(x_2)
+\end{equation}
+für alle $x_1,x_2 \in \mathbb{R}, \lambda \in [0,1]$. Dann gilt
+\begin{equation}
+\mathbb{E}(g(\xi)) \le g(\mathbb{E}(\xi)).
+\end{equation}
+\end{theorem}
+
+Bemerkungen
+
+* Bei konvexem $g$ liegt der Funktionsgraph unter der Geraden von $g(x_1)$ zu $g(x_2)$.
+* Bei konkavem $g$ liegt der Funktionsgraph über der Geraden von $g(x_1)$ zu $g(x_2)$.
+* Der Logarithmus ist eine konkave Funktion, also gilt $\mathbb{E}(\ln \xi) \le \ln \mathbb{E}(\xi)$.
+
+# Erwartungswertungleichungen
+\footnotesize
+\underline{Beweis}
+\vspace{.2cm}
+\setstretch{1.8}
+
+Wir zeigen die Ungleichung für den Fall einer konkaven Funktion $g$. Es sei $f$ 
+eine Tangente am Punkt $g(\mathbb{E}(\xi))$. $f$ sei also eine linear-affine Funktion der Form
+\begin{equation}
+f(\xi) := a\xi + b \mbox{ für } a,b\in \mathbb{R} \mbox{ mit } f(\mathbb{E}(\xi)) = g(\mathbb{E}(\xi)).
+\end{equation}
+Weil $g$ konkav ist, gilt $g(x) \le ax + b$ für alle $x \in \mathbb{R}$, also  $g(\xi) \le a\xi + b$.
+Also gilt
+\begin{equation}
+\mathbb{E}(g(\xi)) \le \mathbb{E}(a\xi + b) = a\mathbb{E}(\xi) + b = f(\mathbb{E}(\xi)) = g(\mathbb{E}(\xi)).
+\end{equation}
+$\hfill \Box$
+
+#
+\large
+\vfill
+\setstretch{2.5}
+Wahrscheinlichkeitsungleichungen
+
+Erwartungswertungleichungen
+
+**Gesetze der Großen Zahl**
+
+Zentrale Grenzwertsätze
+
+Selbstkontrollfragen
+\vfill
+
+
+# Gesetze der Großen Zahl
+Überblick
+\vspace{2mm}
+\small
+\begin{itemize}
+\itemsep3mm
+\justifying
+\item Es gibt ein \textit{Schwaches Gesetz der Großen Zahl} und ein \textit{Starkes Gesetz der Großen Zahl}.
+\item Intuitiv besagen beide Gesetze, dass sich das Stichprobenmittel von unabhängigen und identisch verteilten Zufallsvariablen für eine große Anzahl an Zufallsvariablen dem Erwartungswert  der zugrundeliegenden Verteilung nähert.
+\item Das Schwache und das Starke Gesetz der Großen Zahl unterscheiden sich in Hinblick auf die zu ihrer Formulierung benutzen Formen der \textit{Konvergenz von Zufallsvariablen}.
+\begin{itemize}
+\small
+\item Das Schwache Gesetz basiert auf der \textit{Konvergenz in Wahrscheinlichkeit}.
+\item Das Starke Gesetz basiert auf der \textit{fast sicheren Konvergenz}.
+\end{itemize}
+\item Wir begnügen uns mit Konvergenz in Wahrscheinlichkeit und dem Schwachen Gesetz.
+\end{itemize}
+
+
+# Gesetze der Großen Zahl
+\small
+\begin{definition}[Konvergenz in Wahrscheinlichkeit]
+\justifying
+Eine Folge von Zufallsvariable $\xi_1,\xi_2,...$ \textit{konvergiert gegen eine Zufallsvariable $\xi$ in Wahrscheinlichkeit}, wenn für jedes noch so kleine $\epsilon > 0$ gilt, dass
+\begin{equation}
+\lim_{n \to \infty} \mathbb{P}(|\xi_n - \xi| < \epsilon) 	= 1 \Leftrightarrow
+\lim_{n \to \infty} \mathbb{P}(|\xi_n - \xi| \ge \epsilon) 	= 0
+\end{equation}
+Die Konvergenz von $\xi_1,\xi_2,....$ gegen $\xi$ in Wahrscheinlichkeit wird geschrieben als
+\begin{equation}
+\xi_n\xrightarrow[n \to \infty]{\mbox{P}} \xi
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* $\xi_n\xrightarrow[n \to \infty]{\text{P}} \xi$  heißt, dass sich die Wahrscheinlichkeit, 
+ dass $\xi_n$ in dem zufälligen Intervall 
+\begin{equation} 
+]\xi-\epsilon, \xi+\epsilon[
+\end{equation}
+liegt, unabhängig davon, wie klein dieses Intervall sein mag, $1$ nähert, wenn $n$ gegen Unendlich strebt.
+* Intuitiv heißt das, dass sich für eine konstante Zufallsvariable $\xi := a$ die Verteilung 
+  von $\xi_n$ mehr und mehr um $a$ konzentriert, wenn $n$ gegen Unendlich strebt.
+
+
+# Gesetze der Großen Zahl
+\small
+\begin{theorem}[Schwaches Gesetz der Großen Zahl]
+\justifying
+\normalfont
+$\xi_1,...,\xi_n$ seien unabhängig und gleichverteilte Zufallsvariablen mit 
+$\mathbb{E}(\xi_i) = \mu$ für alle $i = 1,...,n$. Weiterhin bezeichne
+\begin{equation}
+\bar{\xi}_n := \frac{1}{n}\sum_{i=1}^n \xi_i
+\end{equation}
+das Stichprobenmittel der $\xi_i, i = 1,...,n$. Dann konvergiert $\bar{\xi}_n$ in
+Wahrscheinlichkeit gegen $\mu$,
+\begin{equation}
+\bar{\xi}_n \xrightarrow[n \to \infty]{\mbox{P}} \mu.
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Für einen Beweis siehe zum Beispiel @georgii_stochastik_2009, Abschnitt 5.1.
+* $\bar{\xi}_n \xrightarrow[n\to\infty]{\mbox{P}} \mu$ heißt, dass die Wahrscheinlichkeit,
+dass das Stichprobenmittel nahe dem Erwartungswert der zugrundeliegenden Verteilung
+liegt, sich 1 nähert, wenn $n\to\infty$.
+
+
+# Gesetze der Großen Zahl
+\vspace{2mm}
+Beispiel ($\xi_1,...,\xi_n \sim N(0,1)$)
+\vspace{1mm}
+\footnotesize
+\begin{itemize}
+\item Die linke Abbildung zeigt Realisationen von $\bar{\xi}_n$ als Funktion von $n$.
+\item Die rechte Abbildung zeigt Schätzungen von $\mathbb{P}(|\bar{\xi}_n - \mu| \ge \epsilon)$ 
+als Funktionen von $n$ und $\epsilon$.
+\end{itemize}
+
+
+```{r, eval = F, echo = F}
+
+# figure setup
+library(latex2exp)
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,2),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            cex        = 1.2,                                                    # font scaling
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.1                                                       # title  magnification factor
+        )
+
+# model formulation
+s_max   = 100                                                                    # number of simulations
+s_all   = 1:s_max                                                                # simulation index vector
+n_max   = 200                                                                    # maximal n number of variables
+n_all   = 1:n_max                                                                # number of variables vector
+mu      = 0                                                                      # expectation parameter
+sigsqr  = 1                                                                      # variance parameter
+epsilon = c(1,.5,.25,.125)
+
+
+# sample mean distribution
+X_bar    = matrix(rep(NaN, s_max*n_max), nrow = s_max)                           # sample mean array
+for(s in s_all){                                                                 # simulation iterations
+    for(n in n_all){                                                             # sample size iterations
+        X_bar[s,n] = mean(rnorm(n,mu,sigsqr))                                    # sample mean \xi_n
+                   }
+                }
+matplot(n_all,                                                                   # x values
+        t(X_bar[1:2,]),                                                          # y values
+        type        = "p",                                                       # line style: points
+        pch         = 1,                                                         # point type o
+        lwd         = 1,                                                         # point line width
+        col         = c("gray"),                                                 # point color
+        ylab        = " ",                                                       # no y-axis label
+        xlim        = c(0,n_max),                                                # xlimits
+        ylim        = c(-1.5,1.5),                                               # xlimits
+        xlab        = "n",                                                       # x-axis label
+        main        = "Stichprobenmittelrealisationen")                          #  title
+legend(140,                                                                      # legend x ordinate
+       1.55,                                                                     # legend y ordinate
+       TeX("$\\bar{\\xi}_n$"),                                                      # legend text
+       lty          = NA,                                                        # no line
+       pch          = 1,                                                         # point type o
+       cex          = 1,                                                         # size of text multiplier
+       col          = c("gray"),                                                 # line color
+       lwd          = 2,                                                         # line width
+       x.intersp    = -.2,                                                       # legend line spacing
+       y.intersp    = 1.5,                                                       # legend line spacing
+       bty          = "n")                                                       # box off
+
+# geschätzte Überschreitungswahrscheinlichkeiten der Stichprobenmittel
+P_hat       = cbind(matrix(colMeans(abs(X_bar) > epsilon[1])),
+                    matrix(colMeans(abs(X_bar) > epsilon[2])),
+                    matrix(colMeans(abs(X_bar) > epsilon[3])),
+                    matrix(colMeans(abs(X_bar) > epsilon[4])))
+
+
+matplot(n_all,                                                                   # x values
+        P_hat,                                                                   # y values
+        type        = "l",                                                       # line style: points
+        lty         = 1,
+        lwd         = 2,                                                         # point line width
+        col         = c("gray20","gray40","gray60","gray80"),                    # line color
+        ylab        = " ",                                                       # no y-axis label
+        xlim        = c(0,n_max),                                                # xlimits
+        ylim        = c(-.01,1),                                                 # xlimits
+        xlab        = "n",                                                       # x-axis label
+        main        = "Wahrscheinlichkeitschätzungen")                           # title
+legend(100,                                                                       # legend x ordinate
+       1.00,                                                                     # legend y ordinate
+       c(TeX("$\\epsilon = 1.000$"),
+         TeX("$\\epsilon = 0.500$"),
+         TeX("$\\epsilon = 0.250$"),
+         TeX("$\\epsilon = 0.125$")),                                            # legend text
+       lty          = 1,                                                         # no line
+       cex          = .8,                                                        # size of text multiplier
+       col          = c("gray20","gray40","gray60","gray80"),                    # line color
+       lwd          = 2,                                                         # line width
+       x.intersp    = .2,                                                        # legend line spacing
+       y.intersp    = 2,                                                         # legend line spacing
+       bty          = "n")                                                       # box off
+
+dev.copy2pdf(                                                                    # export to PDF
+    file   = file.path("7_Abbildungen", "wtfi_7_schwaches_gesetz.pdf"),          # filename
+    width  = 10,                                                                 # PDF width
+    height = 5                                                                   # PDF height
+)
+```
+
+```{r, echo = FALSE, out.width = "95%"}
+knitr::include_graphics("7_Abbildungen/wtfi_7_schwaches_gesetz.pdf")
+```
+
+
+
+#
+\large
+\vfill
+\setstretch{2.5}
+Wahrscheinlichkeitsungleichungen
+
+Erwartungswertungleichungen
+
+Gesetze der Großen Zahl
+
+**Zentrale Grenzwertsätze**
+
+Selbstkontrollfragen
+\vfill
+
+# Zentrale Grenzwertsätze
+Überblick
+\footnotesize
+
+* \justifying Die Zentralen Grenzwertsätze besagen, dass die Summe von unabhängigen
+Zufallsvariablen mit Erwartungswert 0 asymptotisch, d.h. für unendlich viele 
+Zufallsvariablen, normalverteilt mit Erwartungswertparameter 0 ist.
+* Modelliert man eine Messgröße $y$ also als Summe eines deterministischen
+Einflusses $\mu$ und der Summe
+\begin{equation}
+\varepsilon := \sum_{i=1}^n \xi_i
+\end{equation}
+einer Vielzahl von unabhängigen Zufallsvariablen $\xi_i, i = 1,...,n$, welche
+unbekannte Störeinflüsse beschreiben, so ist für großes $n$ die Annahme
+\begin{equation}\label{eq:stat_model}
+y = \mu + \varepsilon \mbox{ mit } \varepsilon \sim N(0,\sigma^2)
+\end{equation}
+also mathematisch gerechtfertigt. Wie wir später sehen werden, liegt die Annahme
+in Gleichung \eqref{eq:stat_model} vielen statischen Modellen zugrunde.
+* In der "Lindenberg und Lévy" Form des Zentralen Grenzwertsatzes werden
+unabhängig und identische Zufallsvariablen vorausgesetzt. In der "Liapunov"
+Form werden nur unabhängige Zufallsvariablen voraussetzt. Der Beweis der
+"Lindenberg und Lévy" Form ist einfacher als der Beweis der "Liapunov" Form.
+Wir verzichten hier abe rauf die Angabe von Beweisen.
+* In beiden Formulierungen des Zentralen Grenzwertsatzes die betrachtete
+Konvergenz von Zufallsvariablen die *Konvergenz in Verteilung*, welche
+wir zunächst einführen.
+
+# Zentrale Grenzwertsätze
+\footnotesize
+\begin{definition}[Konvergenz in Verteilung]
+\justifying
+Eine Folge $\xi_1,\xi_2,...$ von Zufallsvariablen \textit{konvergiert in Verteilung 
+gegen eine Zufallsvariable $\xi$}, wenn
+\begin{equation}
+\lim_{n \to \infty} P_{\xi_n}(x) = P_\xi(x).
+\end{equation}
+für alle $\xi$ an denen $P_\xi$ stetig ist.
+Die Konvergenz in Verteilung von $\xi_1,\xi_2,...$ gegen $\xi$ wird geschrieben als
+\begin{equation}
+\xi_n\xrightarrow[n\to \infty]{\text{D}} \xi,
+\end{equation}
+Gilt $\xi_n\xrightarrow[n\to \infty]{\text{D}} \xi$, dann heißt die Verteilung von 
+$\xi$ die \textit{asymptotische Verteilung der Folge $\xi_1,\xi_2,...$}.
+\end{definition}
+\footnotesize
+Bemerkungen
+
+* $\xi\xrightarrow[n\to \infty]{\text{D}} \xi$ ist eine Aussage über die Konvergenz von KVFs.
+* Konvergenz in Wahrscheinlichkeit impliziert Konvergenz in Verteilung.
+
+
+# Zentrale Grenzwertsätze
+\footnotesize
+\begin{theorem}[Zentraler Grenzwertsatz nach Lindenberg und Lévy]
+\justifying
+\normalfont
+$\xi_1,...,\xi_n$ seien unabhängig und identisch verteilte Zufallsvariablen mit
+\begin{equation}
+\mathbb{E}(\xi_i) := \mu \mbox{ und }
+\mathbb{V}(\xi_i) := \sigma^2 > 0
+\mbox{ für alle } i = 1,....,n.
+\end{equation}
+Weiterhin sei $\zeta_n$ die Zufallsvariable definiert als
+\begin{equation}
+\zeta_n := \sqrt{n}\left(\frac{\bar{\xi}_n - \mu}{\sigma}\right).
+\end{equation}
+Dann gilt für alle $z \in \mathbb{R}$
+\begin{equation}
+\lim_{n \to \infty} P_{\zeta_n}(z) = \Phi(z),
+\end{equation}
+wobei $\Phi$ die kumulative Verteilungsfunktion der Standardnormalverteilung bezeichnet.
+\end{theorem}
+
+\footnotesize
+Bemerkung
+
+* Wir zeigen später, dass damit für $n\to\infty$ asymptotisch auch gilt, dass
+\begin{equation}
+\sum_{i=1}^n \xi_i \sim N(n\mu, n\sigma^2)
+\mbox{ und }
+\bar{\xi}_n \sim N\left(\mu,\frac{\sigma^2}{n}\right).
+\end{equation}
+
+```{r, eval = F, echo = F}
+# figure setup
+library(latex2exp)
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,3),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            cex        = 1.2,                                                    # font scaling
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.3                                                     # title  magnification factor
+)
+
+# model formulation
+s_max   = 1e3                                                                    # number of samples
+s_all   = 1:s_max                                                                # simulation index vector
+n_all   = c(2e0,2e2)                                                             # number of variables vector
+k       = 3                                                                      # chi^2 variable parameter
+mu      = k                                                                      # expectation
+sigsqr  = 2*k                                                                    # variance
+x_min   = -4                                                                     # minimum Z variable value
+x_max   = 4                                                                      # maximum Z variable value
+x_res   = 1e3                                                                    # Z space resolution
+x       = seq(x_min,x_max,len = x_res)                                           # Z space
+px      = dnorm(x,0,1)                                                           # standard normal density
+Px      = pnorm(x,0,1)                                                           # standard normal cumulative density
+Y       = matrix(rep(NaN, s_max*length(n_all)), nrow = s_max)                    # standardized sample mean array
+
+# standardized sample mean sampling
+for(n in seq_along(n_all)){                                                      # sample size iteration
+    for(s in s_all){                                                             # simulation iterations
+        X       = rchisq(n_all[n],k)
+        X_n     = mean(X)
+        Y[s,n]  = sqrt(n_all[n])*(X_n - mu)/(sqrt(sigsqr))                       # sample mean
+        }
+
+    # histogram and density for low n
+    hist( Y[,n],                                                                 # X density estimate
+          breaks = 30,                                                           # number of histogram bins
+          col   = "gray90",                                                      # bar color
+          prob  = TRUE,                                                          # density estimate
+          xlim  = c(x_min, x_max),
+          xlab  = "",                                                            # x-axis label
+          ylab  = "",                                                            # y-axis label
+          ylim  = c(0,0.6),                                                      # ylimits
+          main  = sprintf("n = %d", n_all[n])                                    # title
+    )
+    lines(x,                                                                     # density support
+          px,                                                                    # density values
+          lwd   = 2,                                                             # line width
+          col   = "darkorange")                                                  # line color
+}
+
+# CDF and empirical CDFs
+plot( x,                                                                         # density support
+      Px,                                                                        # density values
+      col     = "darkorange",                                                    # line color
+      ylim    = c(-.1,1.1),                                                      # ylimits
+      xlab    = "",                                                              # xlabel
+      ylab    = "")                                                              # ylabel
+lines(ecdf(Y[,1]),                                                               # ECDF low n
+      pch     = NA,                                                              # marker
+      col     = "Gray70",                                                        # line color
+      lwd     = 2,                                                               # line width
+      lty     = 1)                                                               # solid line
+lines(ecdf(Y[,2]),                                                               # ECDF high n
+      pch     = NA,                                                              # marker
+      col     = "Black",                                                         # line color
+      lwd     = 2,                                                               # line width
+      lty     = 1)                                                               # solid line
+legend(-4.5,                                                                     # legend x ordinate
+        1,                                                                       # legend y ordinate
+       c(TeX("$\\Phi(z)"),
+         TeX("$\\hat{P}_{\\zeta_n}(z),\\, n = 2$"),
+         TeX("$\\hat{P}_{\\zeta_n}(z),\\, n = 200$")),                                         # legend text
+       lty          = 1,                                                         # no line
+       cex          = .7,                                                         # size of text multiplier
+       col         = c("darkorange", "Gray70", "Black"),                         # line color
+       lwd          = 2,                                                         # line width
+       x.intersp    = 0.3,
+       y.intersp    = 1.0,                                                       # legend line spacing
+       seg.len      =  .5,
+       bty          = "n")
+dev.copy2pdf(                                                                    # export to PDF
+    file   = file.path("7_Abbildungen", "wtfi_7_lindenberg_levy.pdf"),           # filename
+    width  = 15,                                                                 # PDF width
+    height = 5                                                                   # PDF height
+)
+```
+
+
+# Zentrale Grenzwertsätze
+\small
+Beispiel ($\xi_1,...,\xi_n \sim \chi^2(k)$)
+
+\footnotesize
+* Wir halten ohne Beweis fest, dass $\mathbb{E}(\xi_i) = k$ und $\mathbb{V}(\xi_i) = 2k$.
+* Wir betrachten das Szenario $\xi_i \sim \chi(3)$ für $i = 1,...,n$.
+* Die linken Abbildungen zeigen Histogrammschätzer der Wahrscheinlichkeitsdichte von
+\begin{equation}
+\zeta_n := \sqrt{n}\left(\frac{\bar{\xi}_n - \mu}{\sigma}\right)
+\end{equation}
+basierend auf 1000 Realisationen von $\zeta_n$ für $n = 2$ und $n = 200$, sowie die WDF von $N(0,1)$.
+* Die rechte Abbildung zeigt die entsprechenden (empirischen) kumulativen Verteilungsfunktionen.
+
+\vspace{1mm}
+```{r, echo = FALSE, out.width = "95%"}
+knitr::include_graphics("7_Abbildungen/wtfi_7_lindenberg_levy.pdf")
+```
+
+# Zentrale Grenzwertsätze
+\footnotesize
+\begin{theorem}[Zentraler Grenzwertsatz nach Liapounov]
+\justifying
+\normalfont
+$\xi_1,...,\xi_n$ seien unabhängige aber nicht notwendigerweise identisch verteilten Zufallsvariablen mit
+\begin{equation}
+\mathbb{E}(\xi_i) := \mu_i \mbox{ und }
+\mathbb{V}(\xi_i) := \sigma^2_i > 0
+\mbox{ für alle } i = 1,....,n.
+\end{equation}
+Weiterhin sollen für $\xi_1,...,\xi_n$ folgend Eigenschaften gelten:
+\begin{equation}
+\mathbb{E}(|\xi_i - \mu_i|^3) < \infty \mbox{ und }
+\lim_{n \to \infty} \frac{\sum_{i=1}^n \mathbb{E}\left(|\xi_i - \mu_i|^3\right)}{(\sum_{i=1}^n \sigma_i^2)^{3/2}} = 0.
+\end{equation}
+Dann gilt für die Zufallsvariable $\zeta_n$ definiert als
+\begin{equation}
+\zeta_n := \frac{\sum_{i=1}^n \xi_i - \sum_{i=1}^n \mu_i}{\sqrt{\sum_{i=1}^n \sigma_i^2}},
+\end{equation}
+für alle $z\in\mathbb{R}$, dass
+\begin{equation}
+\lim_{n \to \infty} P_{\zeta_n}(z) = \Phi(z),
+\end{equation}
+wobei $\Phi$ KVF der Standardnormalverteilung bezeichnet.
+\end{theorem}
+
+Bemerkungen 
+
+* Wir zeigen später, dass dann auch gilt, dass $\sum_{i=1}^n \xi_i \sim N\left(\sum_{i=1}^n \mu_i, \sum_{i=1}^n \sigma_i^2\right)$.
+
+
+#
+\large
+\vfill
+\setstretch{2.5}
+Wahrscheinlichkeitsungleichungen
+
+Erwartungswertungleichungen
+
+Gesetze der Großen Zahl
+
+Zentrale Grenzwertsätze
+
+**Selbstkontrollfragen**
+\vfill
+
+# Selbstkontrollfragen
+\setstretch{1.7}
+\small
+\begin{enumerate}
+\item Geben Sie die Markov Ungleichung wieder.
+\item Geben Sie die Chebyshev Ungleichung wieder.
+\item Geben Sie die Cauchy-Schwarz Ungleichung wieder.
+\item Geben Sie die Korrelationsungleichung wieder.
+\item Definieren Sie den Begriff der Konvergenz in Wahrscheinlichkeit.
+\item Definieren Sie den Begriff der Konvergenz in Verteilung.
+\item Geben Sie das Schwache Gesetz der Großen Zahl wieder.
+\item Erläutern Sie den Zentralen Grenzwertsatz nach Lindenberg und Lévy.
+\item Erläutern Sie den Zentralen Grenzwertsatz nach Liapunov.
+\item Warum sind die Zentralen Grenzwertsätze für die statistische Modellbildung wichtig?
+\end{enumerate}
+
+# References
+\footnotesize
+
+
+
+
