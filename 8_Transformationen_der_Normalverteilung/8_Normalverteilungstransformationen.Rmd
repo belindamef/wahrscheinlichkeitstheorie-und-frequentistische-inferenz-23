@@ -1,0 +1,2620 @@
+---
+fontsize: 8pt
+bibliography: 8_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 8_header.tex
+---
+
+
+```{r, include = F}
+source("8_R_common.R")
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+\large
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+\normalsize
+Prof. Dr. Dirk Ostwald
+
+#  {.plain}
+
+\vfill
+\center
+\huge
+\textcolor{black}{(8)  Transformationen der Normalverteilung}
+\vfill
+
+
+#
+\setstretch{1.6}
+\large
+
+Vorbemerkungen
+
+Transformationstheoreme
+
+Standardtransformationen
+
+* \normalsize Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+Selbstkontrollfragen
+
+
+#
+\setstretch{1.6}
+\large
+**Vorbemerkungen**
+
+Transformationstheoreme
+
+Standardtransformationen
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+
+# Vorbemerkungen
+Realisierungen von Zufallsvariablen
+
+\setstretch{1.2}
+\footnotesize
+\justifying
+
+Der einzelne Wert, den eine Zufallsvariable bei jedem Durchgang eines Zufallsvorgangs
+annimmt, heißt eine **Realisierung der Zufallsvariable**. Mithilfe eines Computers 
+lassen sich Zufallsexperimente simulieren und Realisierungen von Zufallsvariablen erhalten.
+
+Realisierungen von normalverteilten Zufallsvariablen erhält man in R mit `rnorm()`,
+wobei die Syntax für Realisierungen von $n$ unabhängig und identisch verteilten
+Zufallsvariablen $\xi_i \sim N(\mu,\sigma^2), i = 1,...,n$ durch `rnorm(n,mu,sigma)`
+gegeben ist.
+
+\vspace{2mm}
+```{r}
+rnorm(1,0,1)					# \xi_i \sim N(0,1)
+rnorm(1,10,1)		    		# \xi_i \sim N(10,1)
+rnorm(3,5,sqrt(2)) 				# \xi_i \sim N(5,2), i = 1,2,3 (u.i.v.)
+rnorm(1e1,5,sqrt(2)) 	    	# \xi_i \sim N(5,2), i = 1,...,10 (u.i.v.)
+```
+
+
+# Vorbemerkungen
+\vspace{1mm}
+Realisierungen von Zufallsvariablen
+
+\justifying
+\footnotesize
+\setstretch{1.2}
+Die empirische Verteilung unabhängig und identisch simulierter
+Zufallsvariablenrealisationen  entspricht der Verteilung der Zufallsvariable.
+Die empirische Verteilung stellt man mit Histogrammen (Häufigkeitsverteilungen)
+oder histogramm-basierten Dichteschätzern dar.
+
+```{r, echo = F, eval = F}
+
+# histogram-based density estimation
+# ------------------------------------------------------------------------------
+graphics.off()
+library(latex2exp)
+dev.new()
+par(
+family      = "sans",
+mfcol       = c(2,2),
+pty         = "m",
+bty         = "l",
+lwd         = 1,
+las         = 1,
+mgp         = c(2,1,0),
+xaxs        = "i",
+yaxs        = "i",
+font.main   = 1,
+cex         = .8,
+cex.main    = 1)
+
+
+# outcome space of interest
+x_min       = -4                                                                 # minimum z-value
+x_max       = 4                                                                  # maximum z-value
+x_res       = 1e3                                                                # z-space resolution
+x           = seq(x_min, x_max, len = x_res)                                     # z-space
+
+# random variable realizations
+mu          = 0                                                                  # \mu_1
+sigsqr      = 1                                                                  # \sigma_1^2
+n           = 1e4                                                                # number of samples
+m           = 20                                                                 # number of subsamples
+X           = rnorm(n, mu, sqrt(sigsqr))                                         # n samples of \xi_1 \sim N(\mu_1,\sigma_1^2)
+
+# density
+p_X         = dnorm(x, mu, sqrt(sigsqr))                                         # density
+plot(x,                                                                          # density support
+      p_X,                                                                       # density values
+      type  = "l",
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange",                                                      # line color
+      xlim  = c(x_min,x_max),                                                    # x-axis limits
+      ylim  = c(0,.5),                                                           # y-axis limits
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("N(x; 0,1)"))
+
+#  absolute Häufigkeit
+hist( X,                                                                         # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col    = "gray90",                                                         # bar color
+      freq   = T,                                                                # density estimate
+      xlim   = c(x_min,x_max),                                                   # x-axis limits
+      ylim   = c(0,1e3),                                                         # x-axis limits
+      xlab   = expression("x"[1]),                                               # x-axis label
+      ylab   = "",                                                               # y-axis label
+      main   = TeX("$\\xi_i \\sim N(0,1), i = 1,...,10^4$")                         # title label
+)
+legend( -4,                                                                      # upper left corner x ordinate
+        1030,                                                                   # upper left corner y ordinate
+        "Absolute Häufigkeit",                                                   # labels
+        cex         = .9,                                                        # text fontsize multiplier
+        lty         = 1,                                                         # solid linetype
+        lwd         = 3,                                                         # line width
+        bty         = "n",                                                       # no box
+        col         = "gray90")                                                  # line color
+
+# samples
+plot(X[1:m],                                                                     # realizations
+     rep(0,m),                                                                   # dummy values
+     type  = "p",                                                                # points only
+     cex   = 1.2,                                                                # marker size
+     pch   = 21,                                                                 # marker type (edge color, face color)
+     col   = "white",                                                            # edge color
+     bg    = "gray70",                                                           # face color
+     xlim  = c(x_min,x_max),                                                     # x-axis limits
+     ylim  = c(-.05,.4),                                                         # y-axis limits
+     ylab  = "",                                                                 # no y-axis label
+     yaxt  = 'n',                                                                # no y ticks
+     xlab   = expression("x"[1]),                                                # x-axis label
+     main  = TeX("Realisierungen von \\xi_1,..., \\xi_{20}"))                               # title
+
+# histogram-based density estimation
+hist( X,                                                                         # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col    = "gray90",                                                         # bar color
+      prob   = TRUE,                                                             # density estimate
+      xlim   = c(x_min,x_max),                                                   # x-axis limits
+      ylim   = c(0,.5),                                                          # y-axis limits
+      xlab   = expression("x"[1]),                                               # x-axis label
+      ylab   = "",                                                               # y-axis label
+      main   = TeX("$\\xi_i \\sim N(0,1), i = 1,...,10^4$")                         # title label
+)
+lines(x,                                                                         # density support
+      p_X,                                                                       # density values
+      lwd    = 2,                                                                # line width
+      col    = "darkorange")                                                     # line color
+legend( -4,                                                                      # upper left corner x ordinate
+        .52,                                                                      # upper left corner y ordinate
+       c("Dichteschätzung",                                                      # labels
+         "N(x;0,1)"),
+       cex         = .9,                                                         # size of text multiplier
+       lty         = c(1,1),                                                     # solid linetype
+       col         = c("gray90","darkorange"),                                   # line color
+       y.intersp   = 1.4,                                                        # y spacing
+       lwd         = 2,                                                          # line width
+       bty         = "n")                                                        # box off
+
+fdir       = file.path(getwd(), "8_Abbildungen")                                 # Abbildungsverzeichnis
+dev.copy2pdf(								                                                     # PDF Kopiefunktion
+file  		= file.path(fdir, "wtfi_8_realisierungen.pdf"),                        # Dateiname
+width 		= 8, 							                                                     # Breite (inch)
+height 		= 5)
+```
+
+\vspace{5mm}
+\center
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_realisierungen.pdf")
+```
+
+
+# Vorbemerkungen
+
+Transformation von Zufallsvariablen
+
+\footnotesize
+
+Inhalt dieser Vorlesungseinheit sind einige Gesetzmäßigkeiten zur Transformation
+von normalverteilten Zufallsvariablen. Mit \textit{Transformation} ist hier die
+Anwendung einer Funktion auf Zufallsvariablen sowie die arithmetische Verknüpfung
+mehrerer Zufallsvariablen gemeint. Die zentrale Fragestellung dabei ist folgende:
+"Wenn die Zufallsvariable $\xi$ normalverteilt ist, wie ist dann eine Zufallsvariable
+$\ups$, die sich durch Transformation von $\xi$ ergibt, verteilt?"
+
+Für die in dieser Vorlesungseinheit behandelten Fälle gilt, dass man explizit
+Wahrscheinlichkeitsdichtefunktionen für die Verteilung der transformierten
+Zufallsvariable angeben kann. Diese gehören zu den klassischen Resultaten der
+frequentistischen Inferenz und sind für das Verständnis von Konfidenzintervallen,
+Hypothesentests, und Varianzanalysen essentiell.
+
+Intuitiv kann man sich die Transformation einer Zufallsvariable anhand der
+Transformation ihrer u.i.v. Realisierungen klar machen. Betrachtet man z.B.
+$\xi \sim N(0,1)$ und ihre Transformation $\ups := \xi^2$ und sind $x_1 = 0.10, x_2 = -0.20, x_3 = 0.80$
+drei u.i.v. Realisierungen von $\xi$, so entspricht dies den u.i.v. Realisierungen
+$y_1 = x_1^2 = 0.01, y_2 = x_2^2 = 0.04, y_3 = x_3^2 = 0.64$ von $\ups$. In diesem
+Beispiel fällt auf, dass $\ups$ keine negativen Werte annimmt, die Verteilung von
+$\ups$ ordnet negativen Werten daher Wahrscheinlichkeitsdichten von $0$ zu.
+
+
+# Vorbemerkungen
+Simulation der Transformation normalverteilter Zufallsvariablen in R
+
+\vspace{2mm}
+\footnotesize
+```{r}
+# Simulationsspezifikation
+n       = 1e4                          # Anzahl von u.i.v Realisierungen (ZVen)
+mu      = 1                            # Erwartungswertparameter von \xi
+sigsqr  = 2                            # Varianzparameter von \xi
+
+# Quadrieren einer Zufallsvariable
+x       = rnorm(n, mu, sqrt(sigsqr))   # Realisierungen x_i, i = 1,....,n von \xi
+y       = x^2                          # Realisierungen y_i = x_i^2 von \ups
+
+# Ausgabe der ersten acht Werte
+print(x[1:8], digits = 2)
+print(y[1:8], digits = 2)
+```
+
+
+```{r, echo = F, eval = F}
+
+# Histogramm von X
+graphics.off()
+dev.new()
+library(latex2exp)
+hist(
+x,
+main = TeX("Histogramm von unabhängigen Realisierungen von $\\xi$"),
+xlim = c(-5,10),
+ylim = c(0, 2000),
+ylab = "Häufigkeit",
+xlab = "x")
+dev.copy2pdf(
+file = file.path(getwd(), "8_Abbildungen", "wtfi_8_hist_x.pdf"))
+
+# Histogramm von Y
+graphics.off()
+dev.new()
+hist(
+y,
+main =  TeX("Histogramm von unabhängigen Realisierungen von $\\upsilon$"),
+xlim = c(-10,50),
+ylim = c(0, 6000),
+ylab = "Häufigkeit",
+xlab = "y")
+dev.copy2pdf(
+file = file.path(getwd(), "8_Abbildungen", "wtfi_8_hist_y.pdf"))
+```
+
+
+# Vorbemerkungen
+Simulation der Transformation normalverteilter Zufallsvariablen in R
+
+\vspace{4mm}
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_hist_x.pdf")
+```
+
+# Vorbemerkungen
+Simulation der Transformation normalverteilter Zufallsvariablen in R
+
+\vspace{4mm}
+\center
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_hist_y.pdf")
+```
+
+# Vorbemerkungen
+\footnotesize
+\begin{theorem}[Transformation eines Zufallsvektors]
+\normalfont
+\justifying
+$\xi : \Omega \to \mathcal{X}$ sei ein Zufallsvektor und $f:\mathcal{X} \to \mathbb{R}^m$ 
+sei eine multivariate vektorwertige Funktion. Dann ist
+\begin{equation}
+\ups : \Omega \to \mathbb{R}, \omega \mapsto \ups(\omega) := (f \circ \xi)(\omega) := f(\xi(\omega))
+\end{equation}
+ein Zufallsvektor.
+\end{theorem}
+
+Bemerkungen
+
+* \justifying Das Theorem formalisiert die oben etablierte Intuition, dass die Anwendung einer 
+  (deterministischen) Funktion  auf eine zufällige Größe im Allgemeinen wieder eine zufällige 
+  Größe ergibt. Wir verzichten auf einen Beweis.
+* In einem Beweis müsste die Messbarkeit von $\ups$ als Folge der Messbarkeit von $\xi$ nachgewiesen werden.
+* Im Folgenden ist oft $\mathcal{X} := \mathbb{R}$ und $f : \mathbb{R} \to \mathbb{R}$.
+* Wir schreiben in diesem Fall in der Regel einfach $\ups := f(\xi)$ und nennen $\ups$ die *transformierte Zufallsvariable*.
+
+
+
+
+
+# Vorbemerkungen
+
+Überblick
+
+\footnotesize
+\justifying
+Im Abschnitt **Transformationstheoreme** stellen wir zunächst einige generelle
+Werkzeuge zum Berechnen der WDFen von transformierten Zufallsvariablen bereit.
+Diese Werkzeuge sind von der allgemeinen Form "Wenn $\xi$ eine Zufallsvariable
+mit WDF $p_\xi$ und $\ups := f(\xi)$ die durch $f$ transformierte Zufallsvariable ist,
+dann gilt für die WDF von $\ups$ die folgende Formel: $p_\ups := \{\mbox{Formel}\}$".
+
+Im Abschnitt **Standardtransformationen** diskutieren wir sechs
+Standardtransformationen normalverteilter Zufallsvariablen, die in der
+frequentistischen Inferenz und damit im weiteren Verlauf des Kurses
+zentrale Rollen spielen. Diese Aussagen sind von der allgemeinen Form "Wenn
+$\xi_i, i = 1,...,n$ unabhängig und identisch normalverteilte Zufallsvariablen sind
+und $\ups := f(\xi_1,...,\xi_n)$ eine Transformation dieser Zufallsvariablen ist,
+dann ist die WDF von $\ups$ durch die Formel $p_\ups := \{\mbox{Formel}\}$ gegeben und man
+nennt die Verteilung von $\ups$ *Verteilungsname*".
+
+Die Aussagen im Abschnitt **Standardtransformationen** sind für die frequentistische
+Inferenz zentral, weil
+
+(1) \justifying die Zentralen Grenzwertsätze die Annahme additiv unabhängig normalverteilter
+Störvariablen, und damit normalverteilter Daten, rechtfertigt,
+(2)  wie wir in der nächsten Vorlesungseinheit sehen werden, es sich bei Schätzern
+und Statistiken um Transformationen von Zufallsvariablen handelt, und
+(3) Konfidenzintervalle und Hypothesentests durch die Verteilungen ihrer jeweiligen
+Statistiken charakterisiert und gerechtfertigt sind.
+
+
+# Vorbemerkungen
+Ausblick
+
+\footnotesize
+Das probabilistische Standardmodell von $n$ Datenpunkten hat die Form
+
+\begin{equation}
+y_i := \mu_i + \varepsilon_i, i = 1,...,n.
+\end{equation}
+
+Die Zufallsvariable $y_i$ dient dabei als das Modell des $i$ten Datenpunktes 
+$\tilde{y}_i \in \mathbb{R}$, d.h. $\tilde{y}_i$ wird als Realisierung von $y_i$ modelliert.
+Die Normalverteilung $y_i \sim N(\mu_i,\varepsilon)$ der Zufallsvariable $y_i$
+ergibt sich dabei wie wir später sehen werden aus der linear-affinen Transformation
+der Zufallsvariable $\varepsilon_i$ unter der Abbildung $f(\varepsilon_i) := \mu_i + \varepsilon_i$
+
+$\mu_i \in \mathbb{R}$ repräsentiert den deterministischen Aspekt des Datenpunktmodells
+und liefert die theoretische Erklärung für den Wert von $y_i$.  $\varepsilon_i \sim N(0,\sigma^2)$ 
+dagegen repräsentiert den stochastischen Aspekt des Datenpunktmodells und liefert 
+im Sinne der Zentralen Grenzwertsätzte die theoretischer Erklärung für die Differenz 
+von $\mu_i$ und $y_i$ als Resultat der Addition vieler weiterer Einflüsse in der 
+Generation von $y_i$ über $\mu_i$ hinaus.
+
+Statistiken und Schätzer, also Funktionen von $y_i, i = 1,...,n$, entsprechen damit im
+probabilistischen Standardmodell Transformationen von normalverteilten Zufallsvariablen. 
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+**Transformationstheoreme**
+
+Standardtransformationen
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# Transformationstheoreme
+Überblick
+
+\footnotesize
+\justifying
+
+Das **univariate WDF Transformationstheorem bei bijektiven Abbildungen**
+liefert eine Formel zur Berechnung der WDF $p_\ups$ von $\ups := f(\xi)$, wenn $\xi$ eine
+Zufallsvariable mit WDF $p_\xi$ ist und $f$ eine bijektive Funktion ist.
+
+Das **univariate WDF Transformationstheorem bei linear affinen Abbildungen**
+gibt eine Formel zur Berechnung der WDF $p_\ups$ von $\ups := f(\xi)$ an, wenn $\xi$ eine
+Zufallsvariable mit WDF $p_\xi$ ist und $f$ eine linear-affine Funktion ist.
+
+Das **univariate WDF Transformationstheorem bei stückweisen bijektiven Abbildungen**
+gibt eine Formel zur Berechnung der WDF $p_\ups$ von $\ups := f(\xi)$ an, wenn $\xi$ eine
+Zufallsvariable mit WDF $p_\xi$ ist und $f$ zumindest in Teilen bijektiv ist.
+
+Das **multivariate WDF Transformationstheorem bei bijektiven Abbildungen**
+liefert eine Formel zur Berechnung der WDF $p_\ups$ von $\ups := f(\xi)$, wenn $\xi$ ein
+Zufallsvektor mit WDF $p_\xi$ ist und $f$ eine bijektive multivariate vektorwertigeFunktion ist.
+
+Das **Faltungstheorem** liefert eine Formel zur Berechnung der WDF $p_\ups$
+von $\ups := \xi_1 + \xi_2$, wenn  $\xi_1$ und $\xi_2$ zwei Zufallsvariablen mit WDFen
+$p_{\xi_1}$ und $p_{\xi_2}$ sind.
+
+
+
+# Transformationstheoreme
+\small
+\begin{theorem}[Univariate WDF Transformation bei bijektiven Abbildungen]
+\normalfont
+\justifying
+$\xi$ sei eine Zufallsvariable mit WDF $p_\xi$ für die $\mathbb{P}(]a,b[) = 1$ gilt,
+wobei $a$ und/oder $b$ entweder endlich oder unendlich seien. Weiterhin sei
+\begin{equation}
+\ups := f(\xi)
+\end{equation}
+wobei die univariate reellwertige Funktion $f : ]a,b[ \to \mathbb{R}$ differenzierbar
+und bijektiv auf $]a,b[$ sei. $f(]a,b[)$ sei das Bild von $]a,b[$ unter $f$.
+Schließlich sei $f^{-1}(y)$ der Wert der Umkehrunktion von $f(x)$ für
+$y \in f(]a,b[)$ und $f'(x)$ sei die Ableitung von $f$ an der Stelle $x$.
+Dann ist die WDF von $\ups$ gegeben durch
+\begin{equation}
+p_\ups : \mathbb{R} \to \mathbb{R}_{\ge 0}, y \mapsto p_\ups(y) :=
+\begin{cases}
+\frac{1}{\vert  f^{'}\left(f^{-1}(y)\right) \vert}p_\xi\left(f^{-1}(y)\right)
+& \mbox{ für } y \in f(]a,b[) \\
+0
+& \mbox{ für } y \in \mathbb{R} \setminus f(]a,b[).
+\end{cases}
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Linear-affine Abbildungen sind ein wichtiger Anwendungsfalls.
+* Die $Z$-Transformation ist ein wichtiger Anwendungsfall.
+
+
+# Transformationstheoreme
+\tiny
+\setstretch{1}
+\underline{Beweis}
+
+Wir halten zunächst fest, dass weil $f$ eine differenzierbare bijektive Funktion
+auf $]a,b[$ ist, $f$ entweder strikt wachsend oder strikt fallend ist. Nehmen
+wir zunächst an, dass $f$ auf $]a,b[$ strikt wachsend ist. Dann ist auch
+$f^{-1}$ für alle $y \in f(]a,b[)$ wachsend, und es gilt
+\begin{equation*}
+P_\ups(y)
+= \mathbb{P}(\ups \le y)
+= \mathbb{P}\left(f(\xi) \le y\right)
+= \mathbb{P}\left(f^{-1}(f(\xi)) \le f^{-1}(y)\right)
+= \mathbb{P}\left(\xi \le f^{-1}(y)\right)
+= P_\xi\left(f^{-1}(y)\right).
+\end{equation*}
+$P_\ups$ ist also differenzierbar an allen Stellen $y$, an denen sowohl $f^{-1}$
+als auch $P_\xi$ differenzierbar sind. Mit der Kettenregel und dem
+Satz von der Umkehrabbildung $(f^{-1}(x))' = 1/f'(f^{-1}(x))$, folgt dann,
+dass die WDF $p_\ups$
+sich ergibt wie folgt:
+\begin{equation*}
+p_\ups(y)
+= \frac{d}{dy}P_\ups(y)
+= \frac{d}{dy}P_\xi\left(f^{-1}(y)\right)
+= p_\xi\left(f^{-1}(y)\right)\frac{d}{dy}f^{-1}(y)
+= \frac{1}{f'\left(f^{-1}(y)\right)} p_\xi\left(f^{-1}(y)\right),
+\end{equation*}
+Weil $f^{-1}$ strikt wachsend ist, ist $d/dy (f^{-1}(y))$ positiv und das Theorem
+trifft zu. Analog gilt, dass wenn $f$ auf $]a,b[$ strikt fallend ist, dann ist
+auch  $f^{-1}$ für alle $y \in f(]a,b[)$ fallend und es gilt
+\begin{equation*}
+P_\ups(y)
+= \mathbb{P}(f(\xi) \le y)
+= \mathbb{P}\left(f^{-1}(f(\xi)) \ge f^{-1}(y)\right)
+= \mathbb{P}\left(\xi \ge f^{-1}(y)\right)
+= 1 - P_\xi\left(f^{-1}(y) \right),
+\end{equation*}
+Mit der Kettenregel und dem Satz von der Umkehrabbildung  folgt dann
+\begin{equation*}
+p_\ups(y)
+= \frac{d}{dy}(1 - P_\ups(y))
+= -\frac{d}{dy}P_\xi\left(f^{-1}(y)\right)
+= -p_\xi\left(f^{-1}(y)\right)\frac{d}{dy}f^{-1}(y)
+= -\frac{1}{f'\left(f^{-1}(y)\right)} p_\xi\left(f^{-1}(y)\right).
+\end{equation*}
+Weil $f^{-1}$ strikt fallend ist, ist $d/dy (f^{-1}(y))$ negativ, so dass
+$-d/dy (f^{-1}(y))$ gleich $|d/dy (f^{-1}(y))|$ ist und das Theorem trifft zu.
+
+# Transformationstheoreme
+\small
+\begin{theorem}[Univariate WDF Transformation bei linear-affinen Abbildungen]
+\normalfont
+\justifying
+$\xi$ sei eine Zufallsvariable mit WDF $p_\xi$ und es sei
+\begin{equation}
+\ups = f(\xi) \mbox{ mit } f(\xi) := a\xi + b \mbox{ für } a\neq 0.
+\end{equation}
+Dann ist die WDF von $\ups$ gegeben durch
+\begin{equation}
+p_\ups : \mathbb{R} \to \mathbb{R}_{\ge 0}, y \mapsto p_\ups(y) :=
+\frac{1}{|a|}p_\xi\left(\frac{y-b}{a}\right).
+\end{equation}
+\end{theorem}
+
+Bemerkung
+
+* Das Theorem folgt direkt WDF Transformationstheorem bei bijektiven Abbildungen.
+* Die $Z$-Transformation ist ein wichtiger Anwendungsfall.
+
+# Transformationstheoreme
+\footnotesize
+\underline{Beweis}
+\vspace{1mm}
+
+Wir halten zunächst fest, dass
+\begin{equation}
+f^{-1} : \mathbb{R} \to \mathbb{R}, y  \mapsto f^{-1}(y) = \frac{y - b}{a}
+\end{equation}
+ist, weil dann $f \circ f^{-1} = \mbox{id}_{\mathbb{R}}$  gilt, wie man anhand von
+\begin{equation}
+f(f^{-1}(x)) = a \left(\frac{x - b}{a}\right) + b = x - b + b = x \mbox{ für alle } x \in \mathbb{R}
+\end{equation}
+einsieht. Wir halten weiterhin fest, dass
+\begin{equation}
+f' : \mathbb{R} \to \mathbb{R}, x \mapsto f'(x) = \frac{d}{dx}(ax  + b) = a.
+\end{equation}
+Also folgt mit dem Theorem zur WDF Transformation bei bijektiven Abbildungen, dass
+\begin{align}
+\begin{split}
+p_\ups : \mathbb{R} \to \mathbb{R}_{\ge 0}, y \mapsto p_\ups(y)
+& = \frac{1}{\vert f^{'}\left(f^{-1}(y)\right)\vert}p_\xi\left(f^{-1}(y)\right) \\
+& = \frac{1}{|a|}p_\xi\left(\frac{y - b}{a}\right).
+\end{split}
+\end{align}
+$\hfill \Box$
+
+
+# Transformationstheoreme
+\footnotesize
+\begin{theorem}[WDF Transformation bei stückweise bijektiven Abbildungen]
+\normalfont
+\justifying
+$\xi$ sei eine Zufallsvariable mit Ergebnisraum $\mathcal{X}$ und WDF $p_\xi$. Weiterhin sei
+\begin{equation}
+\ups = f(\xi),
+\end{equation}
+wobei $f$ so beschaffen sei, dass der Ergebnisraum von $\xi$ in eine endliche Anzahl
+von Mengen $\mathcal{X}_1,...,\mathcal{X}_k$ mit einer entsprechenden Anzahl von
+Mengen $\mathcal{Y}_1 := f(\mathcal{X}_1), ..., \mathcal{Y}_k :=  f(\mathcal{X}_k)$
+im Ergebnisraum $\mathcal{Y}$ von $\ups$ partitioniert werden kann (wobei nicht
+notwendigerweise $\mathcal{Y}_i \cap \mathcal{Y}_j = \emptyset, 1 \le i,j \le k$
+gelten muss), so dass die Abbildung $f$ für alle $\mathcal{X}_1,...,\mathcal{X}_k$
+bijektiv ist (d.h. $f$ ist eine \textit{stückweise} bijektive Abbildung). Für
+$i = 1,...,k$ bezeichne $f_i^{-1}$ die Umkehrfunktion von $f$ auf $\mathcal{Y}_i$.
+Schließlich nehmen wir an, dass die Ableitungen $f_i^{\prime}$ für alle $i=1,...,k$
+existieren und stetig sind. Dann ist eine WDF von $\ups$ durch
+\begin{equation}
+p_\ups : \mathcal{Y} \to \mathbb{R}_{\ge 0}, y \mapsto p_\ups(y) :=
+\sum_{i=1}^k 1_{\mathcal{Y}_i} (y) \frac{1}{\vert  f^{'}_i(f^{-1}_i(y)) \vert}p_\xi\left(f^{-1}_i(y)\right).
+\end{equation}
+gegeben.
+\end{theorem}
+
+Bemerkungen
+
+* Wir verzichten auf einen Beweis.
+* Die $\chi^2$-Transformation ist ein wichtiger Anwendungsfall.
+
+# Transformationstheoreme
+\footnotesize
+\begin{theorem}[Multivariate WDF Transformation bei bijektiven Abbildungen]
+\normalfont
+\justifying
+$\xi$ sei ein $n$-dimensionaler Zufallsvektor mit Ergebnisraum $\mathbb{R}^n$ und
+WDF $p_\xi$. Weiterhin sei
+\begin{equation}
+\ups := f(\xi),
+\end{equation}
+wobei die multivariate vektorwertige Funktion $f : \mathbb{R}^n \to \mathbb{R}^n$
+differenzierbar und bijektiv auf $]a,b[$ sei. Schließlich seien
+\begin{equation}
+J^f(x)
+= \left(\frac{\partial}{\partial x_j}f_i(x)\right)_{1\le i \le n, 1 \le j \le n}
+\in \mathbb{R}^{n \times n}
+\end{equation}
+die Jacobi-Matrix von $f$ an der Stelle $x \in \mathbb{R}^n$, $|J^f(x)|$ die
+Determinante von $J^f(x)$, und es sei $|J^f(x)| \neq 0$ für alle $x \in \mathbb{R}^n$.
+Dann ist eine WDF von $\ups$ durch
+\begin{equation}\label{eq:mpdf_transform}
+p_\ups : \mathbb{R}^n \to \mathbb{R}_{\ge 0}, y \mapsto p_\ups(y) :=
+\begin{cases}
+\frac{1}{|J^f\left(f^{-1}(y)\right)|}p_\xi\left(f^{-1}(y)\right)
+& \mbox{ for } y\in f(\mathbb{R}^n) \\
+0
+& \mbox{ for } y \in \mathbb{R}^n \setminus f(\mathbb{R}^n)
+\end{cases}
+\end{equation}
+gegeben.
+\end{theorem}
+
+Bemerkungen
+
+* Wir verzichten auf einen Beweis.
+* Es handelt sich um eine direkte Generalisierung des univariaten Falls.
+* Die $T$-und $F$-Transformationen sind wichtige Anwendungsfälle.
+
+# Transformationstheoreme
+\small
+\begin{theorem}[Summe unabhängiger Zufallsvariable, Faltung]
+\justifying
+\normalfont
+$\xi_1$ und $\xi_2$ seien zwei kontinuierliche unabhängige Zufallsvariablen mit WDF
+$p_{\xi_1}$ und $p_{\xi_2}$, respektive. $\ups := \xi_1 + \xi_2$ sei die Summe von $\xi_1$
+und $\xi_2$. Dann ergibt sich eine WDF der Verteilung von $\ups$ als
+\begin{equation}
+p_\ups(y)
+= \int_{-\infty}^\infty p_{\xi_1}(y - x_2)p_{\xi_2}(x_2)\,dx_2
+= \int_{-\infty}^\infty p_{\xi_1}(x_1)p_{\xi_2}(y - x_1)\,dx_1
+\end{equation}
+Die Formel für die WDF $p_\ups$ heißt \textit{Faltung} oder \textit{Konvolution}
+von $p_{\xi_1}$ und $p_{\xi_2}$.
+\end{theorem}
+
+\footnotesize
+Bemerkung
+
+* Die Summen- und Mittelwerttransformation sind wichtige Anwendungsfälle.
+
+# Transformationstheoreme
+\setstretch{1.1}
+\footnotesize
+\underline{Beweis}
+\vspace{2mm}
+
+Wir nutzen das multivariate WDF Transformationstheorem für bijektive Abbildungen.
+Dazu definieren wir zunächst
+\begin{equation}
+f : \mathbb{R}^2 \to \mathbb{R}^2, x \mapsto f(x) :=
+\begin{pmatrix}
+x_1 + x_2 \\
+x_2
+\end{pmatrix}
+:=
+\begin{pmatrix}
+z_1 \\ z_2
+\end{pmatrix}
+\end{equation}
+Die inverse Funktion von $f$ ist dann gegeben durch
+\begin{equation}
+f : \mathbb{R}^2 \to \mathbb{R}^2, z \mapsto f(z) :=
+\begin{pmatrix}
+z_1 - x_2 \\
+z_2
+\end{pmatrix}
+\end{equation}
+weil dann $f \circ f^{-1} = \mbox{id}_{\mathbb{R}^2}$ gilt, wie man anhand von
+\begin{equation}
+f^{-1}\left(f(x)\right)
+=
+f^{-1}
+\begin{pmatrix}
+x_1 + x_2 \\
+x_2
+\end{pmatrix}
+=
+\begin{pmatrix}
+x_1 + x_2 - x_2\\
+x_2
+\end{pmatrix}
+=
+\begin{pmatrix}
+x_1 \\
+x_2
+\end{pmatrix}
+\end{equation}
+einsieht. Die Jacobimatrix von $f$ ergibt sich zu
+\begin{equation}
+J^{f}(x) =
+\begin{pmatrix}
+\frac{\partial}{\partial x_1} f_1(x) &  \frac{\partial}{\partial x_2} f_1(x) \\
+\frac{\partial}{\partial x_1} f_2(x) &  \frac{\partial}{\partial x_2} f_2(x) \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+	\frac{\partial}{\partial x_1} (x_1 + x_2)
+&  	\frac{\partial}{\partial x_2} (x_1 + x_2)
+\\
+	\frac{\partial}{\partial x_1} x_2
+&   \frac{\partial}{\partial x_2} x_2 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &  1 \\
+0 &  1 \\
+\end{pmatrix}
+\end{equation}
+und die Jacobideterminante damit zu $|J^f(x)| = 1$.
+
+
+
+# Transformationstheoreme
+\setstretch{1.1}
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{2mm}
+
+Wir halten weiterhin fest, dass die Unabhängigkeit von $\xi_1$ und $\xi_2$ impliziert,
+dass
+\begin{equation}
+p_{\xi_1,\xi_2}(x_1,x_2) = p_{\xi_1}(x_1)p_{\xi_2}(x_2)
+\end{equation}
+impliziert. Einsetzen und Integration hinsichtlich $x_2$ ergibt dann ergibt dann
+für $z \in f(\mathbb{R}^2)$
+\begin{align}
+\begin{split}
+p_\zeta(z)
+& = \frac{1}{|J^f\left(f^{-1}(z)\right)|}p_\xi\left(f^{-1}(z)\right)  \\
+& = \frac{1}{1}p_{\xi_1,\xi_2}\left(z_1 - x_2, x_2\right)  \\
+& = p_{\xi_1}(z_1 - x_2)p_{\xi_2}(x_2)
+\end{split}
+\end{align}
+Integration über $x_2$ ergibt dann eine WDF für die marginale Verteilung von $\zeta_1$
+\begin{align}
+\begin{split}
+p_{\zeta_1}(z_1)
+& = \int_{-\infty}^{\infty} p_{\xi_1}(z_1 - x_2)p_{\xi_2}(x_2)\,dx_2
+\end{split}
+\end{align}
+Mit $\zeta_1 = \xi_1 + \xi_2 = \ups$ ergibt sich dann die erste Form des Faltungstheorems zu
+\begin{align}
+p_\ups(y)
+& = \int_{-\infty}^{\infty} p_{\xi_1}(y - x_2)p_{\xi_2}(x_2)\,dx_2.
+\end{align}
+$\hfill \Box$
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# Standardtransformationen
+Überblick
+\vspace{1mm}
+
+\justifying
+\footnotesize
+
+Das **Summentransformationstheorem** besagt, dass die Summe
+unabhängig normalverteilter Zufallsvariablen wiederum normalverteilt ist und gibt die
+Parameter dieser Verteilung an.
+
+Das **Mittelwertstransformationstheorem** besagt, dass das Stichprobenmittel
+unabhängig normalverteilter Zufallsvariablen wiederum normalverteilt ist und
+gibt die Parameter dieser Verteilung an.
+
+Das **$Z$-Transformationstheorem** besagt, dass Subtraktion des
+Erwartungswertparameters und gleichzeitige Division mit der Wurzel des
+Varianzsparameters die Verteilung einer normalverteilten Zufallsvariable in eine
+Standardnormalverteilung transformiert.
+
+Das **$\chi^2$-Transformationstheorem** besagt, dass die Summe quadrierter
+unabhängiger standardnormalverteilter Zufallsvariablen eine $\chi^2$-verteilte
+Zufallsvariable ist.
+
+Das **$T$-Transformationstheorem** besagt, dass die Zufallsvariable, die
+sich durch Division einer standardnormalverteilten Zufallsvariable durch die
+Quadratwurzel einer $\chi^2$-verteilten Zufallsvariable geteilt durch ein $n$,
+ergibt, eine $t$-verteilte Zufallsvariable ist.
+
+Das **$F$-Transformationstheorem** besagt, dass die Zufallsvariable, die
+sich durch Division zweier $\chi^2$ verteilter Zufallsvariablen, jeweils geteilt
+durch ihre jeweiligen Freiheitsgradparameter, ergibt eine $F$-verteilte
+Zufallsvariable ist.
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* **Summentransformation**
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# Summentransformation
+\small
+\begin{theorem}[Summe unabhängig normalverteilter Zufallsvariablen]
+\justifying
+\normalfont
+Für $i = 1,...,n$ seien $\xi_i \sim N(\mu_i,\sigma^2_i)$ unabhängige normalverteilte
+Zufallsvariablen. Dann gilt für die Summe $\ups := \sum_{i=1}^n \xi_i$ , dass
+\begin{equation}
+\ups \sim N\left(\sum_{i=1}^n \mu_i, \sum_{i=1}^n \sigma^2_i\right)
+\end{equation}
+Für unabhängige und identisch normalverteilte Zufallsvariablen
+$\xi_i \sim N(\mu,\sigma^2)$ gilt folglich
+\begin{equation}
+\ups \sim N(n\mu, n \sigma^2).
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Die Mittelwerttransformation ist ein wichtiger Anwendungsfall.
+* Die Generalisierung der zentralen Grenzwertsätze sind wichtige Anwendungsfälle.
+
+# Summentransformation
+```{r, echo = F, eval = F}
+
+# Summation of independent normally distributed random variables
+# ------------------------------------------------------------------------------
+# figure setup
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,3),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            cex        = 1.1,                                                    # font magnification factor
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.2                                                     # title  magnification factor
+)
+
+# outcome space of interest
+x_min       = -5                                                                 # minimum z-value
+x_max       = 5                                                                  # maximum z-value
+x_res       = 1e3                                                                # z-space resolution
+x           = seq(x_min, x_max, len = x_res)                                     # z-space
+
+
+# \xi_1 sample
+mu_1        = -2                                                                 # \mu_1
+sigsqr_1    = .5                                                                 # \sigma_1^2
+n           = 1e4                                                                # number of samples
+X_1         = rnorm(n, mu_1, sqrt(sigsqr_1))                                     # n samples of \xi_1 \sim N(\mu_1,\sigma_1^2)
+p_X_1       = dnorm(x, mu_1, sqrt(sigsqr_1))                                     # density
+hist( X_1,                                                                       # \xi_1 density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 5),                                                          # x-axis limits
+      ylim  = c(0,.7),                                                            # y-axis limits
+      xlab  = expression("x"[1]),                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$\\xi_1 \\sim N(-2.0,0.5)$")                                     # title label
+)
+lines(x,                                                                         # density support
+      p_X_1,                                                                     # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# \xi_2 sample
+mu_2        = 1                                                                  # \mu_2
+sigsqr_2    = .7                                                                 # \sigma_2^2
+n           = 1e4                                                                # number of samples
+X_2         = rnorm(n, mu_2, sqrt(sigsqr_2))                                     # n samples of \xi_2 \sim N(\mu_2,\sigma_2^2)
+p_X_2       = dnorm(x, mu_2, sqrt(sigsqr_2))                                     # density
+hist( X_2,                                                                       # \xi_1 density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 5),                                                          # x-axis limits
+      ylim  = c(0,.7),                                                           # y-axis limits
+      xlab  = expression("x"[2]),                                                # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$\\xi_2 \\sim N(1.0,0.7)$")                                      # title label
+)
+lines(x,                                                                         # density support
+      p_X_2,                                                                     # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+
+# Y = X_1 + \xi_2 sample
+Y           = X_1 + X_2                                                          # sum of \xi_1 and \xi_2 samples
+p_Y        = dnorm(x, mu_1+mu_2, sqrt(sigsqr_1+sigsqr_2))                        # density
+hist( Y,                                                                         # \xi_1 density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 5),                                                          # x-axis limits
+      ylim  = c(0,.7),                                                           # y-axis limits
+      xlab  = TeX("$x_1 + x_2$"),                                                # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$\\xi_1 + \\xi_2 \\sim N(-1.0,1.2)$")                               # title label
+)
+lines(x,                                                                         # density support
+      p_Y,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_summation.pdf"),          # filename
+  width  = 12,                                                                   # PDF width
+  height = 5                                                                     # PDF height
+)
+```
+
+\vfill
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_summation.pdf")
+```
+\vfill
+
+# Summentransformation
+\footnotesize
+\underline{Beweis}
+
+Wir skizzieren mithilfe der Faltungsformel, dass für $\xi_1 \sim N(\mu_1,\sigma^2_1)$,
+$\xi_2 \sim N(\mu_2,\sigma^2_2)$, und $\ups := \xi_1 + \xi_2$ gilt, dass
+$\ups \sim N(\mu_1 + \mu_2,\sigma_1^2 + \sigma_2^2)$. Für $n > 2$ folgt das Theorem
+dann durch Iteration. Mit der Definition der WDF der Normalverteilung erhalten
+wir zunächst
+\begin{align}
+\begin{split}
+p_\ups(y)
+& = \int_{-\infty}^\infty p_{\xi_1}(x_1)p_{\xi_2}(y - x_1)\,dx_1
+\\
+& = \int_{-\infty}^\infty
+    \frac{1}{\sqrt{2 \pi} \sigma_1} \exp\left(-\frac{1}{2}\left(\frac{x_1 - \mu_1}{\sigma_1}\right)^2\right)
+	\frac{1}{\sqrt{2 \pi} \sigma_2} \exp\left(-\frac{1}{2}\left(\frac{y - x_1 - \mu_2}{\sigma_2}\right)^2\right)
+	\,dx_1
+\\
+& = \int_{-\infty}^\infty
+    \frac{1}{2 \pi \sigma_1\sigma_2}\exp
+    \left(
+    -\frac{1}{2}\left(\frac{x_1 - \mu_1}{\sigma_1}\right)^2
+    -\frac{1}{2}\left(\frac{y - x_1 - \mu_2}{\sigma_2}\right)^2
+    \right)
+	\,dx_1 .
+\\
+\end{split}
+\end{align}
+Mit einigem algebraischen Aufwand erhält man die Identität
+\begin{multline}
+-\frac{1}{2}\left(\frac{x_1 - \mu_1}{\sigma_1}\right)^2
+-\frac{1}{2}\left(\frac{y - x_1 - \mu_2}{\sigma_2}\right)^2
+\\ =
+-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+-\frac{((\sigma_1^2 + \sigma_2^2)x_1 -\sigma_1^2y + \mu_2 \sigma_1^2 - \mu_1 \sigma_2^2)^2}
+      {2\sigma_1^2\sigma_2^2(\sigma_1^2 + \sigma_2^2)},
+\end{multline}
+so dass weiterhin gilt, dass
+
+
+# Summentransformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+\tiny
+\begin{align}
+\begin{split}
+p_\ups(y)
+& = \int_{-\infty}^\infty
+	\frac{1}{2 \pi \sigma_1\sigma_2}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+	-\frac{((\sigma_1^2 + \sigma_2^2)x_1 -\sigma_1^2y + \mu_2 \sigma_1^2 - \mu_1 \sigma_2^2)^2}
+      {2\sigma_1^2\sigma_2^2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\,dx_1
+\\
+& = \int_{-\infty}^\infty
+	\frac{1}{2 \pi \sigma_1\sigma_2}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\exp\left(
+	-\frac{((\sigma_1^2 + \sigma_2^2)x_1 -\sigma_1^2y + \mu_2 \sigma_1^2 - \mu_1 \sigma_2^2)^2}
+      {2\sigma_1^2\sigma_2^2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\,dx_1
+\\
+& = \frac{1}{2 \pi \sigma_1\sigma_2}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\int_{-\infty}^\infty
+	\exp\left(
+	-\frac{((\sigma_1^2 + \sigma_2^2)x_1 -\sigma_1^2y + \mu_2 \sigma_1^2 - \mu_1 \sigma_2^2)^2}
+      {2\sigma_1^2\sigma_2^2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\,dx_1.
+\end{split}
+\end{align}
+
+# Summentransformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+Für das verbleibende Integral zeigt man mithilfe der Integration durch Substitution, dass
+\begin{equation}
+\int_{-\infty}^\infty
+	\exp\left(
+	-\frac{((\sigma_1^2 + \sigma_2^2)x_1 -\sigma_1^2y + \mu_2 \sigma_1^2 - \mu_1 \sigma_2^2)^2}
+      {2\sigma_1^2\sigma_2^2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+	\,dx_1
+= \frac{\sqrt{2\pi}\sigma_1\sigma_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}.
+\end{equation}
+Es ergibt sich also
+\begin{align}
+\begin{split}
+p_\ups(y)
+& = \frac{1}{2 \pi \sigma_1\sigma_2}
+	\frac{\sqrt{2\pi}\sigma_1\sigma_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+\\
+& = \frac{(2\pi)^{-1}(2\pi)^2}{\sqrt{\sigma_1^2 + \sigma_2^2}}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+    \right)
+\\
+& = \frac{1}{\sqrt{2\pi}\sqrt{\sigma_1^2 + \sigma_2^2}}
+	\exp\left(
+ 	-\frac{(y - \mu_1 - \mu_2)^2}
+      {2(\sigma_1^2 + \sigma_2^2)}
+    \right).
+\end{split}
+\end{align}
+
+
+# Summentransformation
+\footnotesize
+
+\underline{Beweis (fortgeführt)}
+\vspace{2mm}
+
+Schließlich folgt, dass
+\begin{align}
+\begin{split}
+p_\ups(y)
+& = \frac{1}{\sqrt{2\pi(\sigma_1^2 + \sigma_2^2)}}
+  \exp\left(-\frac{1}{2(\sigma_1^2 + \sigma_2^2)}\left(y - (\mu_1 + \mu_2)\right)^2\right) \\
+& = N(y; \mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)
+\end{split}
+\end{align}
+Ein einfacheres Vorgehen ergibt sich vermutlich nach Fouriertransformation der
+WDF im Sinne der sogenannten charakteristischen Funktion einer Zufallsvariable.
+In diesem Fall würde die Faltung der WDFen der Multiplikation der charakteristischen
+Funktionen entsprechen.
+
+$\hfill \Box$
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* **Mittelwerttransformation**
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# Mittelwerttransformation
+\small
+\begin{theorem}[Stichprobenmittel von u.i.v. normalverteilten Zufallsvariablen]
+\justifying
+\normalfont
+Für $i = 1,...,n$ seien $\xi_i \sim N(\mu,\sigma^2)$ unabhängig und identisch
+normalverteilte Zufallsvariablen. Dann gilt für das Stichprobenmittel
+$\bar{\xi}_n := \frac{1}{n}\sum_{i=1}^n \xi_i$ , dass
+\begin{equation}
+\bar{\xi}_n \sim N\left(\mu, \frac{\sigma^2}{n}\right).
+\end{equation}
+\end{theorem}
+
+Bemerkung
+
+* Die Analyse von Erwartungswertschätzern ist ein wichtiger Anwendungsfall.
+* Die Generalisierung der zentralen Grenzwertsätze sind wichtige Anwendungsfälle.
+
+# Mittelwerttransformation
+```{r, echo = F, eval = F}
+
+# sample mean transformation
+# ------------------------------------------------------------------------------
+# figure setup
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family      = "sans",                                                # font family
+            mfcol       = c(1,2),                                                # subplot grid
+            pty         = "m",                                                   # square plots
+            bty         = "l",                                                   # plot box, o, l, 7, c, or ]
+            lwd         = 1,                                                     # line width
+            las         = 1,                                                     # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp         = c(2,1,0),                                              # margin line in mex unit
+            xaxs        = "i",                                                   # "internal" (tight) x-axis style
+            yaxs        = "i",                                                   # "internal" (tight) y-axis style
+            font.main   = 1,                                                     # title font type
+            cex         = 1.2,                                                   # font magnification factor
+            cex.main    = 1.2                                                    # title  magnification factor
+)
+
+# N(\mu,\sigma^2) sample
+mu          = 2                                                                  # expectation parameter
+sigsqr      = 4                                                                  # variance parameter
+sigma       = sqrt(sigsqr)                                                       # standard deviation
+n           = 1e1                                                                # number of samples
+n_sim       = 1e4                                                                # number of simlutions
+x_min       = -5                                                                 # minimum x-value
+x_max       = 10                                                                 # maximum x-value
+x_res       = 1e3                                                                # x-space resolution
+x           = seq(x_min, x_max, len = x_res)                                     # x-space
+p_X         = dnorm(x,mu, sigma)                                                 # X density
+X           = matrix(rep(NaN,n*n_sim), nrow = n)                                 # sample array
+
+for(i in 1:n_sim){
+    X[,i] = rnorm(n, mu, sqrt(sigsqr))                                           # n_sim simulations of n samples of \xi \sim N(\mu,\sigma^2)
+}
+
+
+# histogram
+hist( X,                                                                         # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,.7),                                                           # y-axis limits
+      xlab  = "x",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$\\xi_i \\sim N(2,4),\\, i = 1,...,10$")                         # title label
+      )
+
+# density
+lines(x,                                                                         # density support
+      p_X,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# Mittelwerttransformation
+X_bar       = colMeans(X)                                                        # n_sim simulations of \bar{\xi}_n
+p_X_bar     = dnorm(x, mu, sqrt(sigsqr/n))                                       # \bar{\xi}_n density N(\bar{x}_n;\mu,\sigma^2/n)
+
+
+# histogram
+hist( X_bar,                                                                     # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,.7),                                                           # y-axis limits
+      xlab  = TeX("$\\bar{x}_n$"),                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$\\bar{\\xi}_n \\sim N(2,4/10)$")                                # title label
+)
+
+# density
+lines(x,                                                                       # density support
+      p_X_bar,                                                                 # density values
+      lwd   = 2,                                                               # line width
+      col   = "darkorange")                                                     # line color
+
+
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_mittelwert.pdf"),         # filename
+  width  = 12,                                                                   # PDF width
+  height = 5                                                                     # PDF height
+)
+
+```
+
+\vfill
+\center
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_mittelwert.pdf")
+```
+\vfill
+
+# Mittelwerttransformation
+\vspace{2mm}
+\footnotesize
+\underline{Beweis}
+\setstretch{.9}
+\tiny
+
+Wir halten zunächst fest, dass mit dem Theorem zur Summe von unabhängig
+normalverteilten Zufallsvariablen gilt, dass $\bar{\xi}_n = \frac{1}{n}\ups$ mit
+$\ups := \sum_{i=1}^n \xi_i \sim N(n\mu,n\sigma^2)$. Einsetzen in das
+univariate WDF Transformationstheorem für lineare Funktionen ergibt dann
+\begin{align}
+\begin{split}
+p_{\bar{\xi}_n}(\bar{x}_n)
+& = \frac{1}{|1/n|}N\left(n\bar{x}_n; n\mu , n\sigma^2 \right) \\
+& = \frac{n}{\sqrt{2\pi n\sigma^2}}\exp\left(-\frac{1}{2n\sigma^2}
+\left(n\bar{x}_n - n\mu\right)^2 \right) \\
+& = \frac{n}{\sqrt{2\pi n\sigma^2}}\exp\left(-\frac{1}{2n\sigma^2}
+\left(n\bar{x}_n - n\mu\right)^2 \right) \\
+& = nn^{-\frac{1}{2}}\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(
+			-\frac{(n\bar{x}_n)^2}{2n\sigma^2}
+		  	+ \frac{2(n\bar{x}_n)(n\mu)}{2n\sigma^2}
+		  	- \frac{(n\mu)^2}{2n\sigma^2}
+		 \right) \\
+& = \sqrt{n}\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(
+			-\frac{n\bar{x}_n^2}{2\sigma^2}
+		  	+ \frac{2n\bar{x}_n\mu}{2\sigma^2}
+		  	- \frac{n\mu^2}{2\sigma^2}
+		 \right) \\
+& = \frac{1}{1/\sqrt{n}}\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(
+			-\frac{\bar{x}_n^2}{2(\sigma^2/n)}
+		  	+ \frac{2\bar{x}_n\mu}{2(\sigma^2/n)}
+		  	- \frac{\mu^2}{2(\sigma^2/n)}
+		 \right) \\
+& = \frac{1}{\sqrt{2\pi(\sigma^2/n)}}
+\exp\left(-\frac{1}{2(\sigma^2/n)}
+			(\bar{x}_n - \mu)^2
+		 \right) \\
+& = N\left(\bar{x}_n;\mu,\sigma^2/n \right)
+\end{split}
+\end{align}
+
+
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* **$Z$-Transformation**
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# $Z$-Transformation
+\small
+\begin{definition}[$z$-Zufallsvariable]
+\justifying
+$Z$ sei eine Zufallsvariable mit Ergebnisraum  $\mathbb{R}$ und WDF
+\begin{equation}
+p : \mathbb{R} \to \mathbb{R}_{>0}, z \mapsto p(z) := \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}z^2\right).
+\end{equation}
+Dann sagen wir, dass $Z$ einer \textit{$z$-Verteilung (oder Standardnormalverteilung)}
+unterliegt und nennen $Z$ eine \textit{$z$-Zufallsvariable}. Wir kürzen dies mit
+$Z \sim N(0,1)$ ab. Die WDF einer $z$-Zufallsvariable bezeichnen wir mit
+\begin{equation}
+N(z;0,1) := \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}z^2\right).
+\end{equation}
+\end{definition}
+
+Bemerkung
+
+* Eine $z$-Zufallsvariable ist eine normalverteilte Zufallsvariable mit $\mu := 0$ und $\sigma^2 := 1$.
+
+# $Z$-Transformation
+
+```{r, echo = F, eval = F}
+# Z-Density
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = 1.2,
+            cex.main   = 1.2                                                     # title  magnification factor
+            )
+
+# z space
+z_min   = -4                                                                     # minimum z-value
+z_max   = 4                                                                      # maximum z-value
+z_res   = 1e3                                                                    # z-space resolution
+z       = seq(z_min,z_max, len = z_res)                                          # z-space
+
+# plotting
+matplot(z,
+        dnorm(z),
+        type         = "l",                                                      # line style
+        lwd          =  2,                                                       # line width
+        col          = 'Black',                                                   # line color
+        xlim         = c(z_min,z_max),                                           # x-axis limits
+        ylim         = c(0,.5),                                                  # x-axis limits
+        ylab         = " ",                                                      # y-axis label
+        xlab         = "z",                                                      # x-axis label
+        main         = "N(z;0,1)")                                               # main title
+
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_z_verteilung.pdf"),        # filename
+  width  = 7,                                                                   # PDF width
+  height = 5                                                                     # PDF height
+)
+
+```
+Wahrscheinlichkeitsdichtefunktion einer $z$-Zufallsvariable
+\vfill
+\vspace{5mm}
+```{r, echo = FALSE, out.width="70%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_z_verteilung.pdf")
+```
+\vfill
+
+
+
+# $Z$-Transformation
+\small
+\begin{theorem}[$Z$-Transformation]
+\justifying
+\normalfont
+Es sei $y \sim N(\mu,\sigma^2)$ eine normalverteilte Zufallsvariable. Dann ist
+die Zufallsvariable
+\begin{equation}
+Z := \frac{y - \mu}{\sigma}
+\end{equation}
+eine $Z$-verteilte Zufallsvariable, es gilt also $Z \sim N(0,1)$.
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* \justifying Wir benutzen hier den Bezeichner $y$ für eine normalverteilte Zufallsvariable. 
+Werte, die diese Zufallsvariable annehmen kann, bezeichnen wir in der Folge mit $\tilde{y}$.
+* \justifying $Z$ wird hier als $(y-\mu)/\sigma$ definiert. Dass ein solches $Z$ aber
+eine $z$-Zufallsvariable ist, muss bewiesen werden und ergibt sich nicht einfach
+durch die Wahl des Bezeichners für $(y - \mu)/\sigma$, welcher hier zufällig auch
+$Z$ lautet. In analoger Form gilt diese Bemerkung auch für alle weiteren betrachteten
+Transformationen.
+
+* Die $Z$-Konfidenzintervallstatistik und die $Z$-Teststatistik sind wichtige Anwendungsfälle.
+
+# Z-Transformation
+
+```{r, echo = F, eval = F}
+# figure setup
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,2),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    #  "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = .7,
+            cex.main   = 1                                                        # title  magnification factor
+)
+
+# N(\mu,\sigma^2) sample
+mu          = 2                                                                  # expectation parameter
+sigsqr      = 3                                                                  # variance parameter
+sigma       = sqrt(sigsqr)                                                       # standard deviation
+n           = 1e5                                                                # number of samples
+X           = rnorm(n ,mu, sqrt(sigsqr))                                         # n samples of \xi \sim N(\mu,\sigma^2)
+x_min       = -5                                                                 # minimum x-value
+x_max       = 10                                                                 # maximum x-value
+x_res       = 1e3                                                                # x-space resolution
+x           = seq(x_min, x_max, len = x_res)                                     # x-space
+p_X         = dnorm(x,mu, sigma)                                                 # X density
+
+# histogram
+hist( X,                                                                         # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,.42),                                                          # y-axis limits
+      xlab  = TeX("\\tilde{y}"),                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$y \\sim N(2,3)$")                                            # title lable
+      )
+
+# density
+lines(x,                                                                         # density support
+      p_X,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# Transformation der  N(\mu,\sigma^2) sample
+Z           = (X - mu)/sigma                                                     # vector arithmetic
+z_min       = -5                                                                 # minimum x-value
+z_max       = 10                                                                 # maximum x-value
+z_res       = 1e3                                                                # x-space resolution
+z           = seq(z_min, z_max, len = z_res)                                     # x-space
+p_Z         = dnorm(z, 0, 1)                                                     # Z density N(z;0,1)
+
+
+# histogram
+hist( Z,                                                                         # X density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,.42),                                                          # y-axis limits
+      xlab  = "z",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$Z = \\frac{y - \\mu}{\\sigma} \\sim N(0,1)$")                                            # title label
+)
+
+# density
+lines(z,                                                                         # density support
+      p_Z,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_z_transformation.pdf"),   # filename
+  width  = 5,                                                                    # PDF width
+  height = 3                                                                     # PDF height
+)
+
+```
+
+\vfill
+\vspace{5mm}
+```{r, echo = FALSE, out.width="100%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_z_transformation.pdf")
+```
+\vfill
+
+# $Z$-Transformation
+\footnotesize
+\underline{Beweis}
+\vspace{2mm}
+
+Wir nutzen das univariate WDF Transformationstheorem für linear-affine Funktionen.
+Dazu halten wir zunächst fest, dass die $Z$-Transformation einer Funktion der Form
+\begin{equation}
+\zeta : \mathbb{R} \to \mathbb{R}, \tilde{y} \mapsto \zeta(\tilde{y}) := \frac{\tilde{y} - \mu}{\sigma} =: z
+\end{equation}
+entspricht. Wir stellen weiterhin fest, dass die Umkehrfunktion von $\zeta$ durch
+\begin{equation}
+\zeta^{-1} : \mathbb{R} \to \mathbb{R}, z \mapsto \zeta^{-1}(z) := \sigma z + \mu
+\end{equation}
+gegeben ist, da für alle $z \in \mathbb{R}$ mit $z = \frac{\tilde{y} - \mu}{\sigma}$ gilt, dass
+\begin{equation}
+\zeta^{-1}(z)
+= \zeta^{-1}\left(\frac{\tilde{y} - \mu}{\sigma}\right)
+= \frac{\sigma(\tilde{y} - \mu)}{\sigma} + \mu
+= \tilde{y} - \mu + \mu
+= \tilde{y}.
+\end{equation}
+Schließlich stellen wir fest, dass für die Ableitung $\zeta'$ von $\zeta$ gilt, dass
+\begin{equation}
+\zeta'(\tilde{y})
+= \frac{d}{d\tilde{y}}\left(\frac{\tilde{y} - \mu}{\sigma} \right)
+= \frac{d}{d\tilde{y}}\left(\frac{\tilde{y}}{\sigma} -\frac{\mu}{\sigma} \right)
+= \frac{1}{\sigma}.
+\end{equation}
+
+# $Z$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{2mm}
+
+Einsetzen in das univariate WDF Transformationstheorem für lineare Funktionen ergibt dann
+\begin{align}
+\begin{split}
+p_\zeta(z)
+& = \frac{1}{|1/\sigma|}N\left(\sigma z + \mu; \mu , \sigma^2 \right) \\
+& = \frac{1}{1/\sqrt{\sigma^2}}\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2\sigma^2}\left(\sigma z + \mu - \mu\right)^2 \right) \\
+& = \frac{\sqrt{\sigma^2}}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2\sigma^2}\sigma^2 z^2\right)\\
+& = \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2} z^2\right)\\
+& = N(z;0,1)
+\end{split}
+\end{align}
+also, dass $Z \sim N(0,1)$. $Z$ ist also eine $z$-Zufallsvariable.
+
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* **$\chi^2$-Transformation**
+* $T$-Transformation
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+
+# $\chi^2$-Transformation
+\small
+\begin{definition}[$\chi^2$-Zufallsvariable]
+\justifying
+$U$ sei eine Zufallsvariable mit Ergebnisraum $\mathbb{R}_{>0}$ und WDF
+\begin{equation}
+p : \mathbb{R}_{>0} \to \mathbb{R}_{>0},
+u \mapsto p(u)
+:= \frac{1}{\Gamma\left(\frac{n}{2}\right)2^{\frac{n}{2}}}
+u^{\frac{n}{2}-1}\exp\left(-\frac{1}{2}u\right),
+\end{equation}
+wobei $\Gamma$ die Gammafunktion bezeichne. Dann sagen wir, dass $U$ einer
+$\chi^2$-Verteilung mit $n$ Freiheitsgraden unterliegt und nennen $U$ eine
+$\chi^2$-Zufallsvariable mit $n$ Freiheitsgraden. Wir kürzen dies mit
+$U \sim \chi^2(n)$ ab. Die WDF einer $\chi^2$-Zufallsvariable bezeichnen wir mit
+\begin{equation}
+\chi^2(u;n) :=
+\frac{1}{\Gamma\left(\frac{n}{2}\right)2^{\frac{n}{2}}}
+u^{\frac{n}{2}-1}\exp\left(-\frac{1}{2}u\right).
+\end{equation}
+\end{definition}
+
+Bemerkung
+
+* Die WDF der $\chi^2$-Verteilung entspricht der WDF $G\left(u;\frac{n}{2},2\right)$ einer Gammaverteilung.
+
+# $\chi^2$-Transformation
+
+
+Wahrscheinlichkeitsdichtefunktionen von $\xi^2$-Zufallsvariablen
+```{r, eval = F, echo = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs         = "i",                                                  # "internal" (tight) x-axis style
+            yaxs         = "i",                                                  # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.5                                                     # title  magnification factor
+)
+
+# chi^2 space
+u_min   = 1e-5                                                                   # minimum z-value
+u_max   = 10                                                                     # maximum z-value
+u_res   = 1e3                                                                    # z-space resolution
+u       = seq(u_min,u_max, len = u_res)                                          # z-space
+
+# parameters of interest
+n       = c(1,2,3,5,10)                                                          # degrees of freedom
+
+
+# plotting
+matplot(u,
+        matrix(c(dchisq(u,n[1]),
+                 dchisq(u,n[2]),
+                 dchisq(u,n[3]),
+                 dchisq(u,n[4]),
+                 dchisq(u,n[5])),
+                ncol = 5),
+        type         = "l",                                                      # line plot
+        lty          = 1,                                                        # solid line
+        lwd          = 2,                                                        # line width
+        col          = c("gray90","gray70", "gray50", "gray30", "gray10"),       # line colors
+        ylim         = c(0,.6),                                                  # y-axis limits
+        xlim         = c(u_min,u_max),                                           # x-axis limits
+        ylab         = " ",                                                      # y-axis label
+        xlab         = "u",                                                      # x-axis label
+        main         = TeX("$\\chi^2(u;n)$"))                                    # main title
+
+legend( 7,                                                                       # x-ordinate
+       .6,                                                                       # y-ordinate
+        c("n = 1", "n = 2", "n = 3", "n = 5", "n = 10"),                         # legend text
+        lty         = 1,                                                         # line type
+        lwd         = 2,                                                         # line width
+        col         =  c("gray90","gray70", "gray50", "gray30", "gray10"),       # line colors
+        bty         = "n",                                                       # no legend box
+        cex         = 1.1,                                                       # character expansion (fontsize)
+        y.intersp   = 1.6)                                                       # y-direction character spacing
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_chi2_wdf.pdf"),        # filename
+  width  = 6,                                                                   # PDF width
+  height = 4                                                                     # PDF height
+)
+```
+\vfill
+\center
+```{r, echo = FALSE, out.width="80%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_chi2_wdf.pdf")
+```
+\small
+Steigendes $n$ verbreitert $\chi^2(u;n)$ und verschiebt Masse zur größeren Werten.
+
+# $\chi^2$-Transformation
+\small
+\begin{theorem}[$\chi^2$-Transformation]
+\justifying
+\normalfont
+$Z_1,...,Z_n \sim N(0,1)$ seien unabhängig und identisch verteilte $z$-Zufallsvariablen.
+Dann ist die Zufallsvariable
+\begin{equation}
+U := \sum_{i=1}^n Z_i^2
+\end{equation}
+eine $\chi^2$-verteilte Zufallsvariable mit $n$ Freiheitsgraden, es gilt also
+$U \sim \chi^2(n)$. Insbesondere gilt für $Z \sim N(0,1)$ und $U := Z^2$, dass
+$U \sim \chi^2(1)$.
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Die $U$-Konfidenzintervallstatistik ist ein wichtiger Anwendungsfall.
+* $t$- und $f$-Zufallsvariablen sind wichtige Anwendungsfälle.
+
+# $\chi^2$-Transformation
+
+```{r, echo = F, eval = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,2),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs         = "i",                                                  # "internal" (tight) x-axis style
+            yaxs         = "i",                                                  # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = 1.2,
+            cex.main   = 1.5                                                     # title  magnification factor
+)
+
+# Z sample
+n           = 1e5                                                                # number of samples
+Z           = rnorm(n, 0 ,1)                                                     # n samples of Z \sim N(0,1)
+z_min       = -5                                                                 # minimum z-value
+z_max       = 5                                                                  # maximum z-value
+z_res       = 1e3                                                                # z-space resolution
+z           = seq(z_min, z_max, len = z_res)                                     # z-space
+p_Z         = dnorm(z, 0, 1)                                                     # z density
+
+# histogram
+hist( Z,                                                                         # Z density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,.42),                                                          # y-axis limits
+      xlab  = "z",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$Z \\sim N(0,1)$")                                            # title lable
+)
+
+# density
+lines(z,                                                                         # density support
+      p_Z,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# Transformation der N(0,1) sample
+U           = Z^2                                                                # vector arithmetic
+u_min       = -5                                                                 # minimum u-value
+u_max       = 10                                                                 # maximum u-value
+u_res       = 1e3                                                                # u-space resolution
+u           = seq(u_min, u_max, len = u_res)                                     # u-space
+p_U         = dchisq(u,1)                                                        # Chi^2 density chi^2(u;1)
+
+
+# histogram
+hist( U,                                                                         # U density estimate
+      breaks= 100,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 10),                                                         # x-axis limits
+      ylim  = c(0,1),                                                          # y-axis limits
+      xlab  = "x",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$U = Z^2 \\sim \\chi^2(1)$")                                  # title label
+)
+
+# density
+lines(u,                                                                         # density support
+      p_U,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+
+dev.copy2pdf(                                                                    # export to PDF
+  file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_chi2_transform.pdf"),     # filename
+  width  = 10,                                                                   # PDF width
+  height = 5                                                                     # PDF height
+)
+```
+\vfill
+\vspace{5mm}
+```{r, echo = FALSE, out.width="90%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_chi2_transform.pdf")
+```
+\vfill
+
+
+# $\chi^2$-Transformation
+\footnotesize
+\underline{Beweis}
+\vspace{1mm}
+
+Wir zeigen das Theorem nur für den Fall $n := 1$ mithilfe des WDF
+Transformationstheorems für stückweise bijektive Abbildungen. Danach ist die WDF
+einer Zufallsvariable $U := f(Z)$, welche aus der Transformation einer
+Zufallsvariable $Z$ mit WDF $p_\zeta$ durch eine stückweise bijektive Abbildung
+hervorgeht, gegeben durch
+\begin{equation}\label{eq:piecewise_pdf_transform}
+p_U(u) = \sum_{i=1}^k 1_{\mathcal{U}_i} \frac{1}{|f'_i(f_i^{-1}(u))|}p_\zeta\left(f_i^{-1} (u)\right).
+\end{equation}
+Wir definieren
+\begin{equation}
+\mathcal{U}_1 := ]-\infty,0[,
+\mathcal{U}_2 := ]0,\infty[, \mbox{ und }
+\mathcal{U}_i := \mathbb{R}_{>0} \mbox{ für } i = 1,2,
+\end{equation}
+sowie
+\begin{equation}
+f_i : \mathcal{Z}_i \to \mathcal{U}_i, x \mapsto f_i(z) := z^2 =: u \mbox{ für } i = 1,2.
+\end{equation}
+Die Ableitung und die Umkehrfunktion der $f_i$ ergeben sich zu
+\begin{equation}
+f_i' : \mathcal{Z}_i \to \mathcal{Z}_i, x \mapsto f_i'(z) = 2z \mbox{ für } i = 1,2,
+\end{equation}
+und
+\begin{equation}
+f_1^{-1} : \mathcal{U}_1 \to \mathcal{U}_1, u \mapsto f_1^{-1}(u) = - \sqrt{u}
+\mbox{ und }
+f_2^{-1} : \mathcal{U}_2 \to \mathcal{U}_2, u \mapsto f_2^{-1}(u) = \sqrt{u},
+\end{equation}
+respektive.
+
+# $\chi^2$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{1mm}
+
+Einsetzen in Gleichung \eqref{eq:piecewise_pdf_transform} ergibt dann
+\begin{align}
+\begin{split}
+p_U(u)
+& = 1_{\mathcal{U}_1}(u) \frac{1}{|f'_1(f_1^{-1}(u))|}p_\zeta\left(f_1^{-1} (u)\right)
+  + 1_{\mathcal{U}_2}(u) \frac{1}{|f'_2(f_2^{-1}(u))|}p_\zeta\left(f_2^{-1} (u)\right) \\
+& = \frac{1}{|2(-\sqrt{u})|}\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}(-\sqrt{u})^2\right)
+  + \frac{1}{|2( \sqrt{u})|}\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}( \sqrt{u})^2\right) \\
+& = \frac{1}{2\sqrt{u}}\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}u\right)
+  + \frac{1}{2\sqrt{u}}\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}u\right)\\
+& = \frac{1}{\sqrt{2\pi}}\frac{1}{\sqrt{u}}\exp\left(-\frac{1}{2}u\right).
+\end{split}
+\end{align}
+Andererseits gilt, dass mit $\Gamma\left(\frac{1}{2}\right) = \sqrt{\pi}$, die PDF einer $\chi^2$-Zufallsvariable $U$ mit $n = 1$ durch
+\begin{equation}
+\frac{1}{\Gamma\left(\frac{1}{2}\right)2^{\frac{1}{2}}} u^{\frac{1}{2}-1}\exp\left(-\frac{1}{2}u\right)
+= \frac{1}{\sqrt{2\pi}}\frac{1}{\sqrt{u}}\exp\left(-\frac{1}{2}u\right)
+\end{equation}
+gegeben ist. Also gilt, dass wenn $Z \sim N(0,1)$ ist, dann ist $U := Z^2 \sim \chi^2(1)$.
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* **$T$-Transformation**
+* $F$-Transformation
+
+\large
+Selbstkontrollfragen
+
+# $T$-Transformation
+\small
+\begin{definition}[$t$-Zufallsvariable]
+\justifying
+$T$ sei eine Zufallsvariable mit Ergebnisraum $\mathbb{R}$ und WDF
+\begin{equation}
+p : \mathbb{R} \to \mathbb{R}_{>0}, t \mapsto p(t)
+:= \frac{\Gamma\left(\frac{n+1}{2}\right)}{\sqrt{n\pi}\Gamma\left(\frac{n}{2}\right)}
+\left(1 + \frac{t^2}{n} \right)^{-\frac{n+1}{2}},
+\end{equation}
+wobei $\Gamma$ die Gammafunktion bezeichne. Dann sagen wir, dass $T$ einer
+$t$-Verteilung mit $n$ Freiheitsgraden unterliegt und nennen $T$ eine $t$-Zufallsvariable
+mit $n$ Freiheitsgraden. Wir kürzen dies mit $T \sim t(n)$ ab. Die WDF einer
+$t$-Zufallsvariable bezeichnen wir mit
+\begin{equation}
+T(t;n) := \frac{\Gamma\left(\frac{n+1}{2}\right)}{\sqrt{n\pi}\Gamma\left(\frac{n}{2}\right)}
+\left(1 + \frac{t^2}{n} \right)^{-\frac{n+1}{2}}.
+\end{equation}
+\end{definition}
+
+
+
+# $T$-Transformation
+
+```{r, echo = F, eval = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = 1.1,
+            cex.main   = 1.5                                                     # title  magnification factor
+)
+
+# t space
+t_min   = -5                                                                     # minimum t-value
+t_max   = 5                                                                      # maximum t-value
+t_res   = 1e3                                                                    # t-space resolution
+t       = seq(t_min,t_max, len = t_res)                                          # t-space
+
+# parameters of interest
+n       = c(2,3,5,10,30)                                                        # degrees of freedom
+
+
+# plotting
+matplot(t,
+        matrix(c(dt(t,n[1]),
+                 dt(t,n[2]),
+                 dt(t,n[3]),
+                 dt(t,n[4]),
+                 dt(t,n[5])),
+               ncol = 5),
+        type         = "l",                                                      # line plot
+        lty          = 1,                                                        # solid line
+        lwd          = 2,                                                        # line width
+        col          = c("gray90","gray70", "gray50", "gray30", "gray10"),       # line colors
+        ylim         = c(0,.4),                                                  # y-axis limits
+        xlim         = c(t_min,t_max),                                           # x-axis limits
+        ylab         = " ",                                                      # y-axis label
+        xlab         = "t",                                                      # x-axis label
+        main         = TeX("$\\T(t;n)$"))                                        # main title
+
+legend( 2,                                                                       # x-ordinate
+        .4,                                                                      # y-ordinate
+        c("n = 2", "n = 3", "n = 5", "n = 10", "n = 30"),                        # legend text
+        lty         = 1,                                                         # line type
+        lwd         = 2,                                                         # line width
+        col         =  c("gray90","gray70", "gray50", "gray30", "gray10"),       # line colors
+        bty         = "n",                                                       # no legend box
+        cex         = 1.1,                                                       # character expansion (fontsize)
+        y.intersp   = 1.6)                                                       # y-direction character spacing
+
+
+dev.copy2pdf(                                                                    # export to PDF
+    file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_t_wdf.pdf"),            # filename
+    width  = 6,                                                                  # PDF width
+    height = 5                                                                   # PDF height
+)
+```
+
+Wahrscheinlichkeitsdichtefunktionen von $t$-Zufallsvariablen
+\vspace{5mm}
+```{r, echo = FALSE, out.width="60%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_t_wdf.pdf")
+```
+\vspace{-3mm}
+\footnotesize
+
+* Die Verteilung ist um 0 symmetrisch
+* Steigendes $n$ verschiebt Wahrscheinlichkeitsmasse aus den Ausläufen zum Zentrum.
+* Ab $n = 30$ gilt $T(t;n) \approx N(0,1)$.
+
+# $T$-Transformation
+\small
+\begin{theorem}[$T$-Transformation]
+\justifying
+\normalfont
+$Z \sim N(0,1)$ sei eine  $z$-Zufallsvariable, $U \sim \chi^2(n)$ sei eine
+$\chi^2$-Zufallsvariable mit  $n$ Freiheitsgraden, und $Z$ und $U$ seien
+unabhängige Zufallsvariablen. Dann ist die Zufallsvariable
+\begin{equation}
+T := \frac{Z}{\sqrt{U/n}}
+\end{equation}
+eine $t$-verteilte Zufallsvariable mit $n$ Freiheitsgraden, es gilt also $T \sim t(n)$.
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Das Theorem geht auf @student_1908 zurück.
+* Das Theorem ist das zentrale Resultat der Frequentistischen Statistik.
+* @zabell_2008 gibt hierzu einen historischen Überblick.
+* Die $T$-Konfidenzintervallstatistik und die $T$-Teststatistik sind wichtige Anwendungsfälle.
+
+
+# $T$-Transformation
+```{r, eval = F, echo = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,3),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = .5,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs       = "i",                                                    # "internal" (tight) x-axis style
+            yaxs       = "i",                                                    # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = 0.5,
+            cex.main   = 1.1                                                       # title  magnification factor
+)
+
+# Z sample
+n           = 1e4                                                                # number of samples
+Z           = rnorm(n, 0 ,1)                                                     # n samples of Z \sim N(0,1)
+z_min       = -5                                                                 # minimum z-value
+z_max       = 5                                                                  # maximum z-value
+z_res       = 1e3                                                                # z-space resolution
+z           = seq(z_min, z_max, len = z_res)                                     # z-space
+p_Z         = dnorm(z, 0, 1)                                                     # z density
+
+# histogram
+hist( Z,                                                                         # Z density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(-5, 5),                                                          # x-axis limits
+      ylim  = c(0,.42),                                                          # y-axis limits
+      xlab  = "z",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$Z \\sim N(0,1)$")                                            # title lable
+)
+
+# density
+lines(z,                                                                         # density support
+      p_Z,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# chi^2 sample
+df          = 3                                                                  # degrees of freedom
+U           = rchisq(n,df)                                                       # n samples of U \sim \chi^2(3)
+u_min       = 1e-5                                                               # minimum z-value
+u_max       = 10                                                                  # maximum z-value
+u_res       = 1e3                                                                # u-space resolution
+u           = seq(u_min, u_max, len = u_res)                                     # u-space
+p_U         = dchisq(u,df)                                                       # u density
+
+
+# histogram
+hist( U,                                                                         # U density estimate
+      breaks= 100,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(0, 10),                                                          # x-axis limits
+      ylim  = c(0,0.3),                                                          # y-axis limits
+      xlab  = "u",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$U \\sim \\chi^2(3)$")                                        # title label
+)
+
+# density
+lines(u,                                                                         # density support
+      p_U,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# T-transformation
+Tee         = Z/(sqrt(U/df))                                                     # element-wise vector arithmetic
+Tee         = Tee[!abs(Tee) > 10]                                                # mildly censored sample for good histogram performance
+t_min       = -4                                                                 # minimum t-value
+t_max       = 4                                                                  # maximum t-value
+t_res       = 1e3                                                                # t-space resolution
+t           = seq(z_min, z_max, len = z_res)                                     # t-space
+p_T         = dt(z,df)                                                           # t density
+
+# histogram
+hist( Tee,                                                                       # T density estimate
+      breaks= 100,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(t_min, t_max),                                                    # x-axis limits
+      ylim  = c(0,0.4),                                                          # y-axis limits
+      xlab  = "t",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$T = Z/\\sqrt{U/n}}\\sim \\t(3)$")                                            # title label
+)
+
+# density
+lines(t,                                                                         # density support
+      p_T,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+dev.copy2pdf(                                                                    # export to PDF
+      file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_t_transform.pdf"),    # filename
+      width  = 6,                                                               # PDF width
+      height = 2                                                                 # PDF height
+)
+```
+\vfill
+\vspace{3mm}
+```{r, echo = FALSE, out.width="100%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_t_transform.pdf")
+```
+\vfill
+
+
+# $T$-Transformation
+\footnotesize
+\underline{Beweis}
+\vspace{1mm}
+
+Wir halten zunächst fest, dass die zweidimensionale WDF der gemeinsamen
+(unabhängigen) Verteilung von $Z$ und $U$ durch
+\begin{equation}
+p_{Z,U}(z,u)
+=
+\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}z^2\right)
+\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}}u^{\frac{n}{2}-1} \exp\left(-\frac{1}{2}u\right).
+\end{equation}
+gegeben ist. Wir betrachten dann die multivariate vektorwertige Abbildung
+\begin{equation}
+f : \mathbb{R}^2 \to \mathbb{R}^2,
+(z,u)
+\mapsto
+f(z,u)
+:=
+\left(\frac{z}{\sqrt{u/n}},u\right)
+=:
+(t,w)
+\end{equation}
+und benutzen das multivariate WDF Transformationstheorem für bijektive Abbildungen
+um die WDF von $(t,w)$ herzuleiten. Dazu erinnern wir uns, dass wenn $\xi$ ein
+$n$-dimensionaler Zufallsvektor mit WDF $p_\xi$ und $\ups := f(\xi)$ für eine
+differenzierbare und bijektive Abbildung $f : \mathbb{R}^n \to \mathbb{R}^n$ ist,
+die WDF des Zufallsvektors $\ups$ durch
+\begin{equation}\label{eq:pdftmv}
+p_\ups : \mathbb{R}^n \to \mathbb{R}_{\ge 0},
+y \mapsto p_\ups(y) :=
+\frac{1}{|J^f\left(f^{-1}(y)\right)|}p_\xi\left(f^{-1}(y)\right)
+\end{equation}
+gegeben ist. Für die im vorliegenden Fall betrachtete Abbildung halten wir zunächst fest, dass
+\begin{equation}
+f^{-1}:\mathbb{R}^2 \to \mathbb{R}^2,
+(t,w)
+\mapsto
+f^{-1}
+(t,w)
+:=\left(\sqrt{w/n}t, w\right).
+\end{equation}
+
+
+
+# $T$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{1mm}
+
+Dies ergibt sich direkt aus
+\begin{equation}
+f^{-1}(f(z,u))
+=
+f^{-1}\left(\frac{z}{\sqrt{u/n}},u\right)
+=
+\left(\frac{\sqrt{u/n}z}{\sqrt{u/n}}, u \right)
+=
+(z,u)
+\mbox{ für alle }
+(z,u)
+\in \mathbb{R}^2.
+\end{equation}
+Wir halten dann fest, dass die Determinante der Jacobi-Matrix von $f$ an der Stelle $(z,u)$ durch
+\begin{equation}
+|J^f(z,u)|
+=
+\begin{vmatrix}
+  \frac{\partial}{\partial z} \left(\frac{z}{\sqrt{u/n}}\right)
+& \frac{\partial}{\partial u} \left(\frac{z}{\sqrt{u/n}}\right) \\
+  \frac{\partial}{\partial z} u
+& \frac{\partial}{\partial u} u\\
+\end{vmatrix}
+= \left(\frac{v}{n}\right)^{-1/2},
+\end{equation}
+gegeben ist, sodass folgt, dass
+\begin{equation}
+\frac{1}{|J^f\left(f^{-1}(z,u)\right)|}
+= \left(\frac{w}{n}\right)^{1/2}.
+\end{equation}
+Einsetzen in Gleichung \eqref{eq:pdftmv} ergibt dann
+\begin{equation}
+p_{T,W}(t,w) = \left(\frac{w}{n}\right)^{1/2}p_{Z,V}\left(\sqrt{w/n}t,w\right),
+\end{equation}
+
+
+
+# $T$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{1mm}
+
+Es folgt also
+\tiny
+\begin{align}
+\begin{split}
+p_T(t)
+& =
+\int_0^\infty  p_{T,W}(t,w)
+\,dw 													\\
+& =
+\int_0^\infty
+\left(\frac{w}{n}\right)^{1/2}
+p_{Z,V}\left(\sqrt{w/n}t,w\right)
+\,dw  \\
+& =
+\int_0^\infty
+\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}(\sqrt{w/n}t)^2\right)
+\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}}w^{\frac{n}{2}-1} \exp\left(-\frac{1}{2}w\right)
+\left(\frac{w}{n}\right)^{1/2}
+\,dw \\
+& =
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\int_0^\infty
+\exp\left(-\frac{1}{2}\frac{w}{n}t^2\right)
+w^{\frac{n}{2}-1} \exp\left(-\frac{1}{2}w\right)w^{1/2}
+\,dw \\
+& =
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\int_0^\infty
+\exp\left(-\frac{1}{2}\frac{w}{n}t^2 -\frac{1}{2}w\right)
+w^{\frac{n}{2}-1} w^{\frac{1}{2}}
+\,dw \\
+& =
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\int_0^\infty
+\exp\left(-\frac{1}{2}\left(\frac{w}{n}t^2 + w\right)\right)
+w^{\frac{n + 1}{2}-1}
+\,dw \\
+& =
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\int_0^\infty
+\exp\left(-\frac{1}{2}\left(1 + \frac{t^2}{n}\right)\right)
+w^{\frac{n + 1}{2}-1}
+\,dw \\
+\end{split}
+\end{align}
+
+
+# $T$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{1mm}
+
+Wir stellen dann fest, dass der Integrand auf der linken Seite der obigen Gleichung
+dem Kern einer Gamma WDF mit Parametern  $\alpha = \frac{n+1}{2}$ und
+$\beta = \frac{2}{1+\frac{t^2}{n}}$ entspricht, wie man leicht einsieht:
+\begin{align*}
+\Gamma(w;\alpha,\beta)
+= \frac{1}{\Gamma(\alpha)\beta^{\alpha}}w^{\alpha-1}\exp\left(-\frac{w}{\beta}\right) & \\
+\Rightarrow
+\Gamma\left(w;\frac{n+1}{2},\frac{2}{1+\frac{t^2}{n}}\right)
+& = \frac{1}{\Gamma(\frac{n+1}{2})\left(\frac{2}{1+\frac{t^2}{n}}\right)^{\frac{n+1}{2}}}
+w^{\frac{n+1}{2}-1}\exp\left(-\frac{w}{\frac{2}{1+\frac{t^2}{n}}}\right) \\
+& = \frac{1}{\Gamma( \frac{n+1}{2})\left(\frac{2}{1+\frac{t^2}{n}}\right)^{ \frac{n+1}{2}}}
+\exp\left(-\frac{1}{2}\left(1 + \frac{t^2}{n}\right)\right) w^{\frac{n+1}{2}-1}.
+\end{align*}
+
+
+# $T$-Transformation
+\footnotesize
+\underline{Beweis (fortgeführt)}
+\vspace{1mm}
+
+Es ergibt sich also
+\begin{equation}
+p_T(t)
+=
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\int_0^\infty
+\Gamma\left(w;\frac{n+1}{2},\frac{2}{1+\frac{t^2}{n}}\right)
+\,dw .
+\end{equation}
+Schließlich stellen wir fest, dass der Integralterm in obiger Gleichung dem
+Normalisierungsterm einer Gamma WDF entspricht. Abschließend ergibt sich also
+\begin{equation}
+p_T(t) =
+\frac{1}{\sqrt{2\pi}}\frac{1}{\Gamma(\frac{n}{2})2^{\frac{n}{2}}n^{\frac{1}{2}}}
+\Gamma\left(\frac{n+1}{2}\right)\left(\frac{2}{1 + \frac{t^2}{n}} \right)^{\frac{n+1}{2}}.
+\end{equation}
+Die Verteilung von $Z/\sqrt{U/n}$ hat also die WDF einer $T$-Zufallsvariable.
+
+$\hfill \Box$
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+**Standardtransformationen**
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* **$F$-Transformation**
+
+\large
+Selbstkontrollfragen
+
+# $F$-Transformation
+\small
+\begin{definition}[$f$-Zufallsvariable]
+\justifying
+$F$ sei eine Zufallsvariable mit Ergebnisraum $\mathbb{R}_{>0}$ und WDF
+\begin{equation}
+p_F : \mathbb{R} \to \mathbb{R}_{>0}, f \mapsto p_F(f)
+:= m^{\frac{m}{2}}n^{\frac{n}{2}}
+   \frac{\Gamma\left(\frac{m+n}{2}\right)}{\Gamma\left(\frac{m}{2}\right)\Gamma\left(\frac{n}{2}\right)}
+   \frac{f^{\frac{m}{2}-1}}{\left(1 + \frac{m}{n}f \right)^{\frac{m+n}{2}}},
+\end{equation}
+wobei $\Gamma$ die Gammafunktion bezeichne. Dann sagen wir, dass $F$ einer
+$f$-Verteilung mit $n,m$ Freiheitsgraden unterliegt und nennen $F$ eine
+$f$-Zufallsvariable mit $n,m$ Freiheitsgraden. Wir kürzen dies mit $F \sim f(n,m)$ ab.
+Die WDF einer $f$-Zufallsvariable bezeichnen wir mit
+\begin{equation}
+F(f;n,m)
+:= m^{\frac{m}{2}}n^{\frac{n}{2}}
+   \frac{\Gamma\left(\frac{m+n}{2}\right)}{\Gamma\left(\frac{m}{2}\right)\Gamma\left(\frac{n}{2}\right)}
+   \frac{f^{\frac{m}{2}-1}}{\left(1 + \frac{m}{n}f \right)^{\frac{m+n}{2}}}.
+\end{equation}
+\end{definition}
+
+
+
+# $F$-Transformation
+
+```{r, echo = F, eval = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs         = "i",                                                  # "internal" (tight) x-axis style
+            yaxs         = "i",                                                  # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex.main   = 1.5                                                     # title  magnification factor
+)
+
+# t space
+f_min   = 0                                                                     # minimum t-value
+f_max   = 4                                                                     # maximum t-value
+f_res   = 1e3                                                                    # t-space resolution
+f        = seq(f_min, f_max, len = f_res)                                         # t-space
+
+# parameters of interest
+n       = c(2,2 ,5,5 ,10,10)                                                        # degrees of freedom
+m       = c(2,10,2,10,2 ,10)                                                        # degrees of freedom
+
+# plotting
+matplot(f,
+        matrix(c(df(f,n[1],m[1]),
+                 df(f,n[2],m[2]),
+                 df(f,n[3],m[3]),
+                 df(f,n[4],m[4]),
+                 df(f,n[5],m[5]),
+                 df(f,n[6],m[6])),
+               ncol = 6),
+        type         = "l",                                                      # line plot
+        lty          = c(1,2,1,2,1,2),                                           # line styles
+        lwd          = 2,                                                        # line width
+        col          = c("gray90","gray70", "gray50", "gray30", "gray10"),     # line colors
+        ylim         = c(0,1),                                                   # y-axis limits
+        xlim         = c(f_min,f_max),                                           # x-axis limits
+        ylab         = " ",                                                      # y-axis label
+        xlab         = "f",                                                      # x-axis label
+        main         = TeX("$\\F(f;n,m)$"))                                        # main title
+
+legend( 2.40,                                                                       # x-ordinate
+        1.05,                                                                      # y-ordinate
+        c("n = 2,  m = 2",
+          "n = 2,  m = 10",
+          "n = 5,  m = 2",
+          "n = 5,  m = 10",
+          "n = 10, m = 5",
+          "n = 10, m = 10"),                                                     # legend text
+        lty         = c(1,2,1,2,1,2),                                            # line styles
+        lwd         = 2,                                                         # line width
+        col         = c("gray90","gray70", "gray50", "gray30", "gray10"),      # line colors
+        bty         = "n",                                                       # no legend box
+        cex         = 1.1,                                                       # character expansion (fontsize)
+        y.intersp   = 1.3)                                                       # y-direction character spacing
+
+
+dev.copy2pdf(                                                                    # export to PDF
+    file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_f_wdf.pdf"),            # filename
+    width  = 6,                                                                  # PDF width
+    height = 5                                                                   # PDF height
+)
+```
+Wahrscheinlichkeitsdichtefunktionen von $f$-Zufallsvariablen
+\vspace{5mm}
+\center
+```{r, echo = FALSE, out.width="70%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_f_wdf.pdf")
+```
+\vfill
+
+# $F$-Transformation
+\small
+\begin{theorem}[$F$-Transformation]
+\justifying
+\normalfont
+$V \sim \chi^2(n)$ und $W \sim \chi^2(m)$ seien zwei unabhängige
+$\chi^2$-Zufallfsvariablen mit $n$ und $m$ Freiheitsgraden, respektive.
+Dann ist die Zufallsvariable
+\begin{equation}
+F := \frac{V/n}{W/m}
+\end{equation}
+eine $f$-verteilte Zufallsvariable mit $n,m$ Freiheitsgraden, es gilt also $F \sim f(n,m)$.
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Wir verzichten auf einen Beweis
+* Das Theorem kann bewiesen werden, in dem man zunächst ein Transformationstheorem
+für Quotienten von Zufallsvariablen mithilfe des multivariaten Transformationstheorems
+und Marginalisierung herleitet und dieses Theorem dann auf die WDF von $\chi^2$-verteilten
+ZVen anwendet. Dabei ist die Regel zur Integration durch Substitution von zentraler Bedeutung.
+
+
+# $F$-Transformation
+
+```{r, echo = F, eval = F}
+dev.new()                                                                        # new figure
+fig     = par(                                                                   # figure parameters
+            family     = "sans",                                                 # font family
+            mfcol      = c(1,3),                                                 # subplot grid
+            pty        = "m",                                                    # square plots
+            bty        = "l",                                                    # plot box, o, l, 7, c, or ]
+            lwd        = 1,                                                      # line width
+            las        = 1,                                                      # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+            mgp        = c(2,1,0),                                               # margin line in mex unit
+            xaxs         = "i",                                                  # "internal" (tight) x-axis style
+            yaxs         = "i",                                                  # "internal" (tight) y-axis style
+            font.main  = 1,                                                      # title font type
+            cex        = 1.2,
+            cex.main   = 1.2                                                     # title  magnification factor
+)
+
+# chi^2 samples
+n           = 5
+m           = 10
+nsamp       = 1e4                                                                # number of samples
+V           = rchisq(nsamp,n)                                                    # nsamp samples of V \sim \chi^2(n)
+W           = rchisq(nsamp,m)                                                    # nsamp samples of W \sim \chi^2(m)
+v_min       = 0                                                                  # minimum chi^2-value
+v_max       = 25                                                                 # maximum chi^2-value
+v_res       = 1e3                                                                # chi^2-space resolution
+v           = seq(v_min, v_max, len = v_res)                                     # chi^2-space
+w           = v                                                                  # chi^2-space
+p_V         = dchisq(v,n)                                                        # chi^2(n) density
+p_W         = dchisq(w,m)                                                        # chi^2(m) density
+
+# V histogram
+hist( V,                                                                         # V density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(v_min,v_max),                                                    # x-axis limits
+      ylim  = c(0,.2),                                                           # y-axis limits
+      xlab  = "v",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$V \\sim \\chi^2(5)$")                                        # title lable
+)
+
+# density
+lines(v,                                                                         # density support
+      p_V,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# histogram
+hist( W,                                                                         # Z density estimate
+      breaks = 50,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(v_min,v_max),                                                    # x-axis limits
+      ylim  = c(0,.2),                                                           # y-axis limits
+      xlab  = "w",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$W \\sim \\chi^2(10)$")                                      # title lable
+)
+
+# density
+lines(w,                                                                         # density support
+      p_W,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+# F-transformation
+Eff         = (V/n)/(W/m)                                                        # element-wise vector arithmetic
+#Eff         = Tee[!abs(Tee) > 10]                                               # mildly censored sample for good histogram performance
+f_min       = 0                                                                  # minimum t-value
+f_max       = 6                                                                  # maximum t-value
+f_res       = 1e3                                                                # t-space resolution
+f           = seq(f_min, f_max, len = f_res)                                     # t-space
+p_F         = df(f,n,m)                                                          # t density
+
+# histogram
+hist( Eff,                                                                       # T density estimate
+      breaks= 100,                                                               # number of histogram bins
+      col   = "gray90",                                                          # bar color
+      prob  = TRUE,                                                              # density estimate
+      xlim  = c(f_min, f_max),                                                   # x-axis limits
+      ylim  = c(0,.8),                                                           # y-axis limits
+      xlab  = "f",                                                               # x-axis label
+      ylab  = "",                                                                # y-axis label
+      main  = TeX("$F = \\frac{V/n}{W/m}\\sim \\F(5,10)$")                       # title label
+)
+
+# density
+lines(f,                                                                         # density support
+      p_F,                                                                       # density values
+      lwd   = 2,                                                                 # line width
+      col   = "darkorange")                                                      # line color
+
+dev.copy2pdf(                                                                    # export to PDF
+      file   = file.path(getwd(), "8_Abbildungen", "wtfi_8_f_transform.pdf"),            # filename
+      width  = 12,                                                               # PDF width
+      height = 4                                                                 # PDF height
+)
+```
+\vspace{5mm}
+\vfill
+```{r, echo = FALSE, out.width="100%"}
+knitr::include_graphics("8_Abbildungen/wtfi_8_f_transform.pdf")
+```
+\vfill
+
+
+#
+\setstretch{1.6}
+\large
+Vorbemerkungen
+
+Transformationstheoreme
+
+Standardtransformationen
+
+\normalsize
+* Summentransformation
+* Mittelwerttransformation
+* $Z$-Transformation
+* $\chi^2$-Transformation
+* $T$-Transformation
+* $F$-Transformation
+
+**Selbstkontrollfragen**
+
+# Selbstkontrollfragen
+
+\small
+\setstretch{1.5}
+\begin{enumerate}
+\item Erläutern Sie den Begriff der Transformation einer Zufallsvariable.
+\item Erläutern Sie die zentrale Idee der Transformationstheoreme.
+\item Erläutern Sie die Bedeutung der Standardtransformationen für die Statistik.
+\item Geben Sie das Summentransformationstheorem wieder.
+\item Geben Sie das Mittelwerttransformationstheorem wieder.
+\item Geben Sie das $Z$-Transformationstheorem wieder.
+\item Geben Sie das $\chi^2$-Transformationstheorem wieder.
+\item Beschreiben Sie die WDF der $t$-Verteilung in Abhängigkeit ihrer Freiheitsgrade.
+\item Geben Sie das $T$-Transformationstheorem wieder.
+\item Geben Sie das $F$-Transformationstheorem wieder.
+\end{enumerate}
+
+# References
+\footnotesize
