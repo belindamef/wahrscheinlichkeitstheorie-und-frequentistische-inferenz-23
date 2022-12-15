@@ -1,0 +1,549 @@
+---
+fontsize: 8pt
+bibliography: 9_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 9_header.tex
+---
+
+
+```{r, include = F}
+source("9_R_common.R")
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("9_Abbildungen/wtfi_9_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+\large
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+\normalsize
+Prof. Dr. Dirk Ostwald
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{(9) Grundbegriffe Frequentistischer Inferenz}
+\vfill
+
+#
+\center
+\footnotesize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lll}
+Datum        & Einheit                       & Thema					                            \\\hline
+13.10.2022   & Einführung                    & (1) Einführung 				                        \\
+20.10.2022   & Wahrscheinlichkeitstheorie    & (2) Wahrscheinlichkeitsräume  	                 	\\
+27.10.2022   & Wahrscheinlichkeitstheorie    & (3) Elementare Wahrscheinlichkeiten                  \\
+03.11.2022   & Wahrscheinlichkeitstheorie    & (4) Zufallsvariablen I                               \\
+10.11.2022   & Wahrscheinlichkeitstheorie    & (4) Zufallsvariablen II                              \\
+17.11.2022   & Wahrscheinlichkeitstheorie    & (5) Multivariate Verteilungen                        \\
+24.11.2022   & Wahrscheinlichkeitstheorie    & (6) Erwartungswert und Kovarianz                     \\
+01.12.2022   & Wahrscheinlichkeitstheorie    & (7) Ungleichungen und Grenzwerte                     \\
+08.12.2022   & Wahrscheinlichkeitstheorie    & (8) Transformationen der Normalverteilung  		    \\
+15.12.2022   & Frequentistische Inferenz     & (9) Grundbegriffe Frequentistischer Inferenz         \\
+             & \textcolor{gray}{Weihnachtspause}                                                    \\
+05.01.2023   & Frequentistische Inferenz     & (10) Parameterschätzung                              \\
+12.01.2023   & Frequentistische Inferenz     & (11) Konfidenzintervalle                             \\
+19.01.2023   & Frequentistische Inferenz     & (12) Hypothesentests I                     			\\
+26.01.2023   & Frequentistische Inferenz     & (12) Hypothesentests II                              \\\hline
+02.02.2023   & Klausur                       & G44-H6, 16:00 - 17:00 Uhr                            \\
+Jul 2023     & Klausurwiederholungstermin    &
+\end{tabular}
+
+# 
+\textcolor{darkblue}{Modellbasierte Datenwissenschaft}
+\vspace{3mm}
+
+```{r, echo = FALSE, out.width = "75%"}
+knitr::include_graphics("9_Abbildungen/wtfi_9_modellbasierte_datenwissenschaft.pdf")
+```
+
+\textcolor{darkblue}{Frequentistische Inferenz}
+\small
+\vspace{3mm}
+\center
+\begin{tabular}{ll}
+Modellformulierung & $\Rightarrow$ Statistische Modelle                                \\
+Modellschätzung    & $\Rightarrow$ Parameterschätzung und Konfidenzintervalle          \\
+Modellevaluation   & $\Rightarrow$ Hypothesentests (cf. Allgemeines Lineares Modell)
+\end{tabular}
+
+#
+\large
+\setstretch{3}
+\vfill
+Statistische Modelle
+
+Statistiken und Schätzer
+
+Standardprobleme Frequentistischer Inferenz
+
+Selbstkontrollfragen
+\vfill
+
+#
+\large
+\setstretch{3}
+\vfill
+**Statistische Modelle**
+
+Statistiken und Schätzer
+
+Standardprobleme Frequentistischer Inferenz
+
+Selbstkontrollfragen
+\vfill
+
+# Statistische Modelle
+\footnotesize
+\begin{definition}[Statistisches Modell]
+\justifying
+Ein \textit{statistisches Modell} ist ein Tripel
+\begin{equation}
+\mathcal{M} := (\mathcal{Y}, \mathcal{A}, \{\mathbb{P}_\theta |\theta \in \Theta\})
+\end{equation}
+bestehend  aus einem \textit{Datenraum} $\mathcal{Y}$, einer $\sigma$-Algebra
+$\mathcal{A}$ auf $\mathcal{Y}$ und einer mindestens zweielementigen Menge
+$\{\mathbb{P}_\theta |\theta \in \Theta\}$ von Wahrscheinlichkeitsmaßen auf
+$(\mathcal{Y}, \mathcal{A})$, die durch $\theta \in \Theta$ indiziert sind.
+Wenn $\Theta \subset \mathbb{R}^k$ ist, heißt ein statistisches Modell auch \textit{parametrisches} 
+statistisches Modell und $\Theta$ heißt \textit{Parameterraum} des statistischen Modells.
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+
+* Für Erwartungswerte und (Ko)Varianzen bezüglich $\mathbb{P}_\theta$ schreiben wir 
+$\mathbb{E}_\theta$, $\mathbb{V}_\theta$, $\mathbb{C}_\theta$.
+* \justifying Ein statistisches Modell $\mathcal{M}$ heißt ein *diskretes Modell*, 
+wenn $\mathcal{Y}$ diskret ist und jedes $\mathbb{P}_\theta$ eine WMF $p_\theta$ besitzt,  
+ ein statistisches Modell $\mathcal{M}$ heißt ein *stetiges Modell*, wenn $\mathcal{Y} \subset \mathbb{R}^n$ 
+ist und jedes $\mathbb{P}_\theta$ eine WDF $p_\theta$ besitzt.
+* Für ein statistisches Modell $\mathcal{M}_0 := (\mathcal{Y}_0, \mathcal{A}_0, \{\mathbb{P}_\theta^0 |\theta \in \Theta\})$
+heißt das statistische Modell $\mathcal{M} := (\mathcal{Y}, \mathcal{A}, \{\mathbb{P}_\theta |\theta \in \Theta\})$,
+für das $\mathcal{Y}$ das $n$-fache kartesische Produkt von $\mathcal{Y}_0$ mit sich selbst,
+$\mathcal{A}$ die entsprechende Produkt-$\sigma$-Algebra ist, und $\{\mathbb{P}_\theta |\theta \in \Theta\}$
+die entsprechende Menge an Produktmaßen ist, das zu $\mathcal{M}_0$ gehörige *Produktmodell*.
+* Wenn für ein Produktmodell die Menge $\mathcal{Y}_0$ eindimensional ist, also 
+z.B. $\mathcal{Y}_0 = \mathbb{R}$ gilt, spricht man von einem *univariaten statistischen Modell*. 
+Wenn für ein Produktmodell die Menge $\mathcal{Y}_0$ mehrdimensional ist, also z.B. $\mathcal{Y}_0 = \mathbb{R}^m, m > 1$ ist, 
+spricht man von  einem *multivariaten statistischen Modell*. 
+
+# Statistische Modelle
+
+\footnotesize
+Bemerkungen (fortgeführt)
+
+* \justifying Der Vorgang der Datenbeobachtung wird durch einen Zufallsvektor $y$, der Werte 
+in $\mathcal{Y}$ annimmt, beschrieben. Im Kontext statistischer Modelle nennt man 
+diesen Zufallsvektor *Daten*, *Beobachtung*, *Messung* oder *Stichprobe*. Eine 
+Realisierung von $y$, also konkret vorliegende Datenwerte $\tilde{y} \in \mathcal{Y}$,
+werden *Datensatz*, *Beobachtungswert*, *Messwert* oder *Stichprobenwert* genannt. 
+
+* \justifying Produktmodelle modellieren die $n$-fache unabhängige Wiederholung eines Zufallsvorgangs.
+Der entsprechende Zufallsvektor $y  := (y_1,....,y_n)$ entspricht dann einer Menge
+von $n$ unabhängigen Zufallsvariablen/vektoren.
+
+* \justifying Im Gegensatz zum Wahrscheinlichkeitsraummodell betrachtet man bei statistische Modellen
+zwei oder mehr Wahrscheinlichkeitsmaße, die die Verteilung von $y$ mutmaßlich bestimmen. 
+Das jeweils zugrundeliegende Wahrscheinlichkeitsmaß ist mit $\theta \in \Theta$ indiziert, 
+
+* \justifying In einem konkreten Datenanalyseproblem nimmt man an, dass die beobachteten
+Werte $\tilde{y} = (\tilde{y}_1,...,\tilde{y}_n)$ von $y = (y_1,...,y_n)$ durch
+$\theta^*$ generiert wurde, wobei $\theta^*$ hier den *wahren, aber unbekannten, Parameterwert* 
+bezeichnet. Der wahre, aber unbekannten, Parameterwert $\theta^*$ bleibt auch nach der
+statistischen Analyse unbekannt. In der mathematischen Analyse von Inferenzmethoden
+betrachtet man alle möglichen wahren, aber unbekannten, Parameterwerte, schreibt
+also einfach $\{\mathbb{P}_\theta |\theta \in \Theta\}$.
+
+
+
+# Statistische Modelle
+\footnotesize
+\begin{definition}[Normalverteilungsmodell]
+Das univariate parametrische Produktmodell
+\begin{equation}
+\mathcal{M} := \left(\mathcal{Y}, \mathcal{A}, \{\mathbb{P}_\theta|\theta \in \Theta\}\right)
+\end{equation}
+mit
+\begin{equation}
+\mathcal{Y} := \mathbb{R}^n, \mathcal{A} := \mathcal{B}(\mathbb{R}^n), \theta := (\mu, \sigma^2), \Theta := \mathbb{R} \times \mathbb{R}_{>0},
+\end{equation}
+also
+\begin{equation}
+\{\mathbb{P}_\theta|\theta \in \Theta\}
+:= \left\lbrace \prod_{i=1}^n N(\mu,\sigma^2)|(\mu,\sigma^2)\in \mathbb{R} \times \mathbb{R}_{>0} \right\rbrace,
+\end{equation}
+und damit
+\begin{equation}
+y_1,...,y_n \sim N(\mu,\sigma^2) \mbox{ mit } (\mu,\sigma^2)\in \mathbb{R} \times \mathbb{R}_{>0}
+\end{equation}
+heißt \textit{Normalverteilungsmodell}.
+\end{definition}
+\footnotesize
+
+Bemerkungen
+
+* \justifying Das Normalverteilungsmodell ist Grundlage vieler populärer statistischen Verfahren.
+* Diese Verfahren werden im Allgemeinen Linearen Modell integrativ betrachtet.
+* Das Modell ist grundlegend durch normalverteilte Fehlerterme motiviert.
+
+# Statistische Modelle
+\footnotesize
+\begin{definition}[Bernoullimodell]
+Das univariate parametrische Produktmodell
+\begin{equation}
+\mathcal{M} := \left(\mathcal{Y}, \mathcal{A}, \{\mathbb{P}_\theta|\theta \in \Theta\}\right)
+\end{equation}
+mit
+\begin{equation}
+\mathcal{Y} := \{0,1\}^n, \mathcal{A} := \mathcal{P}\left(\{0,1\}^n\right), \theta:= \mu, \Theta := ]0,1[,
+\end{equation}
+also
+\begin{equation}
+\{\mathbb{P}_\theta|\theta \in \Theta\} := \left\lbrace \prod_{i=1}^n \mbox{Bern}(\mu)|\mu \in ]0,1[ \right\rbrace,
+\end{equation}
+und damit
+\begin{equation}
+y_1,...,y_n \sim \mbox{Bern}(\mu) \mbox{ mit } \mu \in ]0,1[,
+\end{equation}
+heißt \textit{Bernoullimodell}.
+\end{definition}
+
+\footnotesize
+Bemerkung
+
+* Das Bernoullimodell spielt in der statistischen Anwendung eine eher untegeordnete Rolle.
+
+#
+\large
+\setstretch{3}
+\vfill
+Statistische Modelle
+
+**Statistiken und Schätzer**
+
+Standardprobleme Frequentistischer Inferenz
+
+Selbstkontrollfragen
+\vfill
+
+# Statistiken und Schätzer
+\small
+\begin{definition}[Statistik]
+\justifying
+$\mathcal{M}$ sei ein statistisches Modell und $(\Sigma,\mathcal{S})$ sei ein Messraum.
+Dann wird eine Zufallsvariable der Form
+\begin{equation}
+S : \mathcal{Y} \to \Sigma
+\end{equation}
+\textit{Statistik} genannt.
+\end{definition}
+
+Bemerkungen
+
+* \justifying Daten und Statistiken werden durch Zufallsvariablen modelliert. Statistiken 
+modellieren dabei von Datenwissenschaftler:innen konstruierte Funktionen, die 
+bestenfalls datenbasierte Information liefern, aus der sich Schlüsse über die 
+latenten datengenerierenden Prozesse ziehen lassen.
+
+
+# Statistiken und Schätzer
+\small
+Beispiele (Statistiken)
+
+\small
+$\mathcal{M}$ sei das Normalverteilungsmodell. Dann sind zum Beispiel folgende Zufallsvariablen Statistiken,
+was wir hier explizit durch die Notation deutlich machen wollen, was aber oft zur Vereinfachung der Notation
+implizit (aber trotzdem wichtig) bleibt:
+
+* Das \textit{Stichprobenmittel}
+\begin{equation}
+\bar{y}_n : \mathbb{R}^n \to \mathbb{R},
+\tilde{y} \mapsto \bar{y}_n(\tilde{y}) := \frac{1}{n}\sum_{i=1}^n \tilde{y}_i,
+\end{equation}
+* Die \textit{Stichprobenvarianz}
+\begin{equation}
+s^2_n  : \mathbb{R}^n \to \mathbb{R}_{\ge 0},
+\tilde{y} \mapsto s^2_n(\tilde{y}) := \frac{1}{n-1}\sum_{i=1}^n (\tilde{y}_i - \bar{y}_n(\tilde{y}))^2,
+\end{equation}
+* Die \textit{Stichprobenstandardabweichung}
+\begin{equation}
+s_n  : \mathbb{R}^n \to \mathbb{R}_{\ge 0},
+\tilde{y} \mapsto s_n(\tilde{y}) := \sqrt{s_n^2(\tilde{y})},
+\end{equation}
+
+# Statistiken und Schätzer
+\small
+\begin{definition}[Schätzer]
+\justifying
+$\mathcal{M}$ sei ein statistisches Modell, $(\Sigma,\mathcal{S})$ sei ein Messraum  
+und $\tau : \Theta \to \Sigma$ sei eine Abbildung, die jedem $\theta \in \Theta$ 
+eine Kenngröße $\tau(\theta) \in \Sigma$ zuordnet. Dann heißt eine Statistik 
+\begin{equation}
+\hat{\tau} : \mathcal{Y} \to \Sigma
+\end{equation}
+ein \textit{Schätzer} für $\tau$.
+\end{definition}
+
+\small
+Bemerkungen
+
+* Typische Beispiele für $\tau$ sind
+\begin{itemize}
+\begin{small}
+\item[$\circ$] $\tau(\theta) := \theta$ für die Schätzung von $\theta$,
+\item[$\circ$] $\tau(\theta) := \theta_i$ mit $\theta \in \mathbb{R}^d, d > 1$ für die Schätzung einer Komponente von $\theta$,
+\item[$\circ$] $\tau(\theta) := \mathbb{E}_\theta(y_1)$ für die Schätzung des Erwartungswert,
+\item[$\circ$] $\tau(\theta) := \mathbb{V}_\theta(y_1)$ für die Schätzung der Varianz.
+\end{small}
+\end{itemize}
+* Für $\hat{\tau}$ bei $\tau(\theta) := \theta$ schreibt man üblicherweise $\hat{\theta}$.
+* Schätzer nehmen Zahlwerte in $\Sigma$ an und heißen deshalb auch *Punktschätzer*.
+* Nicht jeder Schätzer ist ein guter Schätzer, man definiert deshalb *Schätzgütekriterien*.
+* Gütekriterien für Schätzer sind der Inhalt von Vorlesungseinheit (10) Parameterschätzung.
+
+# Statistiken und Schätzer
+
+\small
+Beispiele (Schätzer)
+
+$\mathcal{M}$ sei das Normalverteilungsmodell.
+
+* Dann ist zum Beispiel das Stichprobenmittel  $\bar{y}_n : \mathbb{R}^n \to \mathbb{R}$ ein Schätzer für
+\begin{equation}
+\tau : \mathbb{R} \times \mathbb{R}_{>0} \to \mathbb{R},
+(\mu, \sigma_2) \mapsto \tau(\mu,\sigma^2) := \mu.
+\end{equation}
+Ebenso ist $\bar{y}_n$ ein Schätzer für
+\begin{equation}
+\tau: \mathbb{R} \times \mathbb{R}_{>0} \to \mathbb{R},
+(\mu, \sigma_2) \mapsto \tau(\mu,\sigma^2) := \mathbb{E}_{\mu,\sigma^2}(y_1).
+\end{equation}
+* Weiterhin ist die konstante Funktion
+\begin{equation}
+\hat{\tau} : \mathbb{R}^n \to \mathbb{R}, \tilde{y} \mapsto \hat{\tau}(\tilde{y}) := 42
+\end{equation}
+ein Schätzer für
+\begin{equation}
+\tau : \mathbb{R} \times \mathbb{R}_{>0} \to \mathbb{R}_{>0},
+(\mu, \sigma_2) \mapsto \tau(\mu,\sigma^2) := \sigma^2.
+\end{equation}
+
+Dass eine Funktion $\hat{\tau} : \mathcal{Y} \to \Sigma$ ein Schätzer ist, heißt nicht, dass sie ein guter Schätzer ist!
+
+
+#
+\large
+\setstretch{3}
+\vfill
+Statistische Modelle
+
+Statistiken und Schätzer
+
+**Standardprobleme Frequentistischer Inferenz**
+
+Selbstkontrollfragen
+\vfill
+
+
+# Standardprobleme Frequentistischer Inferenz
+\small
+Mithilfe statistischer Modelle behandelt die Frequentistische Inferenz folgende Standardprobleme:
+
+\vspace{2mm}
+\noindent (1) Parameterschätzung
+
+Ziel der Parameterschätzung ist es, einen möglichst guten Tipp für wahre, aber unbekannte, 
+Parameterwerte oder Funktionen dieser abzugeben, typischerweise mithilfe der Daten.
+
+\vspace{2mm}
+\noindent (2) Konfidenzintervalle
+
+Ziel der Bestimmung von Konfidenzintervallen ist es, basierend auf der angenommenen
+Verteilung der Daten eine quantitative Aussage über die mit Schätzwerten assoziierte 
+Unsicherheit zu treffen.
+
+\vspace{2mm}
+\noindent (3) Hypothesentests
+
+Ziel des Hypothesentestens ist es, basierend auf der angenommenen
+Verteilung der Daten in einer möglichst zuverlässigen Form zu entscheiden, ob ein
+wahrer, aber unbekannter Parameterwert in einer von zwei sich gegenseitig 
+ausschließenden Untermengen des Parameterraumes liegt.
+
+
+# Standardprobleme Frequentistischer Inferenz
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("9_Abbildungen/wtfi_9_frequentistische_inferenz.pdf")
+```
+
+
+# Standardprobleme Frequentistischer Inferenz
+Standardannahmen frequentistischer Inferenz
+
+\footnotesize
+$\mathcal{M}$ sei ein statistisches Modell mit $y_1,...,y_n \sim p_\theta$. 
+
+**Es wird angenommen, dass ein konkreter Datensatz eine der möglichen Realisierungen von $y_1,...,y_n \sim p_\theta$ ist.**
+
+Aus Frequentistischer Sicht kann man eine Studie unendlich oft wiederholen und
+zu jedem Datensatz Schätzer oder Statistiken auswerten, z.B. das Stichprobenmittel:
+
+\footnotesize
+\begin{itemize}
+\item[] Datensatz (1) : $\tilde{y}^{(1)} = \left(\tilde{y}_1^{(1)}, \tilde{y}_2^{(1)}, ...,\tilde{y}_n^{(1)}\right)$
+						mit $\bar{y}_n^{(1)} = \frac{1}{n}\sum_{i=1}^n \tilde{y}_i^{(1)}$
+\item[] Datensatz (2) : $\tilde{y}^{(2)} = \left(\tilde{y}_1^{(2)}, \tilde{y}_2^{(2)}, ...,\tilde{y}_n^{(2)}\right)$
+                        mit $\bar{y}_n^{(2)} = \frac{1}{n}\sum_{i=1}^n \tilde{y}_i^{(2)}$
+\item[] Datensatz (3) : $\tilde{y}^{(3)} = \left(\tilde{y}_1^{(3)}, \tilde{y}_2^{(3)}, ...,\tilde{y}_n^{(3)}\right)$
+                        mit $\bar{y}_n^{(3)} = \frac{1}{n}\sum_{i=1}^n \tilde{y}_i^{(3)}$
+\item[] Datensatz (4) : $\tilde{y}^{(4)} = \left(\tilde{y}_1^{(4)}, \tilde{y}_2^{(4)}, ...,\tilde{y}_n^{(4)}\right)$
+                        mit $\bar{y}_n^{(4)} = \frac{1}{n}\sum_{i=1}^n \tilde{y}_i^{(4)}$
+\item[] Datensatz (5) : $\tilde{y}^{(5)} = ...$
+\end{itemize}
+
+Um die Qualität statistischer Methoden zu beurteilen betrachtet die Frequentistische
+Statistik deshalb die Wahrscheinlichkeitsverteilungen von Schätzern und Statistiken
+unter Annahme von $y_1,...,y_n \sim p_\theta$. Was zum Beispiel ist die Verteilung von
+$\bar{y}_n^{(1)}$, $\bar{y}_n^{(2)}$, $\bar{y}_n^{(3)}$, $\bar{y}_n^{(4)}$, ... also die
+Verteilung der Zufallsvariable $\bar{y}_n$?
+
+Wenn eine statistische Methode im Sinne der Frequentistischen Standardannahmen
+"gut" ist, dann heißt das also, dass sie bei häufiger Anwendung "im Mittel gut" ist.
+Im Einzelfall, also im Normalfall nur eines vorliegenden Datensatzes, kann sie auch 
+"schlecht" sein.
+
+# Standardprobleme Frequentistischer Inferenz {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("9_Abbildungen/wtfi_9_messplan.pdf")
+```
+
+```{r,eval = F, echo = F}
+# Datensimulation 
+set.seed(1)
+n            = 12                                                                # Anzahl Proband:innnen 
+mu           = 2                                                                 # Pre-Post BDI Score Reduktion
+sigsqr       = 20                                                                # Fehlervarianzparameter  
+D            = data.frame(1:12, round(rnorm(n, mu, sqrt(sigsqr))))               # Dataframe
+colnames(D)  = c("i", "BDI Reduktion")                                           # Tabellenbenennung
+write.csv(D, file = "9_Grundbegriffe_Frequentistischer_Inferenz.csv", row.names = F)
+```
+
+
+# Standardprobleme Frequentistischer Inferenz  {.t} 
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+\small
+\vspace{2mm}
+
+\footnotesize
+```{r}
+fname = file.path(getwd(), "9_Grundbegriffe_Frequentistischer_Inferenz.csv")
+D     = read.table(fname, sep = ",", header = T)
+```
+\vspace{2mm}
+
+```{r, echo = F}
+knitr::kable(D, "pipe", align = "rr")                          # table visualization
+```
+
+# Standardprobleme Frequentistischer Inferenz {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+\vspace{2mm}
+
+\small
+Für die Pre-Post BDI Score Reduktion $y_i$ der $i$ten von $n$ Patient:innen legen wir das Modell 
+\begin{equation}
+y_{i} = \mu + \varepsilon_{i} \mbox{ mit } \varepsilon_{i} \sim N(0,\sigma^2) \mbox{ u.i.v. für } i = 1,...,n
+\end{equation}
+zugrunde. Dabei wird die Pre-Post BDI Reduktion $y_i$ der $i$ten Patient:in also mithilfe einer
+über die Gruppe von Patient:innen identischen Pre-Post BDI Score Reduktion $\mu \in \mathbb{R}$
+und einer Patient:innen-spezifischen normalverteilten Pre-Post BDI Score Reduktionsabweichung 
+$\varepsilon_{i}$ erklärt 
+
+Wie unten gezeigt ist dieses Modell äquivalent zum oben eingeführten Normalverteilungsmodell
+\begin{equation}
+y_1,...,y_n \sim N(\mu,\sigma^2).
+\end{equation}
+
+Die Standardprobleme der Frequentistischen Inferenz führen in diesem Szenario auf folgende Fragen:
+
+(1) Was sind sinnvolle Tipps für die wahren, aber unbekannten, Parameterwerte $\mu$ und $\sigma^2$?
+(2) Wie hoch ist im frequentistischen Sinn die mit diesen Tipps assoziierte Unsicherheit?
+(3) Entscheiden wir uns sinnvollerweise für die Hypothese, dass gilt $\mu\neq 0$ ?
+
+
+# Standardprobleme Frequentistischer Inferenz {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+\vfill
+\footnotesize
+Die Äquivalenz beider Modellformen folgt direkt aus der Transformation normalverteilter 
+Zufallsvariablen durch linear-affine Funktionen. Speziell gilt im vorliegenden Fall für
+$\varepsilon_i \sim N(0,\sigma^2)$ u.i.v., dass
+\begin{equation}
+y_i = f(\varepsilon_i)
+\mbox{ mit }
+f : \mathbb{R} \to \mathbb{R}, \varepsilon_i \mapsto f(\varepsilon_i) := \varepsilon_i + \mu.
+\end{equation}
+Dann gilt
+\begin{align}
+\begin{split}
+p_{y_i}(\tilde{y}_i)
+& = \frac{1}{|1|} p_{\varepsilon_i}\left(\frac{\tilde{y}_i - \mu}{1} \right)                        \\
+& = N\left(\tilde{y}_i - \mu; 0, \sigma^2\right)                                                    \\
+& = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2\sigma^2}(\tilde{y}_i - \mu - 0)^2 \right)    \\
+& = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2\sigma^2}(\tilde{y}_i - \mu)^2 \right)        \\
+& = N(\tilde{y}_i; \mu,\sigma^2),
+\end{split}
+\end{align}
+also $y_i \sim N(\mu,\sigma^2)$ u.i.v. und damit $y_1,...,y_n\sim N(\mu,\sigma^2)$.
+\vfill
+
+#
+\large
+\setstretch{3}
+\vfill
+Statistische Modelle
+
+Statistiken und Schätzer
+
+Standardprobleme Frequentistischer Inferenz
+
+**Selbstkontrollfragen**
+\vfill
+
+# Selbstkontrollfragen
+\small
+\setstretch{2.6}
+
+1. Definieren und erläutern Sie den Begriff des parametrischen statistischen Modells.
+2. Definieren und erläutern Sie den Begriff eine parametrischen statistischen Produktmodells.
+3. Erläutern Sie den Unterschied zwischen univariaten und multivariaten statistischen Modellen.
+4. Formulieren und erläutern Sie das Normalverteilungsmodell.
+5. Formulieren und erläutern Sie das Bernoullimodell.
+6. Definieren und erläutern Sie den Begriff der Statistik.
+7. Definieren und erläutern Sie den Begriff des Schätzers.
+8. Nennen und erläutern Sie die Standardprobleme der frequentistischen Inferenz.
+9. Erläutern Sie die Standardannahmen der frequentistischen Inferenz.
+
+
