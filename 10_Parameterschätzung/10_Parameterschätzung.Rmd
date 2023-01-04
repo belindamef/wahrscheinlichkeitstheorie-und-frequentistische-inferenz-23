@@ -1,0 +1,2265 @@
+---
+fontsize: 8pt
+bibliography: 10_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 10_header.tex
+---
+
+
+```{r, include = F}
+source("10_R_common.R")
+fdir        = file.path(getwd(), "10_Abbildungen")                               # Abbildungsverzeichnis
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+\large
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+\normalsize
+Prof. Dr. Dirk Ostwald
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{(10) Parameterschätzung}
+\vfill
+
+#
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_frequentistische_inferenz.pdf")
+```
+
+
+#
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_frequentistische_inferenz_parameterschätzung.pdf")
+```
+
+#
+Standardannahmen Frequentistischer Inferenz
+
+\footnotesize
+$\mathcal{M}$ sei ein statistisches Modell mit Stichprobe $\ups_1,...,\ups_n  \sim p_\theta$.
+**Es wird angenommen, dass ein konkret vorliegender Datensatz $y = (y_1,...,y_n) \in \mathbb{R}^n$
+eine der möglichen Realisierungen von $\ups_1,...,\ups_n \sim p_\theta$ ist.**
+Aus Frequentistischer Sicht kann man eine Studie unter gleichen Umständen unendlich 
+oft wiederholen und zu jedem Datensatz Schätzer oder Statistiken auswerten, z.B. das Stichprobenmittel:
+
+\footnotesize
+\begin{itemize}
+\item[] Datensatz (1) : $y^{(1)} = \left(y_1^{(1)}, y_2^{(1)}, ...,y_n^{(1)}\right)$
+						mit $\bar{y}_n^{(1)} = \frac{1}{n}\sum_{i=1}^n y_i^{(1)}$
+\item[] Datensatz (2) : $y^{(2)} = \left(y_1^{(2)}, y_2^{(2)}, ...,y_n^{(2)}\right)$
+                        mit $\bar{y}_n^{(2)} = \frac{1}{n}\sum_{i=1}^n y_i^{(2)}$
+\item[] Datensatz (3) : $y^{(3)} = \left(y_1^{(3)}, y_2^{(3)}, ...,y_n^{(3)}\right)$
+                        mit $\bar{y}_n^{(3)} = \frac{1}{n}\sum_{i=1}^n y_i^{(3)}$
+\item[] Datensatz (4) : $y^{(4)} = \left(y_1^{(4)}, y_2^{(4)}, ...,y_n^{(4)}\right)$
+                        mit $\bar{y}_n^{(4)} = \frac{1}{n}\sum_{i=1}^n y_i^{(4)}$
+\item[] Datensatz (5) : $y^{(5)} = ...$
+\end{itemize}
+
+Um die Qualität statistischer Methoden zu beurteilen betrachtet die Frequentistische
+Statistik deshalb die Wahrscheinlichkeitsverteilungen von Schätzern und Statistiken
+unter Annahme von $\ups_1,...,\ups_n \sim p_\theta$. Was zum Beispiel
+ist die Verteilung der $\bar{y}_n^{(1)}$, $\bar{y}_n^{(2)}$, $\bar{y}_n^{(3)}$, $\bar{y}_n^{(4)}$, ...
+also die Verteilung der Zufallsvariable $\bar{\ups}_n$?
+
+Wenn eine statistische Methode im Sinne der Frequentistischen Standardannahmen "gut" ist, dann heißt das
+also, dass sie bei häufiger Anwendung "im Mittel gut" ist. Im Einzelfall, also
+im Normalfall nur eines vorliegenden Datensatzes, kann sie auch "schlecht" sein.
+
+#
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+Maximum-Likelihood Schätzer
+
+Schätzereigenschaften bei endlichen Stichproben
+
+Asymptotische Schätzereigenschaften
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+Selbstkontrollfragen
+\vfill
+
+#
+\large
+\vfill
+\setstretch{2.3}
+**Grundbegriffe**
+
+Maximum-Likelihood Schätzer
+
+Schätzereigenschaften bei endlichen Stichproben
+
+Asymptotische Schätzereigenschaften
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+Selbstkontrollfragen
+\vfill
+
+# Grundbegriffe
+\small
+\begin{definition}[Parameterpunktschätzer]
+\justifying
+$\mathcal{M} := (\mathcal{Y}, \mathcal{A}, \{\mathbb{P}_\theta|\theta \in \Theta\})$
+sei ein statistisches Modell, $(\Theta,\mathcal{S})$ sei ein Messraum und
+$\hat{\theta} : \mathcal{Y} \to \Theta$ sei eine Abbildung. Dann nennen wir
+$\hat{\theta}$ einen \textit{Parameterpunktschätzer} für $\theta$.
+\end{definition}
+
+Bemerkungen
+
+* Parameterpunktschätzer nennt man auch einfach *Parameterschätzer*.
+* Parameterpunktschätzer sind Schätzer mit $\tau := \mbox{id}_\Theta$
+* Parameterschätzer nehmen Zahlwerte in $\Theta$ an.
+* Notationstechnisch wird oft nicht zwischen $\hat{\theta}$ und $\hat{\theta}(y)$ unterschieden.
+
+# Grundbegriffe
+
+\justifying
+Prinzipien zur Gewinnung von Parameterschätzern
+
+\small
+Die Definition eines Parameterschätzers macht keine Aussage darüber, wie man
+Parameterschätzer findet. Zur Gewinnung von Parameterschätzern in statistischen
+Modellen haben sich deshalb verschiedene Prinzipien etabliert. Populäre Prinzipien
+zur Gewinnung von Parameterschätzern sind
+
+* Momentenmethode ($\approx$ est. 1890)
+* Maximum-Likelihood Methode ($\approx$ est. 1920)
+* M-, Z-, W-Schätzung ($\approx$ est. 1960)
+
+*Perse* garantiert keine der obengenannten Methoden, dass die mit ihrer Hilfe
+generierten Parameterschätzer in einem wohldefinierten Sinn gute Schätzer sind.
+
+Die Eigenschaften von durch die Maximum-Likelihood Methode generierten Schätzern
+sind generell wünschenswert. Wir betrachten also in der Folge nur die Maximum-Likelihood
+Methode genauer. Mithilfe der Maximum-Likelihood Methode generierte Parameterpunktschätzer
+nennen wir *Maximum-Likelihood (ML) Schätzer*.
+
+#
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+**Maximum-Likelihood Schätzer**
+
+Schätzereigenschaften bei endlichen Stichproben
+
+Asymptotische Schätzereigenschaften
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+Selbstkontrollfragen
+\vfill
+
+
+# Maximum-Likelihood Schätzer
+\small
+\begin{definition}[Likelihood-Funktion und Log-Likelihood-Funktion]
+\justifying
+$\mathcal{M}$ sei ein parametrisches statistisches Produktmodell mit WMF oder WDF $p_\theta$,
+also $\ups_1,...,\ups_n \sim p_\theta$. Dann ist die \textit{Likelihood Funktion} definiert als
+\begin{equation}
+L_n : \Theta \to [0,\infty[, \theta \mapsto L_n(\theta) := \prod_{i=1}^n p_\theta(y_i)
+\end{equation}
+und die \textit{Log-Likelihood-Funktion} ist definiert als
+\begin{equation}
+\mathcal{\ell}_n : \Theta \to \mathbb{R}, \theta \mapsto \ell_n(\theta) := \ln L_n(\theta).
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* $L_n$ ist eine Funktion des Parameters eines statistischen Modells.
+* Werte von $L_n$ sind die gemeinsamen Wahrscheinlichkeitsmassen bzw. -dichten von Datenwerten $y_1,...,y_n$.
+* Generell gibt es keinen Grund anzunehmen, dass $L_n$ über $\Theta$ zu 1 integriert.
+* Die Likelihood-Funktion ist also keine WMF oder WDF.
+* Die Log-Likelihood-Funktion ist die logarithmierte Likelihood-Funktion.
+
+
+# Maximum-Likelihood Schätzer
+\small
+\begin{definition}[Maximum-Likelihood Schätzer]
+\justifying
+$\mathcal{M}$ sei ein parametrisches statistisches Produktmodell mit Parameter
+$\theta \in \Theta$. Ein \textit{Maximum-Likelihood Schätzer} von $\theta$
+ist definiert als
+\begin{equation}
+\hat{\theta}^{\mbox{\tiny ML}}_n : \mathcal{Y} \to \Theta,
+y \mapsto \hat{\theta}^{\mbox{\tiny ML}}_n(y)
+:= \argmax_{\theta \in \Theta} L_n(\theta)
+=  \argmax_{\theta \in \Theta} \ell_n(\theta).
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* \justifying $L_n(\theta) := \prod_{i=1}^n p_\theta(y_i)$ hängt von $y := (y_1,...,y_n)$ ab,
+also hängt auch $\hat{\theta}^{\mbox{\tiny ML}}_n(y)$ von $y$ ab.
+* Weil $\ln$ monoton steigend ist, entspricht eine Maximumstelle von $\ell_n$ einer Maximumstelle von $L_n$.
+* Das Arbeiten mit der Log-Likelihood-Funktion ist oft einfacher als mit der Likelihood Funktion.
+* Multiplikation von $L_n$ mit einer positiven Konstante, die nicht von $\theta$ abhängt,
+verändert einen Maximum-Likelihood Schätzer nicht, konstante additive Terme in der Log-Likelihood können also vernachlässigt werden.
+* Maximum-Likelihood Schätzung ist ein Optimierungsproblem
+
+
+# Maximum-Likelihood Schätzer
+
+\setstretch{1.8}
+Vorgehen zur Gewinnung von Maximum-Likelihood Schätzern
+
+(1) Formulierung der Log-Likelihood-Funktion.
+(2) Auswertung der Ableitung der Log-Likelihood-Funktion und Nullsetzen.
+(3) Auflösen nach potentiellen Maximumstellen.
+
+Dabei nutzt man typischerweise
+
+* Methoden der analytischen Optimierung in klassischen Beispielen  
+* Methoden der numerischen Optimierung im Anwendungskontext.
+
+
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Bernoullimodell)
+
+\small
+$\mathcal{M}$ sei das Bernoullimodell, also $\ups_1,...,\ups_n \sim \mbox{Bern}(\mu)$.
+
+\noindent (1) Formulierung der Log-Likelihood-Funktion
+
+\footnotesize
+Es gilt
+\begin{equation}
+L_n : ]0,1[ \to ]0,1[,
+\mu \mapsto L_n(\mu)
+:= \prod_{i=1}^n \mu^{y_i}(1 - \mu)^{1-y_i}
+ = \mu^{\sum_{i=1}^n y_i}(1 - \mu)^{n - \sum_{i=1}^n y_i}.
+\end{equation}
+Logarithmieren ergibt
+\begin{equation}
+\ell_n : ]0,1[ \to \mathbb{R}, \mu \mapsto  \ell_n(\mu)
+= \ln \mu \sum_{i=1}^n y_i + \ln (1- \mu) \left(n - \sum_{i=1}^n y_i \right).
+\end{equation}
+
+
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Bernoullimodell)
+
+\small
+\noindent (2) Auswertung der Ableitung der Log-Likelihood-Funktion und Nullsetzen
+
+\footnotesize
+Es gilt
+\begin{align}
+\begin{split}
+\frac{d}{d\mu} \ell_n(\mu)
+& = \frac{d}{d\mu}\left(\ln \mu \sum_{i=1}^n y_i + \ln (1- \mu) \left(n - \sum_{i=1}^n y_i \right)\right)  \\
+& = \frac{d}{d\mu} \ln \mu \sum_{i=1}^n y_i  + \frac{d}{d\mu} \ln (1 - \mu) \left(n - \sum_{i=1}^n y_i \right)  \\
+& = \frac{1}{\mu}\sum_{i=1}^n y_i  -  \frac{1}{1-\mu} \left(n - \sum_{i=1}^n y_i \right).
+\end{split}
+\end{align}
+Die sogenannte \textit{Maximum-Likelihood Gleichung} ergibt sich in diesem Beispiel also zu
+\begin{equation}
+\frac{1}{\hat{\mu}_{n}^{\mbox{\tiny ML}}}\sum_{i=1}^n y_i - \frac{1}{1-\hat{\mu}_{n}^{\mbox{\tiny ML}}} \left(n - \sum_{i=1}^n y_i \right) = 0.
+\end{equation}
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Bernoullimodell)
+
+\small
+\noindent (3) Auflösen nach potentiellen Maximumstellen
+
+\footnotesize
+Es gilt
+\begin{align}
+\begin{split}
+\frac{1}{\hat{\mu}_{n}^{\mbox{\tiny ML}}}\sum_{i=1}^n y_i - \frac{1}{1-\hat{\mu}_{n}^{\mbox{\tiny ML}}} \left(n - \sum_{i=1}^n y_i \right) & = 0 \\
+\Leftrightarrow
+\hat{\mu}_{n}^{\mbox{\tiny ML}}(1 - \hat{\mu}_{n}^{\mbox{\tiny ML}})\left(\frac{1}{\hat{\mu}_{n}^{\mbox{\tiny ML}}}\sum_{i=1}^n y_i - \frac{1}{1-\hat{\mu}_{n}^{\mbox{\tiny ML}}} \left(n - \sum_{i=1}^n y_i \right) \right) & = 0 \\
+\Leftrightarrow
+\sum_{i=1}^n y_i - \hat{\mu}_{n}^{\mbox{\tiny ML}} \sum_{i=1}^n y_i - n \hat{\mu}_{n}^{\mbox{\tiny ML}}  + \hat{\mu}_{n}^{\mbox{\tiny ML}}\sum_{i=1}^n y_i & = 0 \\
+\Leftrightarrow
+n \hat{\mu}_{n}^{\mbox{\tiny ML}}  & = \sum_{i=1}^n y_i \\
+\Leftrightarrow
+\hat{\mu}_{n}^{\mbox{\tiny ML}}  & = \frac{1}{n} \sum_{i=1}^n y_i. \\
+\end{split}
+\end{align}
+
+# Maximum-Likelihood Schätzer
+Beispiel (Bernoullimodell)
+\vspace{2mm}
+
+\small
+$\hat{\mu}_{n}^{\mbox{\tiny ML}} = \frac{1}{n}\sum_{i=1}^n y_i$ ist also ein
+potentieller Maximum-Likelihood Schätzer von $\mu$. Dies kann durch Betrachten
+der zweiten Ableitung von $\ell_n$ verifiziert werden, worauf hier verzichtet werden soll.
+\begin{equation}
+\hat{\mu}_{n}^{\mbox{\tiny ML}} : \{0,1\}^n \to [0,1],
+y \mapsto \hat{\mu}_{n}^{\mbox{\tiny ML}}(y):= \frac{1}{n}\sum_{i=1}^n y_i
+\end{equation}
+ist also ein Maximum-Likelihood Schätzer von $\mu$ im Bernoullimodell.
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Normalverteilungsmodell)
+
+\small
+$\mathcal{M}$ sei das Normalverteilungsmodell, also $\ups_1,...,\ups_n \sim N\left(\mu,\sigma^2\right)$
+
+\noindent (1) Formulierung der Log-Likelihood-Funktion
+
+\footnotesize
+Es gilt
+\begin{align}
+\begin{split}
+L_n : \mathbb{R} \times \mathbb{R}_{>0} \to \mathbb{R}_{>0},
+(\mu,\sigma^2) \mapsto L_n(\mu,\sigma^2)
+:= & \prod_{i=1}^n \frac{1}{\sqrt{2\pi \sigma^2}}\exp\left(-\frac{1}{2\sigma^2}(y_i-\mu)^2\right) \\
+ = & \left(2 \pi \sigma^2\right)^{-\frac{n}{2}}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2\right). \\
+\end{split}
+\end{align}
+Logarithmieren ergibt
+\begin{equation}
+\ell_n : \mathbb{R} \times \mathbb{R}_{>0} \to \mathbb{R},
+(\mu,\sigma^2) \mapsto \mathcal{\ell}_n(\mu,\sigma^2)
+= -\frac{n}{2} \ln 2\pi - \frac{n}{2} \ln \sigma^2  -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2.
+\end{equation}
+
+# Maximum-Likelihood Schätzer
+Beispiel (Normalverteilungsmodell)
+
+\small
+\noindent (2) Auswertung der Ableitung der Log-Likelihood-Funktion und Nullsetzen
+
+\footnotesize
+Es ergibt sich
+\begin{equation}
+\frac{d}{d\mu} \ell_n(\mu)
+ = - \frac{d}{d\mu} \frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2
+ = - \frac{1}{2\sigma^2}\sum_{i=1}^n \frac{d}{d\mu} (y_i-\mu)^2
+ = \frac{1}{\sigma^2}\sum_{i=1}^n (y_i-\mu).
+\end{equation}
+Weiterhin ergibt sich
+\begin{align}
+\begin{split}
+\frac{d}{d\sigma^2} \ell_n(\sigma^2)
+= - \frac{n}{2} \frac{d}{d\sigma^2} \ln \sigma^2  - \frac{d}{d\sigma^2} \frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2
+= - \frac{n}{2 \sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^n(y_i-\mu)^2.
+\end{split}
+\end{align}
+Die Maximum-Likelihood Gleichungen haben also die Form
+\begin{align}
+\begin{split}
+\sum_{i=1}^n (y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}}) & = 0 \\
+- \frac{n}{2 \hat{\sigma}^{2^{\mbox{\tiny ML}}}_n} + \frac{1}{2\hat{\sigma}^{4^{\mbox{\tiny ML}}}_n}\sum_{i=1}^n(y_i-\mu)^2 & = 0
+\end{split}
+\end{align}
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Normalverteilungsmodell)
+
+\small
+\noindent (3) Auflösen nach potentiellen Maximumstellen
+
+\footnotesize
+Es ergibt sich
+\begin{equation}
+\sum_{i=1}^n (y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}})  = 0
+\Leftrightarrow \sum_{i=1}^n y_i  = n\hat{\mu}_{n}^{\mbox{\tiny ML}}
+\Leftrightarrow \hat{\mu}_{n}^{\mbox{\tiny ML}} = \frac{1}{n}\sum_{i=1}^n y_i.
+\end{equation}
+Also ist $\hat{\mu}_{n}^{\mbox{\tiny ML}} = n^{-1}\sum_{i=1}^n y_i$ ein potentieller
+Maximum-Likelihood Schätzer von $\mu$. Einsetzen ergibt dann  
+\begin{align}
+\begin{split}
+- \frac{n}{2 \hat{\sigma}^{2^{\mbox{\tiny ML}}}_n} + \frac{1}{2\hat{\sigma}^{4^{\mbox{\tiny ML}}}_n}\sum_{i=1}^n(y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}})^2 & = 0 \\
+\Leftrightarrow
+- n\hat{\sigma}^{2^{\mbox{\tiny ML}}}_n + \sum_{i=1}^n(y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}})^2 & = 0 \\
+\Leftrightarrow
+\hat{\sigma}^{2^{\mbox{\tiny ML}}}_n & = \frac{1}{n} \sum_{i=1}^n(y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}})^2.
+\end{split}
+\end{align}
+$\hat{\sigma}^{2^{\mbox{\tiny ML}}}_n = n^{-1}\sum_{i=1}^n(y_i-\hat{\mu}_{n}^{\mbox{\tiny ML}})^2$
+ist also ein potentieller Maximum-Likelihood Schätzer von $\sigma^2$.
+
+# Maximum-Likelihood Schätzer
+
+Beispiel (Normalverteilungsmodell)
+
+\vspace{2mm}
+
+\small
+Beide potentiellen Maximum-Likelihood Schätzer können durch Betrachten der zweiten Ableitung von $\ell_n$ verifiziert werden, worauf hier verzichtet werden soll.
+
+Also sind
+\begin{equation}
+\hat{\mu}_{n}^{\mbox{\tiny ML}} :
+\mathbb{R}^n \to \mathbb{R}, y \mapsto \hat{\mu}_{n}^{\mbox{\tiny ML}}(y)
+:= \frac{1}{n}\sum_{i=1}^n y_i
+\end{equation}
+und
+\begin{equation}
+\hat{\sigma}_n^{2^{\mbox{\tiny ML}}} :
+\mathbb{R}^n \to \mathbb{R}_{\ge 0},
+y \mapsto \hat{\sigma}_n^{2^{\mbox{\tiny ML}}}(y)
+:= \frac{1}{n}\sum_{i=1}^n \left(y_i - \hat{\mu}_{n}^{\mbox{\tiny ML}}\right)^2.
+\end{equation}
+die Maximum-Likelihood Schätzer von $\mu$ und $\sigma^2$ im Normalverteilungsmodell.
+$\hat{\mu}_{n}^{\mbox{\tiny ML}}$ ist identisch mit dem Stichprobenmittel $\bar{\ups}_n$,
+$\hat{\sigma}_{n}^{2^{\mbox{\tiny ML}}}$ ist dagegen nicht identisch mit der Stichprobenvarianz $S^2_n$.
+
+# Maximum-Likelihood Schätzer {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_messplan.pdf")
+```
+
+# Maximum-Likelihood Schätzer {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+\small
+\vspace{2mm}
+
+\footnotesize
+```{r}
+fname = file.path(getwd(), "10_Parameterschätzung.csv")
+D     = read.table(fname, sep = ",", header = T)
+```
+\vspace{2mm}
+
+```{r, echo = F}
+knitr::kable(D, "pipe", align = "rr")                                            # table visualization
+```
+
+# Maximum-Likelihood Schätzer {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+\vspace{2mm}
+
+\small
+Für die Pre-Post BDI Score Reduktion $\ups_i$ der $i$ten von $n$ Patient:innen legen wir das Modell
+\begin{equation}
+\ups_{i} = \mu + \varepsilon_{i} \mbox{ mit } \varepsilon_{i} \sim N(0,\sigma^2) \mbox{ u.i.v. für } i = 1,...,n
+\end{equation}
+zugrunde. Dabei wird die Pre-Post BDI Reduktion $\ups_i$ der $i$ten Patient:in also mithilfe einer
+über die Gruppe von Patient:innen identischen Pre-Post BDI Score Reduktion $\mu \in \mathbb{R}$
+und einer Patient:innen-spezifischen normalverteilten Pre-Post BDI Score Reduktionsabweichung
+$\varepsilon_{i}$ erklärt
+
+Wie gezeigt ist dieses Modell äquivalent zum Normalverteilungsmodell
+\begin{equation}
+\ups_1,...,\ups_n \sim N(\mu,\sigma^2).
+\end{equation}
+
+Die Standardprobleme der Frequentistischen Inferenz führen in diesem Szenario auf folgende Fragen:
+
+(1) Was sind sinnvolle Tipps für die wahren, aber unbekannten, Parameterwerte $\mu$ und $\sigma^2$?
+(2) Wie hoch ist im frequentistischen Sinn die mit diesen Tipps assoziierte Unsicherheit?
+(3) Entscheiden wir uns sinnvollerweise für die Hypothese, dass gilt $\mu\neq 0$ ?
+
+
+# Maximum-Likelihood Schätzer {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+\vspace{2mm}
+\footnotesize
+```{r}
+# Einlesen und Auswahl der Daten
+fname = file.path(getwd(), "10_Parameterschätzung.csv")
+D     = read.table(fname, sep = ",", header = T)
+y     = D$BDI.Reduktion
+
+# ML Schätzung des Erwartungswertparameters
+mu_hat   = mean(y)                           # mean(y) berechnet das Stichprobenmittel
+print(mu_hat)                                # Ausgabe
+```
+\vspace{2mm}
+
+```{r}
+# ML Schätzung des Varianzparameters
+n           = length(y)                      # Anzahl der Datenpunkte
+sigsqr_hat  = ((n-1)/n)*var(y)               # var(y) berechnet die Stichprobenvarianz
+print(sigsqr_hat)                            # Ausgabe
+```
+
+\footnotesize
+Basierend auf dem Prinzip der Maximum-Likelihood Schätzung sind also
+\begin{equation}
+\hat{\mu}_{12}^{\mbox{\tiny ML}} = 3.17,
+\mbox{ und }
+\hat{\sigma}^{2^{\mbox{\tiny ML}}}_{12} = 12.6
+\end{equation}
+sinnvolle Tipps für $\mu$ und $\sigma^2$ basierend auf den vorliegenden 12 Datenpunkten.
+
+
+#
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+Maximum-Likelihood Schätzer
+
+**Schätzereigenschaften bei endlichen Stichproben**
+
+Asymptotische Schätzereigenschaften
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+Selbstkontrollfragen
+\vfill
+
+#
+Vorbemerkungen zu Frequentistischen Schätzereigenschaften
+
+\footnotesize
+Wir gehen von einem statistischem parametrischem Produktmodell
+$\mathcal{M} := \{\mathcal{Y},\mathcal{A}, \{\mathbb{P}_\theta| \theta \in \Theta\}\}$
+mit $n$-dimensionalen Stichprobenraum (z.B. $\mathcal{Y} := \mathbb{R}^n$),
+$d$-dimensionalen Parameteraum $\Theta \subset \mathbb{R}^d$ und gegebener WMF
+oder WDF $p_\theta$ für alle $\theta \in \Theta$ aus. $\ups := \ups_1,...,\ups_n \sim p_\theta$
+bezeichnet die zu $\mathcal{M}$ gehörende Stichprobe unabhängig und identisch
+verteilter Zufallsvariablen, es gilt also $\ups_1 \sim p_\theta$ und $\ups_i \sim p_\theta$
+für alle $i = 1,...,n$.
+
+Für einen Messraum $(\Sigma,S)$ sei $\hat{\tau} : \mathcal{Y} \to \Sigma$ ein
+Schätzer von $\tau : \Theta \to \Sigma$. Wir betrachten Erwartungswerts- Varianz-,
+und Standardabweichungsschätzer, also Schätzer für
+\begin{align}
+\begin{split}
+\tau : \Theta \to \Sigma,\,
+\theta \mapsto \tau(\theta)
+\mbox{ mit }
+\tau(\theta) := \mathbb{E}_\theta(\ups_1),
+\tau(\theta) := \mathbb{V}_\theta(\ups_1), \mbox{ und }
+\tau(\theta) := \mathbb{S}_\theta(\ups_1)
+\end{split}
+\end{align}
+respektive, sowie Parameterschätzer, also Schätzer für
+\begin{equation}
+\tau: \Theta \to \Sigma, \tau(\theta) := \theta.
+\end{equation}
+In der Folge führen wir *Frequentistische Schätzereigenschaften* ein. Frequentistische
+Schätzereigenschaften betrachten die Verteilung der Schätzwerte $\hat{\tau}(y_1,...,y_n)$
+in Abhängigkeit von der Verteilung der Datennwerte $\ups := \ups_1,...,\ups_n$. Weil die
+Stichprobenwerte zufällig sind, sind auch die Schätzwerte zufällig; ein Schätzer
+$\hat{\tau}$ ist also wie oben gesehen eine Zufallsvariable. Wir unterscheiden zwischen 
+*Schätzereigenschaften bei endlichen Stichproben*, d.h. Eigenschaften von $\hat{\tau}_n$ 
+für ein fixes $n \in \mathbb{N}$ (z.B. $n = 12$) und *Asymptotischen Schätzereigenschaften*, 
+d.h. Eigenschaften von $\hat{\tau}_n$ für unendlich groß werdende Stichproben mit  $n \to \infty$.
+
+
+# Schätzereigenschaften bei endlichen Stichproben
+\justifying
+Schätzereigenschaften bei endlichen Stichproben
+
+\footnotesize
+Wir betrachten vier Aspekte von Schätzereigenschaften bei endlichen Stichproben.
+
+(1) Erwartungstreue
+(2) Varianz und Standardfehler
+(3) Mittlerer Quadratischer Fehler
+(4) Cramér-Rao Ungleichung
+
+Intuitiv haben diese folgende Bedeutungen:
+
+(1) \justifying Ein Schätzer $\hat{\tau}_n$ heißt *erwartungstreu*, wenn sein
+Erwartungswert dem wahren, aber unbekannten, Wert  $\tau(\theta)$ für alle
+$\theta \in \Theta$ gleicht.
+
+(2) Die *Varianz* eines Schätzers $\hat{\tau}_n$ ist die Varianz der
+Zufallsvariable $\hat{\tau}_n(\ups)$. Der *Standardfehler* eines Schätzers
+$\hat{\tau}_n$ ist die Standardabweichung der Zufallsvariable $\hat{\tau}_n(\ups)$.
+
+(3) Der *mittlere quadratische Fehler* von $\hat{\tau}_n$ ist der Erwartungswert
+der quadrierten Abweichung von $\hat{\tau}_n(\ups)$ von $\tau(\theta)$ über Stichproben
+vom Umfang $n$.
+
+(4) Die *Cramér-Rao-Ungleichung* gibt eine untere Schranke für die Varianz
+erwartungstreuer Schätzer an. Ein erwartungstreuer Schätzer mit Varianz gleich
+der in der Cramér-Rao-Ungleichung gegebenen unteren Schranke hat die kleinstmögliche
+Varianz aller erwartungstreuen Schätzer und ist in diesem Sinne ein optimaler Schätzer.
+Wir vertiefen die Cramér-Rao-Ungleichung lediglich in einem nicht klausurrelevanten Appendix.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\small
+\begin{definition}[Fehler, Systematischer Fehler, und Erwartungstreue]
+$\ups := \ups_1,...,\ups_n \sim  p_\theta$ sei eine Stichprobe und $\hat{\tau}_n$ sei ein Schätzer für $\tau$.
+\begin{itemize}
+\item Der \textit{Fehler} von $\hat{\tau}_n$ ist definiert als
+\begin{equation}
+\hat{\tau}_n(\ups) - \tau(\theta).
+\end{equation}
+\item Der \textit{systematische Fehler (Bias)} von $\hat{\tau}_n$ ist definiert als
+\begin{equation}
+\mbox{B}(\hat{\tau}_n) := \mathbb{E}_{\theta}(\hat{\tau}_n(\ups)) - \tau(\theta).
+\end{equation}
+\item $\hat{\tau}_n$ heißt \textit{erwartungstreu (unbiased)}, wenn
+\begin{equation}
+\mbox{B}(\hat{\tau}_n) = 0\Leftrightarrow
+\mathbb{E}_{\theta}(\hat{\tau}_n(\ups)) = \tau(\theta) \mbox{ für alle } \theta \in \Theta, n \in \mathbb{N}.
+\end{equation}
+Andernfalls heißt $\hat{\tau}_n$  \textit{verzerrt (biased)}.
+\end{itemize}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* Der Fehler hängt von einer Realisation der Stichprobe ab.
+* Der systematische Fehler ist der erwartete Fehler über viele Stichprobenrealisationen.
+* Ein Parameterschätzer ist erwartungstreu, wenn $\mathbb{E}_{\theta}(\hat{\theta}_n(\ups)) = \theta$.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\small
+\begin{theorem}[Erwartungstreue von Stichprobenmittel und Stichprobenvarianz]
+\justifying
+\normalfont
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines statistischen parametrischen Produktmodells $\mathcal{M}$.
+\begin{itemize}
+\item Das Stichprobenmittel
+\begin{equation}
+\bar{\ups}_n := \frac{1}{n}\sum_{i=1}^n \ups_i
+\end{equation}
+ist ein erwartungstreuer Schätzer des Erwartungswerts $\mathbb{E}_\theta(\ups_1)$.
+\vspace{1mm}
+\item Die Stichprobenvarianz
+\begin{equation}
+S^2_n := \frac{1}{n-1}\sum_{i=1}^n (\ups_i - \bar{\ups}_n)^2
+\end{equation}
+ist ein erwartungstreuer Schätzer der Varianz $\mathbb{V}_\theta(\ups_1)$.
+\end{itemize}
+\end{theorem}
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\footnotesize
+\underline{Beweis}
+
+Um die Notation zu vereinfachen, definieren wir $\mathbb{E} := \mathbb{E}_\theta$
+und $\mathbb{V} := \mathbb{V}_\theta$. Mit der Linearität von Erwartungswerten
+ergibt sich dann
+\begin{align*}
+\mathbb{E}(\bar{\ups}_n)
+= \mathbb{E} \left(\frac{1}{n}\sum_{i=1}^n  \ups_i \right)
+= \frac{1}{n}\sum_{i=1}^n  \mathbb{E}\left( \ups_i \right)
+= \frac{1}{n}\sum_{i=1}^n  \mathbb{E}\left( \ups_1 \right)
+= \frac{1}{n} n  \mathbb{E}\left( \ups_1 \right)
+=  \mathbb{E}\left( \ups_1 \right).
+\end{align*}
+Dies zeigt die Erwartungstreue des Stichprobenmittels als Schätzer des Erwartungswertes.
+
+Um die Erwartungstreue der Stichprobenvarianz zu zeigen, halten wir zunächst fest, dass
+\begin{equation*}
+\mathbb{V}(\bar{\ups}_n)
+= \mathbb{V}\left(\frac{1}{n} \sum_{i=1}^n \ups_i \right)
+= \frac{1}{n^2} \sum_{i=1}^n \mathbb{V}\left( \ups_i \right)
+= \frac{1}{n^2} \sum_{i=1}^n  \mathbb{V}\left( \ups_1 \right)
+= \frac{1}{n^2} n \mathbb{V}\left( \ups_1 \right)
+= \frac{\mathbb{V}\left( \ups_1 \right)}{n}.
+\end{equation*}
+Weiterhin gilt, wie im Folgenden gezeigt,
+\begin{align*}
+\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n\right)^2 = \sum_{i=1}^n (\ups_i - \mu)^2 - n(\bar{\ups}_n - \mu)^2.
+\end{align*}
+
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\vspace{-2mm}
+\footnotesize
+\begin{align}
+\begin{split}
+\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n\right)^2
+& = \sum_{i=1}^n \left(\ups_i - \mu - \bar{\ups}_n + \mu \right)^2 \\
+& = \sum_{i=1}^n \left((\ups_i - \mu) - (\bar{\ups}_n - \mu) \right)^2 \\
+& = \sum_{i=1}^n (\ups_i-\mu)^2 - 2(\bar{\ups}_n-\mu)\left(\sum_{i=1}^n(\ups_i-\mu)\right) + \sum_{i=1}^n (\bar{\ups}_n-\mu)^2 \\
+& = \sum_{i=1}^n (\ups_i-\mu)^2 - 2(\bar{\ups}_n-\mu)\left(\sum_{i=1}^n\ups_i- n\mu\right) + n(\bar{\ups}_n-\mu)^2 \\
+& = \sum_{i=1}^n (\ups_i-\mu)^2 - 2(\bar{\ups}_n-\mu)\left(n\left(\frac{1}{n}\sum_{i=1}^n\ups_i\right)- n\mu\right) + n(\bar{\ups}_n-\mu)^2 \\
+& = \sum_{i=1}^n (\ups_i-\mu)^2 - 2n(\bar{\ups}_n-\mu)^2 + n(\bar{\ups}_n-\mu)^2 \\
+& = \sum_{i=1}^n (\ups_i - \mu)^2 - n(\bar{\ups}_n - \mu)^2.
+\end{split}
+\end{align}
+\vfill
+
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\footnotesize
+Es ergibt sich also
+\vspace{-1mm}
+\footnotesize
+\begin{align*}
+\mathbb{E}\left((n-1)S^2_n\right)
+& = \mathbb{E}\left(\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n\right)^2 \right) \\
+& = \mathbb{E}\left(\sum_{i=1}^n (\ups_i - \mu)^2 - n(\bar{\ups}_n - \mu)^2 \right) \\
+& = \sum_{i=1}^n \mathbb{E}\left((\ups_i - \mu)^2\right) - n \mathbb{E}\left((\bar{\ups}_n - \mu)^2 \right) \\
+& = n \mathbb{V}(\ups_1) - n \mathbb{V}(\bar{\ups}_n) \\
+& = n \mathbb{V}(\ups_1) - n \frac{\mathbb{V}(\ups_1)}{n} \\
+& = n \mathbb{V}(\ups_1) - \mathbb{V}(\ups_1) \\
+& = (n - 1) \mathbb{V}(\ups_1)
+\end{align*}
+Schließlich ergibt sich
+\footnotesize
+\begin{equation*}
+\mathbb{E}(S^2_n)
+= \mathbb{E}\left(\frac{1}{n-1}(n-1)S^2_n \right)
+= \frac{1}{n-1}\mathbb{E}\left((n-1)S^2_n \right)
+= \frac{1}{n-1}(n - 1)  \mathbb{V}(\ups_1)
+= \mathbb{V}(\ups_1)
+\end{equation*}
+und damit die Erwartungstreue der Stichprobenvarianz als Schätzer der Varianz.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\small
+\begin{theorem}[Verzerrtheit der Stichprobenstandardabweichung]
+\justifying
+\normalfont
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines statistischen parametrischen
+Produktmodells $\mathcal{M}$.  Dann ist die Stichprobenstandardabweichung
+\begin{equation}
+S_n := \sqrt{S^2_n}
+\end{equation}
+ein verzerrter Schätzer der Standardabweichung $\mathbb{S}_\theta(\ups_1)$.
+\end{theorem}
+
+\footnotesize
+\underline{Beweis}
+
+Wir halten zunächst fest, dass $\sqrt{\cdot}$ eine strikt konkave Funktion und
+$\sigma^2 > 0$ ist. Dann aber gilt mit der Jensenschen Ungleichung
+$\mathbb{E}(f(\xi)) < f(\mathbb{E}(\xi))$ für strikt konkave Funktionen, dass
+\begin{equation}
+\mathbb{E}(S_n)
+= \mathbb{E}\left(\sqrt{S^2_n}\right)
+< \sqrt{\mathbb{E}(S^2_n)}
+= \sqrt{\mathbb{V}_\theta(\ups_1)}
+= \mathbb{S}_\theta(\ups_1).
+\end{equation}
+$\hfill \Box$
+
+Bemerkung
+
+* Nichtlineare Transformationen von erwartungstreuen Schätzern liefern oft verzerrte Schätzer.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\small
+Simulation von $\ups_1,...,\ups_{12} \sim N(\mu,\sigma^2)$ mit $n = 12$, $\mu = 1.7$, $\sigma^2 = 2$, $\sigma \approx 1.41$
+\vspace{1mm}
+
+\setstretch{1}
+\footnotesize
+```{r}
+# Modellformulierung
+mu      = 1.7        	             # wahrer, aber unbekannter, Erwartungswertparameter
+sigsqr  = 2         		         # wahrer, aber unbekannter, Varianzparameter
+n       = 12       			         # Stichprobengroesse n
+nsim    = 1e4                        # Anzahl der Simulationen
+y_bar   = rep(NaN,nsim)   	         # Stichprobenmittelarray
+s_sqr   = rep(NaN,nsim)		         # Stichprobenvarianzarray
+s       = rep(NaN,nsim)   	         # Stichprobenstandardabweichungarray
+
+# Simulationsiterationen
+for(sim in 1:nsim){
+
+	# Stichprobenrealisation von \ups_1,...,\ups_{12}
+    y          = rnorm(n,mu,sqrt(sigsqr))
+
+    # Erwartungswert-, Varianz-, Standardabweichungschaetzer
+    y_bar[sim] = mean(y)     	     # Stichprobenmittel
+    s_sqr[sim] = var(y) 		     # Stichprobenvarianz
+    s[sim]     = sd(y)   		     # Stichprobenstandardabweichung
+}
+
+# Erwartungswertschaetzung
+E_hat_y_bar = cumsum(y_bar)/(1:nsim) # \mathbb{E}(\bar{\ups}_n) Schaetzungen
+E_hat_s_sqr = cumsum(s_sqr)/(1:nsim) # \mathbb{E}(S^2) Schaetzungen
+E_hat_s     = cumsum(s)    /(1:nsim) # \mathbb{E}(S) Schaetzungen
+```
+
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Erwartungstreue
+\small
+Simulation von $\ups_1,...,\ups_{12} \sim N(\mu,\sigma^2)$ mit $n = 12$, $\mu = 1.7$, $\sigma^2 = 2$, $\sigma \approx 1.41$
+
+```{r, eval = F, echo = F}
+# Visualisierung
+library(latex2exp)
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1,                                                                 # font magnification factor
+cex.main    = 1)                                                                 # title magnification factor
+matplot(
+1:nsim,
+matrix(c(E_hat_y_bar, E_hat_s_sqr, E_hat_s), ncol = 3),                          # geschätzte Erwartungswerte
+col         = c("gray10", "gray50", "gray80"),                                   # Linienfarben
+type        = "l",                                                               # Linientyp
+lty         = 1,                                                                 # Linientypdetail
+ylab        = " ",                                                               # y Achsenbeschriftung
+xlab        = "Anzahl an Simulationen",                                          # x Achsenbeschriftung
+ylim        = c(1.3,2.4))
+abline(mu          ,0, col = "gray10", lty = 3)                                  # w.a.u. \mu
+abline(sigsqr      ,0, col = "gray50", lty = 3)                                  # w.a.u. \sigma^2
+abline(sqrt(sigsqr),0, col = "gray80", lty = 3)                                  # w.a.u. \sigma
+legend(
+8e3,                                                                             # upper left corner x ordinate
+2.41,                                                                            # upper left corner y ordinate
+c(TeX("$\\hat{E}(\\bar{\\upsilon}_n)$"),                                         # labels
+  TeX("$\\hat{E}(S^2_n)$"),
+  TeX("$\\hat{E}(S_n)$")),
+cex         = .9,                                                                # size of text multiplier
+lty         = c(1,1),                                                            # solid linetype
+col         = c("gray10", "gray50", "gray80"),                                   # line color
+y.intersp   = 1.5,                                                               # y spacing
+lwd         = 1,                                                                 # line width
+bty         = "n")                                                               # box off
+dev.copy2pdf(file  = file.path("10_Abbildungen/wtfi_10_bias.pdf"), width = 6, height = 5) # PDF Speicherung
+```
+
+```{r, echo = FALSE, out.width = "75%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_bias.pdf")
+```
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Varianz und Standardfehler
+\small
+\begin{definition}[Varianz und Standardfehler]
+$\ups := \ups_1,...,\ups_n \sim  p_\theta$ sei eine Stichprobe und $\hat{\tau}_n$ sei ein Schätzer von $\tau$.
+\begin{itemize}
+\item Die \textit{Varianz} von $\hat{\tau}_n$ ist definiert als
+\begin{equation}
+\mathbb{V}_\theta(\hat{\tau}_n) :=
+\mathbb{E}_\theta
+\left((\hat{\tau}_n(\ups) - \mathbb{E}_\theta(\hat{\tau}_n(\ups)))^2\right).
+\end{equation}
+\item Der \textit{Standardfehler} von $\hat{\tau}_n$ ist definiert als
+\begin{equation}
+\mbox{SE}(\hat{\tau}_n) := \sqrt{\mathbb{V}_\theta(\hat{\tau}_n)}
+\end{equation}
+\end{itemize}
+\end{definition}
+Bemerkungen
+
+* Die Varianz eines Schätzers $\hat{\tau}_n$ ist die Varianz der Zufallsvariable $\hat{\tau}_n(\ups)$.
+* Der Standardfehler eines Schätzers $\hat{\tau}_n$ ist die Standardabweichung von $\hat{\tau}_n(\ups)$.
+
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Varianz und Standardfehler
+\small
+\begin{theorem}[Standardfehler des Stichprobenmittels]
+\justifying
+\normalfont
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen
+statistischen Produktmodells. Dann ist der \textit{Standardfehler des Stichprobenmittels} gegeben durch
+\begin{equation}
+\mbox{SE}(\bar{\ups}_n) = \frac{\mathbb{S}_\theta(\ups_1)}{\sqrt{n}}.
+\end{equation}
+Der Standardfehler des Stichprobenmittels heißt auch \textit{Standardfehler des Mittelwertes}.
+\end{theorem}
+
+\footnotesize
+\underline{Beweis}
+
+Per definitionem und mit $\mathbb{V}_\theta(\bar{\ups}_n) = \mathbb{V}_\theta(\ups_1)/n$, ergibt sich
+\begin{equation}
+\mbox{SE}(\bar{\ups}_n)
+= \sqrt{\mathbb{V}_\theta(\bar{\ups}_n)}
+= \sqrt{\frac{\mathbb{V}_\theta(\ups_1)}{n}}
+= \frac{\mathbb{S}_\theta(\ups_1)}{\sqrt{n}}.
+\end{equation}
+
+Bemerkungen
+
+* Der Standardfehler des Mittelwerts beschreibt die Variabilität des Stichprobenmittels.
+* Da $\mathbb{S}_\theta(\ups_1)$ unbekannt ist, ist auch $\mbox{SE}(\bar{\ups}_n)$ unbekannt.
+* Ein verzerrter Schätzer für den Standardfehler des Stichprobenmittels ist gegeben durch $\hat{\mbox{SE}}(\bar{\ups}_n) = \frac{s_n}{\sqrt{n}}$.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Varianz und Standardfehler
+
+Beispiel (Standardfehler des Bernoulli Parameter Maximum-Likelihood Schätzes)
+
+\small
+Es sei $\ups := \ups_1,...,\ups_n \sim \mbox{Bern}(\mu)$ und
+$\hat{\mu}^{\mbox{\tiny ML}}_n$ der Maximum-Likelihood Schätzer für $\mu$. Dann ist
+\begin{equation}
+\mbox{SE}\left(\hat{\mu}^{\mbox{\tiny ML}}_n\right) = \sqrt{\frac{\mu(1-\mu)}{n}}.
+\end{equation}
+
+\footnotesize
+\underline{Beweis}
+
+Es gilt
+\tiny
+\begin{align}
+\begin{split}
+\mbox{SE}\left(\hat{\mu}^{\mbox{\tiny ML}}_n\right)
+= \sqrt{\mathbb{V}_\mu\left(\hat{\mu}^{\mbox{\tiny ML}}_n\right)}
+& = \sqrt{\mathbb{V}_\mu\left(\frac{1}{n}\sum_{i=1}^n \ups_i \right)} \\
+& = \sqrt{\frac{1}{n^2}\sum_{i=1}^n \mathbb{V}_\mu(\ups_i)}
+= \sqrt{\frac{n \mu(1-\mu)}{n^2}}
+= \sqrt{\frac{\mu(1-\mu)}{n}},
+\end{split}
+\end{align}
+\footnotesize
+wobei die dritte Gleichung mit der Unabhängigkeit der $\ups_i, i = 1,...,n$ und die
+vierte Gleichung mit der Varianz $\mathbb{V}_\mu(\ups_1) = \mathbb{V}_\mu(\ups_i) = \mu(1-\mu), i = 1,...,n$
+der Bernoulli Stichprobenvariablen folgt.  
+
+\footnotesize
+Bemerkung
+\vspace{-1mm}
+
+* Ein Schätzer für den Standardfehler $\mbox{SE}\left(\hat{\mu}^{\mbox{\tiny ML}}_n\right)$ ist
+$\hat{\mbox{SE}}\left(\hat{\mu}^{\mbox{\tiny ML}}_n\right) = \sqrt{\frac{\hat{\mu}^{\mbox{\tiny ML}}_n(1-\hat{\mu}^{\mbox{\tiny ML}}_n)}{n}}$
+
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Varianz und Standardfehler
+\vspace{1mm}
+\small
+Simulation von $\ups_1,...,\ups_n \sim \mbox{Bern}(\mu)$ mit $\mu = 0.4$
+\vspace{1mm}
+
+\tiny
+\setstretch{0.9}
+```{r}
+# Modellformulierung
+mu          = 0.4                                   # wahrer, aber unbekannter, Parameterwert
+n_all       = c(20,100,200)                         # Stichprobengrößen n
+ns          = 1e4                                   # Anzahl der Simulationen
+mu_hat_ML   = matrix(rep(NaN, length(n_all)*ns),    # Maximum-Likelihood Schätzearray
+                     nrow = length(n_all))
+
+# Stichprobengroesseniterationen
+for(i in seq_along(n_all)){
+
+    # Simulationsiterationen
+    for(s in 1:ns){
+        y               = rbinom(n_all[i],1,mu)     # Stichprobenrealisation von y_1,...,y_n
+        mu_hat_ML[i,s]  = mean(y)                   # Stichprobenmittel
+    }
+}
+```
+\vspace{1mm}
+```{r, echo = F, eval = F}
+# Visualisierung
+library(latex2exp)
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+mfcol       = c(1,3),                                                            # subplot grid
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = .8,                                                                # font magnification factor
+cex.main    = 1.6)                                                               # title magnification factor
+
+for(i in seq_along(n_all)){
+    hist(
+    mu_hat_ML[i,],
+    ylim        = c(0,2.5e3),
+    xlim        = c(0,1),
+    col         = "gray90",
+    xlab        = TeX("$\\hat{\\mu}^{ML}_{n}$"),
+    ylab        = "",
+    main        = sprintf("n = %d", n_all[i]))
+}
+dev.copy2pdf(file  = file.path("10_Abbildungen/wtfi_10_sem.pdf"), width = 12, height = 4)
+```
+
+\footnotesize
+Die Varianz bzw. der Standardfehler von $\hat{\mu}^{\mbox{\tiny ML}}_n$ hängen von $n$ ab.
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_sem.pdf")
+```
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Mittlerer quadratischer Fehler
+\small
+\begin{definition}[Mittlerer quadratischer Fehler]
+\justifying
+$\ups := \ups_1,...,\ups_n \sim  p_\theta$ sei die Stichprobe eines parametrischen
+statistischen Produktmodells $\mathcal{M}$ und $\hat{\tau}_n$ ein Schätzer für $\tau$.
+Dann ist der \textit{mittlere quadratischer Fehler (engl. mean squared error)}
+von $\hat{\tau}_n$ definiert als
+\begin{equation}
+\mbox{MQF}(\hat{\tau}_n) := \mathbb{E}_\theta\left((\hat{\tau}_n(\ups) - \tau(\theta))^2\right).
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* Der MQF von $\hat{\tau}_n$ ist die erwartete quadrierte Abweichung von $\hat{\tau}_n(\ups)$ von $\tau(\theta)$.
+* Die Varianz von $\hat{\tau}_n$ ist die erwartete quadrierte Abweichung von $\hat{\tau}_n$ von $\mathbb{E}_\theta(\hat{\tau}_n(\ups))$.
+* $\mathbb{E}_\theta(\hat{\tau}_n(\ups))$ kann mit $\tau(\theta)$ übereinstimmen, muss es aber nicht.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Mittlerer quadratischer Fehler
+\small
+\begin{theorem}[Zerlegung des mittleren quadratischen Fehlers]
+\justifying
+\normalfont
+$\ups := \ups_1,...,\ups_n \sim  p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$, $\hat{\tau}_n$ sei ein Schätzer für $\tau$, und
+$\mbox{MQF}(\hat{\tau}_n)$ sei der mittlere quadratische Fehler von $\hat{\tau}_n$.
+Dann gilt
+\begin{equation}
+\mbox{MQF}(\hat{\tau}_n) = \mbox{B}(\hat{\tau}_n)^2 + \mathbb{V}_\theta(\hat{\tau}_n).
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* MQF = Bias$^2$ + Varianz.
+* Der MQF kann als Bias-Varianz Abwägungskriterium benutzt werden.
+* Kleine Schätzerverzerrungen können gegenüber einer großen Schätzervarianz präferiert werden.
+
+# \small Schätzereigenschaften bei endlichen Stichproben | Mittlerer quadratischer Fehler
+\footnotesize
+\underline{Beweis}
+
+Zur Vereinfachung der Notation seien $\tau := \tau(\theta)$, $\hat{\tau}_n := \hat{\tau}_n(\ups)$
+und $\bar{\tau}_n := \mathbb{E}_\theta(\hat{\tau}_n(\ups))$. Dann gilt:
+\begin{align*}
+\begin{split}
+\mathbb{E}_\theta\left((\hat{\tau}_n - \tau)^2\right)
+& = \mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n + \bar{\tau}_n - \tau)^2\right) \\
+& = \mathbb{E}_\theta
+\left(
+(\hat{\tau}_n - \bar{\tau}_n)^2
++ 2(\hat{\tau}_n - \bar{\tau}_n)(\bar{\tau}_n - \tau)
++ (\bar{\tau}_n - \tau)^2
+\right)
+\\
+& = \mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)^2\right)
++ 2\mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)(\bar{\tau}_n - \tau)\right)
++ \mathbb{E}_\theta\left((\bar{\tau}_n - \tau)^2\right) \\
+& = \mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)^2\right)
++ 2\mathbb{E}_\theta\left(
+\hat{\tau}_n\bar{\tau}_n - \hat{\tau}_n\tau
+- \bar{\tau}_n\bar{\tau}_n + \bar{\tau}_n\tau
+\right)
++ \mathbb{E}_\theta\left((\bar{\tau}_n - \tau)^2\right)
+\\
+& =
+\mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)^2\right)
++ 2\left(
+\bar{\tau}_n\bar{\tau}_n - \bar{\tau}_n\tau
+\right)
++ \mathbb{E}_\theta\left((\bar{\tau}_n - \tau)^2\right) \\
+& =
+\mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)^2\right)
++ 0
++ \mathbb{E}_\theta\left((\bar{\tau}_n - \tau)^2\right) \\
+& =
+\mathbb{E}_\theta\left((\bar{\tau}_n - \tau)^2\right)
++ \mathbb{E}_\theta\left((\hat{\tau}_n - \bar{\tau}_n)^2\right) \\
+& =
+\mathbb{E}_\theta\left((\mathbb{E}_\theta(\hat{\tau}_n) - \tau)^2\right)
++ \mathbb{E}_\theta\left((\hat{\tau}_n - \mathbb{E}_\theta(\hat{\tau}_n))^2\right) \\
+& =
+(\mathbb{E}_\theta(\hat{\tau}_n) - \tau)^2
++ \mathbb{V}_\theta(\hat{\tau}_n) \\
+& =
+\mbox{B}(\hat{\tau}_n)^2
++ \mathbb{V}_\theta(\hat{\tau}_n).
+\end{split}
+\end{align*}
+
+#
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+Maximum-Likelihood Schätzer
+
+Schätzereigenschaften bei endlichen Stichproben
+
+**Asymptotische Schätzereigenschaften**
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+Selbstkontrollfragen
+\vfill
+
+
+# Asymptotische Schätzereigenschaften
+\setstretch{1.8}
+Vorbemerkungen zu Asymptotischen Schätzereigenschaften
+\small
+
+Dieser Abschnitt ist eine Kurzeinführung in die \textit{Asymptotische Statistik (AS)}.
+
+Die AS befasst sich mit dem Verhalten von Statistiken bei großen Stichproben.
+
+Methoden der AS werden benutzt, um
+
+* qualitative Schätzereigenschaften zu studieren und
+* Schätzereigenschaften für große Stichprobengrößen zu approximieren.
+
+Moderne Stichproben sind üblicherweise groß.
+
+Die Methoden der AS sind also praktisch einsetzbar und gerechtfertigt.
+
+@vaart_1998 gibt eine ausführliche Einführung in die AS.
+
+
+# Asymptotische Schätzereigenschaften
+
+Asymptotische Schätzereigenschaften
+
+\footnotesize
+Wir betrachten vier asymptotische Schätzereigenschaften.
+
+(1) Asymptotische Erwartungstreue
+(2) Konsistenz
+(3) Asymptotische Normalverteilung
+(4) Asymptotische Effizienz
+
+Intuitiv haben diese folgende Bedeutungen:
+
+(1) \justifying Ein Schätzer $\hat{\tau}_n$ für $\tau$ heißt *asymptotisch erwartungstreu*,
+wenn der Erwartungswert von $\hat{\tau}_n$ für große Stichprobengrößen $n \to \infty$
+gleich dem wahren, aber unbekannten, Wert  $\tau(\theta)$ ist.
+
+(2) Ein Schätzer $\hat{\tau}_n$ für $\tau$ heißt *konsistent*, wenn für große
+Stichprobengrößen $n \to \infty$ die Wahrscheinlichkeit dafür, dass
+$\hat{\tau}_n(\ups)$ vom wahren, aber unbekannten, Wert $\tau(\theta)$ abweicht
+beliebig klein wird.
+
+(3) Ein Schätzer $\hat{\tau}_n$ für $\tau$ heißt *asymptotisch normalverteilt*,
+wenn für große Stichprobengrößen $n \to \infty$, die Verteilung von $\hat{\tau}_n$
+durch eine Normalverteilung gegeben ist.
+
+(4) Ein Schätzer $\hat{\tau}_n$ für $\tau$ heißt *asymptotisch effizient*, wenn
+für große Stichprobengrößen $n \to \infty$ die Verteilung von $\hat{\tau}_n$ durch
+eine Normalverteilung mit Erwartungswertparameter $\tau(\theta)$ und Varianzparameter
+gleich der Cramér-Rao-Schranke gegeben ist. Wir vertiefen die asymptotische Effienz in einem Appendix.
+
+# \small Asymptotische Schätzereigenschaften | Asymptotische Erwartungstreue
+\small
+\begin{definition}[Asymptotische Erwartungstreue]
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und  $\hat{\tau}_n$ sei ein Schätzer für $\tau$.
+$\hat{\tau}_n$ heißt \textit{asymptotisch erwartungstreu}, wenn
+\begin{equation}
+\lim_{n\to\infty} \mathbb{E}_\theta(\hat{\tau}_n(\ups)) = \tau(\theta) \mbox{ für alle }
+\theta \in \Theta.
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* Asymptotisch erwartungstreue Schätzer sind für "unendlich große" Stichproben erwartungstreu.
+* Erwartungstreue Schätzer sind immer auch asymptotisch erwartungstreu.
+
+# \small Asymptotische Schätzereigenschaften | Asymptotische Erwartungstreue
+\footnotesize
+\begin{theorem}[Asymptotische Erwartungstreue des Varianzparameterschätzers] 
+\justifying
+\normalfont
+Es sei $\ups := \ups_1,...,\ups_n \sim N(\mu,\sigma^2)$. Dann ist der Maximum-Likelihood
+Schätzer des Varianzparameters,
+\begin{equation}
+\hat{\sigma}_n^{2^{\mbox{\tiny ML}}}
+:= \frac{1}{n}\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n \right)^2
+\end{equation}
+asymptotisch erwartungstreu.
+\end{theorem}
+
+\underline{Beweis}
+
+Mit der Erwartungstreue der Stichprobenvarianz ergibt sich  
+\tiny
+\begin{align*}
+\begin{split}
+\mathbb{E}_{\mu,\sigma^2}\left(\hat{\sigma}_n^{2^{\mbox{\tiny ML}}} \right)
+= \mathbb{E}_{\mu,\sigma^2}\left(\frac{1}{n}\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n \right)^2 \right)
+= \frac{1}{n}\mathbb{E}_{\mu,\sigma^2}\left(\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n \right)^2 \right)
+=    \frac{n-1}{n}\sigma^2 \\
+\end{split}
+\end{align*}
+\footnotesize
+Also gilt $\mathbb{E}_{\mu,\sigma^2}\left(\hat{\sigma}_n^{2^{\mbox{\tiny ML}}} \right) \neq \sigma^2$.
+$\hat{\sigma}_n^{2^{\mbox{\tiny ML}}}$ ist also ein verzerrter Schätzer von $\sigma^2$.
+Allerdings gilt $(n-1)/n \to 1$ für $n \to \infty$, so dass
+\begin{equation}
+\lim_{n \to \infty} \mathbb{E}_{\mu,\sigma^2}\left(\hat{\sigma}_n^{2^{\mbox{\tiny ML}}}\right) =
+\lim_{n \to \infty}  \frac{n-1}{n}\sigma^2 =
+\sigma^2 \lim_{n \to \infty}  \frac{n-1}{n} =
+\sigma^2.
+\end{equation}
+
+# \small Asymptotische Schätzereigenschaften | Asymptotische Erwartungstreue
+\small
+Simulation von $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ mit $\mu = 1$, $\sigma^2 = 2$
+
+\footnotesize
+\setstretch{1}
+\vspace{2mm}
+```{r}
+# Modellformulierung
+mu        = 1          				# wahrer, aber unbekannter, Erwartungswertparameter
+sigsqr    = 2                       # wahrer, aber unbekannter, Varianzparameter
+n         = seq(1,100, by = 2)	    # Stichprobengroessen
+ns        = 1e3                     # Anzahl Simulation pro Stichprobengroesse
+sigsqr_ml = matrix( 				# \hat{\sigma^2}^{ML} Array
+			rep(NaN, length(n)*ns),
+			ncol = length(n))
+
+# Stichprobengroesseniterationen
+for(i in seq_along(n)){
+
+    # Simulationsiterationen
+    for(s in 1:ns){
+
+    	# Stichprobenrealisation
+        y               = rnorm(n[i], mu, sqrt(sigsqr))
+
+        # \hat{\sigma^2}^{ML}
+        sigsqr_ml[s,i]  = ((n[i]-1)/n[i])*var(y)
+    }
+}
+E_sigsqr_ml = colMeans(sigsqr_ml)	# Erwartungswertschaetzung
+```
+
+# \small Asymptotische Schätzereigenschaften | Asymptotische Erwartungstreue
+\small
+Simulation $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ mit $\mu = 1$, $\sigma^2 = 2$
+\vspace{2mm}
+```{r, eval = F, echo = F}
+# Visualisierung
+# install.packages("GMCM")
+library(GMCM)
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.1,                                                               # font magnification factor
+cex.main    = 1.4)                                                               # title magnification factor
+
+# Errorbarplot
+plot(
+n,
+colMeans(sigsqr_ml),
+type    = "b",
+ylim    = c(1.2, 2.1),
+xlim    = c(0,102),
+xlab    = "n",
+ylab    = "",
+pch     =  19,
+cex     =  .5)
+abline(sigsqr, 0, col = "gray80" , lty = 1)
+arrows(
+x0      = n,
+y0      = colMeans(sigsqr_ml) - .1*sqrt(GMCM:::colSds(sigsqr_ml)),
+x1      = n,
+y1      = colMeans(sigsqr_ml) + .1*sqrt(GMCM:::colSds(sigsqr_ml)),
+code    = 3,
+angle   = 90,
+length  = 0.01,
+lwd     = .7
+)
+dev.copy2pdf(file  = file.path("10_Abbildungen/wtfi_10_sigsqr_ml.pdf"), width = 6, height = 4)    
+```
+
+```{r, echo = FALSE, out.width = "85%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_sigsqr_ml.pdf")
+```
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+\begin{definition}[Konsistenz]
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und $\hat{\tau}_n$ sei ein Schätzer von $\tau$. Eine
+Folge von Schätzern $\hat{\tau}_1, \hat{\tau}_2, ...$ wird dann eine
+\textit{konsistente Folge von Schätzern} genannt, wenn für jedes $\epsilon > 0$
+und jedes $\theta \in \Theta$ gilt, dass
+\begin{equation*}
+\lim_{n\to \infty}
+\mathbb{P}_\theta\left(|\hat{\tau}_n(\ups) - \tau(\theta)| \ge \epsilon \right) = 0.
+\end{equation*}
+Wenn $\hat{\tau}_1,\hat{\tau}_2,...$ eine konsistente Folge von Schätzern ist,
+dann heißt $\hat{\tau}_n$   \textit{konsistenter Schätzer}.
+\end{definition}
+\footnotesize
+Bemerkungen
+
+* Für $n \to \infty$ wird die Wahrscheinlichkeit, dass $\hat{\tau}_n(\ups)$ beliebig nah bei $\tau(\theta)$ liegt, groß.
+* Für $n \to \infty$ wird die Wahrscheinlichkeit, dass $\hat{\tau}_n(\ups)$ von $\tau(\theta)$ abweicht, klein.
+* Diese Eigenschaften gelten für alle möglichen wahren, aber unbekannten, Parameterwerte.
+* Die Konvergenz ist \textit{Konvergenz in Wahrscheinlichkeit}.
+* Konsistenz von Schätzern kann direkt oder mit Kriterien nachgewiesen werden.
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+\begin{theorem}[Mittlerer-Quadratischer-Fehler-Kriterium für Konsistenz]
+\normalfont
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und $\hat{\tau}_n$ sei ein Schätzer von $\tau$. Wenn
+$\lim_{n\to \infty} \mbox{MQF}(\hat{\tau}_n) = 0$ gilt, dann ist $\hat{\tau}_n$
+ein konsistenter Schätzer.
+\end{theorem}
+
+\footnotesize
+\underline{Beweis}
+
+Mit der Chebychev-Ungleichung gilt, dass
+\begin{equation}
+\mathbb{P}_\theta\left(|\hat{\tau}_n(\ups) - \tau(\theta)| \ge \epsilon \right) \le
+\frac{\mathbb{E}_\theta\left((\hat{\tau}_n(\ups) -  \tau(\theta))^2\right)}{\epsilon^2}
+\end{equation}
+Grenzwertbildung ergibt dann
+\begin{equation}
+\lim_{n\to \infty}\mathbb{P}_\theta\left(|\hat{\tau}_n(\ups) - \tau(\theta)| \ge \epsilon \right) \le
+\frac{1}{\epsilon^2}\lim_{n\to\infty}\mathbb{E}_\theta\left((\hat{\tau}_n(\ups) - \tau(\theta))^2\right).
+\end{equation}
+Wenn also $\lim_{n\to\infty}\mathbb{E}_\theta\left((\hat{\tau}_n(\ups) - \tau(\theta))^2\right) = 0$
+gilt, dann gilt mit $\mathbb{P}_\theta(|\hat{\tau}_n(\ups) - \tau(\theta)| \ge \epsilon)\ge 0$, dass
+\begin{equation}
+\lim_{n\to \infty}\mathbb{P}_\theta\left(|\hat{\tau}_n(\ups) - \tau(\theta)| \ge \epsilon \right) = 0.
+\end{equation}
+Also ist $\hat{\tau}_n$ ein konsistenter Schätzer.
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+\begin{theorem}[Bias-Varianz-Kriterium für Konsistenz]
+\normalfont
+\justifying
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und $\hat{\tau}_n$ sei ein Schätzer von $\tau$. Wenn
+\begin{equation}
+\lim_{n\to \infty} \mbox{B}(\hat{\tau}_n) = 0
+\mbox{ und }
+\lim_{n\to \infty} \mathbb{V}_\theta(\hat{\tau}_n) = 0
+\end{equation}
+gilt, dann ist $\hat{\tau}_n$ ein konsistenter Schätzer
+\end{theorem}
+\footnotesize
+\underline{Beweis}
+
+Wenn $n \to \infty$, dann gilt $\mbox{B}(\hat{\tau}_n) \to 0$, also auch
+$\mbox{B}(\hat{\tau}_n)^2 \to 0$. Wenn für $n \to \infty$ sowohl
+$\mbox{B}(\hat{\tau}_n)^2 \to 0$ als auch $\mathbb{V}_\theta(\hat{\tau}_n) \to 0$,
+dann gilt auch $\lim_{n\to \infty} \mbox{MQF}(\hat{\theta}_n) = 0$. Also gilt
+mit dem MQF-Kriterium, dass $\hat{\tau}_n$ konsistent ist.
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+\begin{theorem}[Konsistenz des Erwartungswertschätzers bei Normalverteilung] 
+\justifying
+\normalfont
+Es sei $\ups := \ups_1,...,\ups_n \sim N(\mu,\sigma^2)$. Dann ist $\bar{\ups}_n$
+ein konsistenter Schätzer von $\mathbb{E}(\ups_1)$.
+\end{theorem}
+\footnotesize
+\underline{Beweis}
+
+Mit der Erwartungstreue des Stichprobenmittels als Schätzer für den Erwartungswert 
+gilt zunächst
+\begin{equation}
+\lim_{n \to \infty} \mbox{B}(\bar{\ups}_n) =  0
+\end{equation}
+Weiterhin gilt mit der Varianz des Stichprobenmittels
+\begin{equation}
+\lim_{n \to \infty} \mathbb{V}_\theta(\bar{\ups}_n) = \lim_{n\to \infty} \frac{1}{n}\mathbb{V}(\ups_1) = 0.
+\end{equation}
+Mit dem Bias-Varianz-Kriterium folgt dann die Konsistenz von $\bar{\ups}_n$ als Schätzer von $\mathbb{E}(\ups_1)$
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+Simulation $\bar{\ups}_n$ bei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ mit $\mu = 1$, $\sigma^2 = 2$
+
+\footnotesize
+\setstretch{.9}
+\vspace{1mm}
+```{r}
+# Modellformulierung
+mu      = 1              							# w.a.u \mu Wert
+sigsqr  = 2              						    # w.a.u. \sigma^2 Wert
+n       = seq(1,1e3,by = 10)        				# Stichprobengroesse n
+eps     = c(0.15, 0.10, 0.05)      					# \epsilon Werte
+ne      = length(eps)              					# Anzahl \epsilon Werte
+nn      = length(n)               					# Anzahl Stichprobengroessen
+ns      = 1e3                     					# Anzahl Simulationen
+E       = array(rep(NaN,nn,ne,ns),  				# Ereignisindikatorarray
+                dim = c(nn,ne,ns))
+
+# Simulation
+for(e in seq_along(eps)){							# \epsilon Iterationen
+	for(i in seq_along(n)){ 						# n Iterationen
+    	for(s in 1:ns){							 	# Simulationsiterationen
+
+    		# Stichprobenrealisationen
+            y   = rnorm(n[i], mu, sqrt(sigsqr))
+            if(abs(mean(y) - mu) >= eps[e]){ 		# |X_bar - \mu)| \ge \epsilon
+                E[i,e,s] = 1
+            } else { 								# |X_bar - \mu)| < \epsilon
+                E[i,e,s] = 0
+            }
+        }
+    }
+}
+
+# Schaetzung von \mathbb{P}(|\hat{\tau}_n(\ups)-\tau(\theta)| \ge \epsilon)
+P_hat       = apply(E, c(1,2), mean)
+```
+
+
+# \small Asymptotische Schätzereigenschaften | Konsistenz
+\small
+Simulation $\bar{\ups}_n$ bei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ mit $\mu = 1$, $\sigma^2 = 2$
+
+```{r, eval = F, echo = F}
+# Visualisierung
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.1,                                                               # font magnification factor
+cex.main    = 1.4                                                                # title magnification factor
+)
+
+matplot(
+n,
+P_hat,
+type    = "l",
+lty     = 1,
+lwd     = 1.2,
+col     = c("gray10", "gray50", "gray90"),
+ylab    = "",
+xlab    = "n",
+xlim    = c(0,1001),
+ylim    = c(0,1),
+)
+
+legend(
+7e2,
+1,
+c(TeX("$\\epsilon$ = 0.15"),
+  TeX("$\\epsilon$ = 0.10"),
+  TeX("$\\epsilon$ = 0.05")),
+col         = c("gray10", "gray50", "gray90"),
+y.intersp   = 1.5,
+lwd         = 1.2,
+bty         = "n")
+dev.copy2pdf(file = file.path("10_Abbildungen/wtfi_10_konsistenz.pdf"), width = 6, height = 4.5)   
+```
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_konsistenz.pdf")
+```
+
+
+# \small Asymptotische Schätzereigenschaften | Asymptotische Normalität
+\small
+\begin{definition}[Asymptotische Normalität]
+\justifying
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und $\hat{\theta}_n$ sei ein Parameterschätzer für
+$\theta$. Weiterhin sei $\tilde{\theta} \sim N(\mu,\sigma^2)$ eine normalverteilte
+Zufallsvariable mit Erwartungswertparameter $\mu$ und Varianzparameter $\sigma^2$.
+Wenn $\hat{\theta}_n$ in Verteilung gegen $\tilde{\theta}$ konvergiert, dann heißt
+$\hat{\theta}_n$ \textit{asymptotisch normalverteilt} und wir schreiben
+\begin{equation}
+\hat{\theta}_n  \stackrel{a}{\sim}  N(\mu,\sigma^2).
+\end{equation}
+\end{definition}
+
+\footnotesize
+Bemerkung
+
+* Konvergenz in Verteilung heißt $\lim_{n\to \infty} P_n(\hat{\theta}_n) = P(\tilde{\theta})$.
+
+# 
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+Maximum-Likelihood Schätzer
+
+Schätzereigenschaften bei endlichen Stichproben
+
+Asymptotische Schätzereigenschaften
+
+**Eigenschaften von Maximum-Likelihood Schätzern**
+
+Selbstkontrollfragen
+\vfill
+
+# Eigenschaften von Maximum-Likelihood Schätzern
+\setstretch{1.4}
+\small
+\begin{theorem}[Eigenschaften von Maximum-Likelihood Schätzern]
+\normalfont
+\justifying
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen 
+statistischen Produktmodells $\mathcal{M}$ und $\hat{\theta}_n^{\mbox{\tiny{ML}}}$ 
+sei ein Maximum-Likelihood Schätzer für $\theta$. Dann gilt, dass 
+$\hat{\theta}_n^{\mbox{\tiny{ML}}}$
+\begin{itemize}
+\item[(1)] nicht notwendigerweise erwartungstreu, aber
+\item[(2)] konsistent,
+\item[(3)] asymptotisch normalverteilt und
+\item[(4)] asymptotisch erwartungstreu.
+\end{itemize}
+\end{theorem}
+
+Bemerkungen
+
+* Maximum-Likelihood Schätzer sind überdies asymptotisch effizient ist.
+* Für einen Beweis verweisen wir auf @held_2014, Abschnitt 3.4.
+
+
+# Eigenschaften von Maximum-Likelihood Schätzern
+\small
+Simulation der asymptotische Normalverteilung des Maximum-Likelihood Bernoulliparameterschätzers
+
+\footnotesize
+Die Varianz der asymptotischen Normalverteilung ergibt sich dabei aus der Cramér-Rao Schranke.
+
+\vspace{1mm}
+\setstretch{1}
+```{r}
+# Modellformulierung
+mu          = 0.4        					    			# w.a.u. Parameterwert
+n_all       = c(1e1,5e1,1e2)                        		# Stichprobengroesse n
+ns          = 1e4                               	    	# Anzahl der Simulationen
+mu_hat_ML   = matrix(								        # ML Schaetzerarray
+			  			rep(NaN,
+			  			length(n_all)*ns),
+			  			nrow = length(n_all))
+mu_hat_ML_r = 1e3                            			    # ML Schaetzerraumaufloesung
+mu_hat_ML_y = seq(0,1,len = mu_hat_ML_r)   		 		    # ML Schaetzerraum
+mu_hat_ML_p = matrix(rep(NaN, length(n_all)*mu_hat_ML_r),   # ML WDF Array
+			  		 nrow = length(n_all))
+
+# Stichprobengroesseniterationen
+for(i in seq_along(n_all)){
+
+    # Simulationsiterationen
+    for(s in 1:ns){
+        y               = rbinom(n_all[i],1,mu)			    # Stichprobenrealisation
+        mu_hat_ML[i,s]  = mean(y)          					# ML Schaetzer
+    }
+
+    # WDF der asymptotischen Verteilung
+    mu_hat_ML_p[i,] = dnorm(mu_hat_ML_y, mu, sqrt(mu*(1-mu)/n_all[i]))
+}
+```
+
+
+# Eigenschaften von Maximum-Likelihood Schätzern
+\small
+Simulation der asymptotische Normalverteilung des Maximum-Likelihood Bernoulliparameterschätzers
+\vspace{10mm}
+
+```{r, echo = F, eval = F}
+# Visualisierung
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+mfcol       = c(1,3),                                                            # subplot grid
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = .9,                                                                # font magnification factor
+cex.main    = 1.4)                                                                 # title magnification factor
+
+for(i in seq_along(n_all)){
+    hist(
+    mu_hat_ML[i,],
+    prob        = TRUE,
+    ylim        = c(0,10),
+    xlim        = c(0,1),
+    col         = "gray90",
+    xlab        = TeX("$\\hat{\\mu}^{ML}$"),
+    ylab        = "",
+    main        = sprintf("n = %d", n_all[i]),
+    cex         = 1.3
+    )
+    lines(
+    mu_hat_ML_x,
+    mu_hat_ML_p[i,],
+    lwd         = 2,
+    col         = "darkorange")
+    if(i == 3){
+        legend(
+        .4,
+        10,
+        c("Histogramm", TeX("$N\\left(\\hat{\\mu}^{ML}; \\, \\mu, \\, J_n^{-1}(\\mu)\\right)$")),
+        col         = c("gray90", "darkorange"),
+        y.intersp   = 1.5,
+        x.intersp   = .6,
+        lwd         = 1.2,
+        bty         = "n",
+        seg.len     = .51,
+        cex         = .9
+        )
+    }
+}
+dev.copy2pdf(file  = file.path("10_Abbildungen/wtfi_10_effizienz.pdf"), width = 12, height = 4)   # PDF Speicherung
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("10_Abbildungen/wtfi_10_effizienz.pdf")
+```
+
+#
+\large
+\vfill
+\setstretch{2.3}
+Grundbegriffe
+
+Maximum-Likelihood Schätzer
+
+Schätzereigenschaften bei endlichen Stichproben
+
+Asymptotische Schätzereigenschaften
+
+Eigenschaften von Maximum-Likelihood Schätzern
+
+**Selbstkontrollfragen**
+\vfill
+
+
+
+# Selbstkontrollfragen
+\footnotesize
+\setstretch{1.2}
+\begin{enumerate}
+\item Definieren und erläutern Sie den Begriff des Parameterpunktschätzers.
+\item Definieren Sie die Begriffe der Likelihood-Funktion und der Log-Likelihood Funktion.
+\item Definieren Sie den Begriff des Maximum-Likelihood Schätzes.
+\item Erläutern Sie das Vorgehen zur Maximum-Likelihood Schätzung für ein parametrisches Produktmodell.
+\item Geben Sie den Maximum-Likelihood Schätzer für den Parameter $\mu$ des Bernoullimodells an.
+\item Geben Sie den Maximum-Likelihood Schätzer für den Parameter $\mu$ des Normalverteilungmodels an.
+\item Geben Sie den Maximum-Likelihood Schätzer für den Parameter $\sigma^2$ des Normalverteilungmodels an.
+\item Definieren und erläutern Sie den Begriff der Erwartungstreue eines Schätzers.
+\item Definieren Sie die Begriffe der Varianz und des Standardfehlers eines Schätzers.
+\item Definieren Sie den Begriff des Mittleren quadratischen Fehlers eines Schätzers.
+\item Geben Sie das Theorem zur Zerlegung des Mittleren quadratischen Fehlers wieder.
+\item Erläutern Sie den Begriff des asymptotischen Erwartungstreue eines Schätzers
+\item Erläutern Sie den Begriff der Konsistenz eines Schätzers.
+\item Erläutern Sie den Begriff der asymptotischen Normalität eines Schätzers.
+\item Nennen Sie vier Eigenschaften eines Maximum-Likelihood Schätzers.
+\end{enumerate}
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{Appendix | Cramér-Rao-Ungleichung}
+\vfill
+
+# Appendix | Cramér-Rao-Ungleichung
+Vorbemerkungen zur Cramér-Rao-Ungleichung
+
+\small
+Je kleiner die Varianz eines Schätzers, desto besser. Weil aber
+Stichproben streuen, kann die Varianz von erwartungstreuen Schätzern nicht
+beliebig klein sein.
+\vspace{2mm}
+
+Die **Cramér-Rao-Ungleichung** gibt eine untere Schranke für die Varianz
+erwartungstreuer Schätzer an. Ein erwartungstreuer Schätzer mit Varianz gleich der in
+der Cramér-Rao-Ungleichung gegebenen unteren Schranke hat die kleinstmögliche
+Varianz aller erwartungstreuer Schätzer und ist in diesem Sinne "optimal".
+\vspace{2mm}
+
+Die Cramér-Rao-Ungleichung basiert auf dem Begriff der **Fisher-Information**.
+Wir diskutieren deshalb zunächst die Begriffe der **Scorefunktion** und der
+darauf basierenden **Fisher-Information**.
+\vspace{2mm}
+
+Die vorgestellten Resultate gelten im Allgemeinen nur unter eine Reihe von Annahmen,
+den sogenannten **Fisher-Regularitätsbedingungen**:
+
+\footnotesize
+
+* $\Theta$ ist ein offenes Intervall, d.h.  $\theta$ liegt nicht an einer Parameterraumgrenze.
+* Der Träger von $p_\theta$ hängt nicht von $\theta$ ab.
+* WMFs oder WDF mit unterschiedlichem $\theta \in \Theta$ sind unterschiedlich.
+* Die Likelihood-Funktion ist zweimal stetig differenzierbar.
+* Integration und Differentiation dürfen vertauscht werden.
+
+# Appendix | Cramér-Rao-Ungleichung
+\small
+\begin{definition}[Scorefunktion und Fisher-Information]
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen
+statistischen Produktmodells $\mathcal{M}$ mit eindimensionalem Parameter
+$\theta$ und $\ell_n$ sei die zugehörige Log-Likelihood-Funktion.
+\begin{itemize}
+\justifying
+\item Die erste Ableitung der Log-Likelihood-Funktion $\ell_n$ wird
+\textit{Scorefunktion der  Stichprobe} genannt und mit
+\begin{equation}
+S_n(\theta) := \frac{d}{d\theta}\ell_n(\theta).
+\end{equation}
+bezeichnet. Für $n = 1$ schreiben wir $S(\theta) := S_1(\theta)$ und nennen
+$S(\theta)$  \textit{Scorefunktion einer Zufallsvariable}.
+\item Die negative zweite Ableitung der Log-Likelihood-Funktion $\ell_n$ wird
+\textit{Fisher-Information der Stichprobe} genannt und mit
+\begin{equation}
+I_n(\theta) := -\frac{d^2}{d\theta^2}\ell_n(\theta).
+\end{equation}
+bezeichnet. Für $n  = 1$ schreiben wir $I(\theta) := I_1(\theta)$ und
+nennen $I(\theta)$ die \textit{Fisher-Information einer Zufallsvariable}.
+\end{itemize}
+\end{definition}
+
+# Appendix | Cramér-Rao-Ungleichung
+\small
+\begin{definition}[Erwartete und beobachtete Fisher-Information]
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ mit eindimensionalem Parameter $\theta$, $\ell_n$
+sei die zugehörige Log-Likelihood-Funktion und $\hat{\theta}_n^{\mbox{\tiny ML}}$
+sei ein ML-Schätzer von $\theta$.
+\begin{itemize}
+\justifying
+\item Die \textit{beobachtete Fisher-Information der Stichprobe} ist
+definiert als
+\begin{equation}
+I_n\left(\hat{\theta}^{\mbox{\tiny ML}}_n\right)
+:= -\frac{d^2}{d\theta^2}\ell_n\left(\hat{\theta}^{\mbox{\tiny ML}}_n\right),
+\end{equation}
+d.h. die beobachtete Fisher-Information der Stichprobe ist die
+Fisher-Information an der Stelle des ML-Schätzers $\hat{\theta}^{\mbox{\tiny ML}}_n$.
+\item Die \textit{erwartete Fisher-Information der Stichprobe} ist
+definiert als
+\begin{equation}
+J_n(\theta) := \mathbb{E}_\theta(I_n(\theta)).
+\end{equation}
+Für $n = 1$ schreiben wir $J(\theta) := J_1(\theta)$ und nennen $J(\theta)$ die
+\textit{erwartete Fisher-Information einer Zufallsvariable.}
+\end{itemize}
+\end{definition}
+
+# Appendix | Cramér-Rao-Ungleichung
+\small
+\begin{theorem}[Additivität der Fisher-Information]
+\normalfont
+\justifying
+$\ups := \ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ mit eindimensionalem Parameter $\theta$, $\ell_n$ sei
+die zugehörige Log-Likelihood-Funktion, und $I_n(\theta)$ und $J_n(\theta)$ seien
+die Fisher-Information und die erwartete Fisher-Information der Stichprobe, respektive.
+Dann gilt
+\begin{equation}
+I_n(\theta) = nI_1(\theta) \mbox{ und } J_n(\theta) = nJ_1(\theta).
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Um $I_n(\theta)$ oder $J_n(\theta)$ zu berechnen, genügt es also $I(\theta)$ oder $J(\theta)$ zu berechnen.
+* Die Additivität der beobachteten Fisher-Information ist in der Additivität von $I_n(\theta)$ implizit.
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+
+Wir zeigen das Resultat für die erwartete Fisher-Information, das Resultat für
+die Fisher-Information ist dann implizit. Per definitionem und mit der Linearität
+von Ableitungen und Erwartungswerte gilt
+
+\setstretch{1}
+\tiny
+\begin{align}
+\begin{split}
+J_n(\theta)
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \ell_n(\theta)\right) \\
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \ln \left(\prod_{i=1}^n p_\theta(\ups_i)\right)\right) \\
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \sum_{i=1}^n \ln p_\theta(\ups_i)\right) \\
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \sum_{i=1}^n \ln p_\theta(y_1)\right) \\
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \ell_1(\theta)n\right) \\
+& =  n \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2}\ell_1(\theta))\right) \\
+& =  n J_n(\theta).
+\end{split}
+\end{align}
+
+# Appendix | Cramér-Rao-Ungleichung
+\small
+\begin{theorem}[Erwartungswert und Varianz der Scorefunktion]
+\normalfont
+\justifying
+Der Erwartungswert der Scorefunktion einer Zufallsvariable ist
+\begin{equation}
+\mathbb{E}_\theta(S(\theta)) = 0
+\end{equation}
+und die Varianz der Scorefunktion einer Zufallsvariable ist
+\begin{equation}
+\mathbb{V}_\theta(S(\theta)) = J(\theta).
+\end{equation}
+\end{theorem}
+
+\footnotesize
+Bemerkungen
+
+* Der Erwartungswert der Ableitung der Log-Likelihood-Funktion ist Null.
+* Die erwartete Fisher-Information ist gleich der Varianz der Scorefunktion.
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+
+Wir betrachten nur den Fall, dass $p_\theta$ eine WDF ist und zeigen zunächst, dass $\mathbb{E}_\theta(S(\theta)) = 0$ ist:
+
+\setstretch{1}
+\tiny
+\begin{align}
+\begin{split}
+\mathbb{E}_\theta(S(\theta))
+& = \int S(\theta)p_\theta(x) \,dx \\
+& = \int \frac{d}{d\theta}\ell(\theta)p_\theta(x) \,dx \\
+& = \int \frac{d}{d\theta} \ln L(\theta) p_\theta(x) \,dx \\
+& = \int \frac{1}{L(\theta)}\frac{d}{d\theta}L(\theta) p_\theta(x) \,dx  \\
+& = \int \frac{1}{p_\theta(x)}\frac{d}{d\theta}L(\theta) p_\theta(x) \,dx  \\
+& = \int \frac{d}{d\theta}L(\theta) \,dx  \\
+& = \frac{d}{d\theta} \int p_\theta(x)\,dx
+= \frac{d}{d\theta} 1
+= 0.
+\end{split}
+\end{align}
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+Mit der Definition der Varianz folgt dann sofort, dass $\mathbb{V}_\theta(S(\theta)) = \mathbb{E}_\theta(S(\theta)^2)$ ist.
+Als nächstes zeigen wir, dass $J(\theta) =  \mathbb{E}_\theta(S(\theta)^2)$
+und deshalb $\mathbb{V}_\theta(S(\theta)) = J(\theta)$ ist:
+\setstretch{1}
+\tiny
+\begin{align}
+\begin{split}
+J(\theta)
+& = \mathbb{E}_\theta\left(-\frac{d^2}{d\theta^2} \ln L(\theta)\right) \\
+& = \mathbb{E}_\theta\left(-\frac{d}{d\theta} \frac{\frac{d}{d\theta}L(\theta)}{L(\theta)}\right) \\
+& = \mathbb{E}_\theta\left(-\frac{\frac{d^2}{d\theta^2} L(\theta) L(\theta) - \frac{d}{d\theta}L(\theta)\frac{d}{d\theta}L(\theta)}{L(\theta)L(\theta)}\right) \\
+& = - \mathbb{E}_\theta\left(\frac{\frac{d^2}{d\theta^2} L(\theta)}{L(\theta)}\right) +
+\mathbb{E}_\theta\left(\frac{\left(\frac{d}{d\theta}L(\theta)\right)^2}{(L(\theta))^2}\right) \\
+& = - \int \frac{\frac{d^2}{d\theta^2} L(\theta)}{L(\theta)} p_\theta(x) \,dx +
+      \int \frac{\left(\frac{d}{d\theta}L(\theta)\right)^2}{(L(\theta))^2} p_\theta(x) \,dx \\
+& = - \frac{d^2}{d\theta^2} \int p_\theta(x) \,dx +
+      \int \left(\frac{1}{L(\theta)}\frac{d}{d\theta}L(\theta)\right)^2 p_\theta(x) \,dx \\
+& = - \frac{d^2}{d\theta^2} 1 +
+\int \left(\frac{d}{d\theta} \ln L(\theta) \right)^2 p_\theta(x) \,dx
+= \mathbb{E}_\theta\left(S(\theta)^2\right).
+\end{split}
+\end{align}
+
+# Appendix | Cramér-Rao-Ungleichung
+
+\footnotesize
+\begin{theorem}[Fisher-Information bei Bernoulli-Verteilung]
+\normalfont
+\justifying
+Es sei $\ups := \ups_1,...,\ups_n \sim \mbox{Bern}(\mu)$ mit $\mu \in ]0,1[$. Dann gilt:
+\vspace{1mm}
+\begin{itemize}
+\item Die Scorefunktion der Stichprobe ist
+\begin{equation}
+S_n : ]0,1[ \to \mathbb{R}, \mu \mapsto S_n(\mu) :=
+\frac{1}{\mu}\sum_{i=1}^n y_i  -  \frac{1}{1-\mu} \left(n - \sum_{i=1}^n y_i \right).
+\end{equation}
+\item Die Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n : ]0,1[ \to \mathbb{R}, \mu \mapsto I_n(\mu) :=
+I_n(\mu) =  \frac{ny}{\mu^2} + \frac{n(1 - y)}{1-\mu}^{2}.
+\end{equation}
+\item Die beobachtete Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n : ]0,1[ \to \mathbb{R}, \hat{\mu}_{n}^{\mbox{\tiny ML}} \mapsto
+I_n\left(\hat{\mu}_{n}^{\mbox{\tiny ML}}\right)
+:= \frac{ny}{\hat{\mu}_{n}^{{\mbox{\tiny ML}}^2}} + \frac{n(1 - y)}{1-\hat{\mu}_{n}^{\mbox{\tiny ML}}}.
+\end{equation}
+\item Die erwartete Fisher-Information der Stichprobe ist
+\begin{equation}
+J_n : ]0,1[ \to \mathbb{R}, \mu \mapsto J_n(\mu)
+:= \frac{n}{\mu(1-\mu)}.
+\end{equation}
+\end{itemize}
+\end{theorem}
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+
+Die Scorefunktion wurde bereits im Kontext der Maximum-Likelihood-Schätzung von
+$\mu$ hergeleitet. Wir betrachten die Fisher-Information einer einzelnen Bernoulli Zufallsvariable $\ups$:
+\begin{align}
+\begin{split}
+I(\mu)
+& := -\frac{d^2}{d\mu^2} \ell_1(\mu) 															\\
+&  = -\frac{d^2}{d\mu^2} \ln p_\mu(y) 														\\
+&  = -\frac{d^2}{d\mu^2}\left(y \ln \mu + (1 - y) \ln (1-\mu)\right)							\\
+&  = -\frac{d}{d\mu}\left(\frac{d}{d\mu}\left(y \ln \mu + (1 - y) \ln (1-\mu)\right)\right)	\\
+&  = -\frac{d}{d\mu}\left(\frac{y}{\mu} + \frac{(1 - y)}{1-\mu}\right) 						\\
+&  = -\left(-\frac{y}{\mu^2} - \frac{(1 - y)}{1-\mu}^{2}\right) 								\\
+&  =  \frac{y}{\mu^2} + \frac{(1 - y)}{1-\mu}^{2}. 											\\
+\end{split}
+\end{align}
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+Damit ergibt sich die erwartete Fisher-Information der Zufallsvariable $\ups$ als
+\begin{align}
+\begin{split}
+J(\mu)
+& = \mathbb{E}_\mu(I(\mu)) 																	\\
+& = \mathbb{E}_\mu \left(\frac{\ups}{\mu^2} + \frac{(1 - \ups)}{1-\mu}^{2} \right) 				\\
+& = \frac{\mathbb{E}_\mu(\ups)}{\mu^2} + \frac{(1 - \mathbb{E}_\mu(\ups))}{1-\mu}^{2} 			\\
+& = \frac{\mu}{\mu^2} + \frac{(1 - \mu)}{1-\mu}^{2} 										\\
+& = \frac{1}{\mu(1-\mu)}. 																	\\
+\end{split}
+\end{align}
+
+Mit der Additivitätseigenschaft der Fisher-Information und der Definition der beobachteten Fisher-Information ergibt sich dann sofort
+\begin{equation}
+I_n(\mu)
+=  \frac{ny}{\mu^2} + \frac{n(1 - y)}{1-\mu}^{2}
+\mbox{ und }
+J_n(\mu) = \frac{n}{\mu(1-\mu)}.
+\end{equation}
+
+# Appendix | Cramér-Rao-Ungleichung
+
+\footnotesize
+\begin{theorem}[Fisher-Information bei Normalverteilung I]
+\justifying
+\normalfont
+Es sei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ und $\sigma^2$ als bekannt vorausgesetzt. Dann gilt:
+\vspace{1mm}
+\begin{itemize}
+\item Die Scorefunktion der Stichprobe ist
+\begin{equation}
+S_n : \mathbb{R} \to \mathbb{R}, \mu \mapsto S_n(\mu) := \frac{1}{\sigma^2}\sum_{i=1}^n(y_i-\mu).
+\end{equation}
+\item Die Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n : \mathbb{R} \to \mathbb{R}, \mu \mapsto I_n(\mu) := \frac{n}{\sigma^2}.
+\end{equation}
+\item Die beobachtete Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n(\hat{\mu}^{\mbox{\tiny ML}}_n) = \frac{n}{\sigma^2}.
+\end{equation}
+\item Die erwartete Fisher-Information der Stichprobe ist
+\begin{equation}
+J_n : \mathbb{R} \to \mathbb{R}, \mu \mapsto J_n(\mu) := \frac{n}{\sigma^2}.
+\end{equation}
+\end{itemize}
+\end{theorem}
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+
+Wir erinnern uns, dass die Log-Likelihood-Funktion der Stichprobe $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ bei bekanntem Varianzparameter $\sigma^2$ durch
+\begin{equation}
+\ell_n : \mathbb{R} \to \mathbb{R},
+\mu \mapsto \ell_n(\mu)
+:= -\frac{n}{2} \ln 2\pi - \frac{n}{2} \ln \sigma^2  - \frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2.
+\end{equation}
+gegeben ist. Damit ergibt sich die Scorefunktion als
+\begin{align}
+\begin{split}
+s_n(\mu)
+&  = \frac{d}{d\mu}\ell_n(\mu)
+= \frac{1}{\sigma^2}\sum_{i=1}^n(y_i-\mu)
+\end{split}
+\end{align}
+Die Fisher-Information der Stichprobe ergibt sich als
+\begin{align}
+\begin{split}
+I_n(\mu)
+ = -\frac{d^2}{d\mu^2}\ell_n(\mu)
+= -\frac{d}{d\mu}s_n(\mu)
+= -\frac{1}{\sigma^2}\frac{d}{d\mu}\left(\sum_{i=1}^n y_i -  n\mu \right)
+= \frac{n}{\sigma^2}.
+\end{split}
+\end{align}
+Die beobachtete Fisher-Information ist die Fisher-Information an der Stelle des Maximum-Likelihood Schätzes $\hat{\mu}^{\mbox{\tiny ML}}_n$. Die erwartete Fisher-Information schließlich ergibt sich als
+\begin{align}
+\begin{split}
+J_n(\mu)
+= \mathbb{E}_\mu(I_n(\mu))
+= \mathbb{E}_\mu\left(\frac{n}{\sigma^2}\right)
+= \frac{n}{\sigma^2}.
+\end{split}
+\end{align}
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\begin{theorem}[Fisher-Information bei Normalverteilung II]
+\justifying
+\normalfont
+Es sei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ und $\mu$ als bekannt vorausgesetzt. Dann gilt:
+\begin{itemize}
+\item die Scorefunktion ist
+\begin{equation}
+S_n : \mathbb{R}_{>0} \to \mathbb{R}, \sigma^2 \mapsto s_n(\sigma^2) :=
+- \frac{n}{2 \sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^n(y_i-\mu)^2
+\end{equation}
+\item die Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n : \mathbb{R}_{>0} \to \mathbb{R}, \sigma^2 \mapsto I_n(\sigma^2) :=
+\frac{1}{\sigma^6}\sum_{i=1}^n (y_i - \mu)^2 - \frac{n}{2\sigma^4}
+\end{equation}
+\item die beobachtete Fisher-Information der Stichprobe ist
+\begin{equation}
+I_n(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n) =  \frac{n}{2\hat{\sigma}_{\mbox{\tiny ML}}^4 }
+\end{equation}
+\item die erwartete Fisher-Information der Stichprobe ist
+\begin{equation}
+J_n : \mathbb{R}_{>0} \to \mathbb{R}, \sigma^2 \mapsto J_n(\sigma^2) := \frac{n}{2\sigma^4}.
+\end{equation}
+\end{itemize}
+\end{theorem}
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+
+Wir erinnern uns, dass die Log-Likelihood-Funktion der Stichprobe $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ bei bekanntem Erwartungswert-Parameter $\mu$ durch
+\begin{equation}
+\ell_n : \mathbb{R}_{>0} \to \mathbb{R},
+\sigma^2 \mapsto \ell_n(\sigma^2)
+:= -\frac{n}{2} \ln 2\pi - \frac{n}{2} \ln \sigma^2  - \frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\mu)^2.
+\end{equation}
+gegeben ist. Die Scorefunktion ergibt sich also als
+\begin{align}
+\begin{split}
+s_n(\sigma^2)
+ = \frac{d}{d\sigma^2}\ell_n(\sigma^2)
+ = - \frac{n}{2 \sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^n(y_i-\mu)^2.
+\end{split}
+\end{align}
+Die Fisher-Information der Stichprobe $\ups := \ups_1,...,\ups_n$ ergibt sich als
+\begin{align}
+\begin{split}
+I_n(\sigma^2)
+= -\frac{d}{d\sigma^2}s_n(\sigma^2)
+& = - \left(\frac{n}{2\sigma^4} - \frac{1}{\sigma^6}\sum_{i=1}^n (y_i - \mu)^2\right) \\
+& = \frac{1}{\sigma^6}\sum_{i=1}^n (y_i - \mu)^2 - \frac{n}{2\sigma^4}.
+\end{split}
+\end{align}
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+Die beobachtete Fisher-Information ist die Fisher-Information an der Stelle des
+Maximum-Likelihood Schätzes $\hat{\sigma}^{2^{\mbox{\tiny ML}}}_n$.
+\begin{align}
+\begin{split}
+I_n(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n)
+& =   \frac{\sum_{i=1}^n (y_i - \mu)^2}{\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^3}
+    - \frac{n}{2\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2} 									\\
+& =   \frac{\sum_{i=1}^n (y_i - \mu)^2}{\frac{1}{n^3}\left(\sum_{i=1}^n (y_i - \mu)^2 \right)^3}
+    - \frac{n}{2\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2}									\\
+& =   \frac{1}{\frac{1}{n^3}\left(\sum_{i=1}^n (y_i - \mu)^2 \right)^2}
+	- \frac{n}{2\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2} 									\\
+& =   \frac{n}{\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2}
+    - \frac{n}{2\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2}   								\\
+& =  \frac{n}{2\left(\hat{\sigma}^{2\,\mbox{\tiny ML}}_n \right)^2}   									\\
+& =  \frac{n}{2\hat{\sigma}^{4\,\mbox{\tiny ML}}_n}.
+\end{split}
+\end{align}
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis (fortgeführt)}
+
+\footnotesize
+Die erwartete Fisher-Information ergibt sich als
+\begin{align}
+\begin{split}
+J_n(\sigma^2)
+& = \mathbb{E}_{\sigma^2}(I_n(\sigma^2))	\\
+& = \mathbb{E}_{\sigma^2}\left(\frac{1}{\sigma^6}\sum_{i=1}^n (y_i - \mu)^2
+  - \frac{n}{2\sigma^4}\right)	\\
+& = \frac{1}{\sigma^6}\sum_{i=1}^n \mathbb{E}_{\sigma^2}\left((y_i - \mu)^2 \right)
+  - \frac{n}{2\sigma^4}	\\
+& = \frac{1}{\sigma^6}\sum_{i=1}^n \sigma^2 - \frac{n}{2\sigma^4}	\\
+& = \frac{n\sigma^2}{\sigma^6} - \frac{n}{2\sigma^4}	\\
+& = \frac{n}{\sigma^4} - \frac{n}{2\sigma^4}	\\
+& = \frac{n}{2\sigma^4}. 	\\
+\end{split}
+\end{align}
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\small
+\begin{theorem}[Cramér-Rao-Ungleichung]
+\normalfont
+\justifying
+$\mathcal{M}$ sei ein parametrisches statistisches Model mit WMF oder
+WDF $p_\theta$ und $\hat{\tau}_n$ sei ein erwartungstreuer Schätzer von $\tau(\theta)$.
+Dann gilt
+\begin{equation}
+\mathbb{V}_\theta(\hat{\tau}_n) \ge \frac{\left(\frac{d}{d\theta}\tau(\theta)\right)^2}{J(\theta)}.
+\end{equation}
+Im Speziellen gilt für $\tau(\theta) := \theta$ und somit $\hat{\tau}_n = \hat{\theta}_n$
+und $\left(\frac{d}{d\theta}\tau(\theta)\right)^2 = 1$, dass
+\begin{equation}
+\mathbb{V}_\theta(\hat{\theta}_n) \ge \frac{1}{J(\theta)}.
+\end{equation}
+Die rechte Seite obiger Ungleichungen heißt \textit{Cramér-Rao-Schranke}.
+\end{theorem}
+\footnotesize
+Bemerkungen
+
+* Die Varianz eines erwartungstreuen Schätzers $\hat{\theta}$ von $\theta$ ist größer oder gleich der reziproken erwarteten Fisher-Information $J(\theta)$.
+* Wenn $\mathbb{V}_\theta(\hat{\theta}_n) = \frac{1}{J(\theta)}$ ist, ist die Varianz des Schätzers minimal.
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\footnotesize
+\underline{Beweis}
+\vspace{.1cm}
+
+Wir halten zunächst fest, dass für die Zufallsvariablen $S(\theta)$ und $\hat{\tau}_n$
+mit der Korrelationsungleichung und $\mathbb{V}_\theta(S(\theta)) = J(\theta)$ gilt, dass
+\begin{align}
+\begin{split}
+\frac{\mathbb{C}_\theta(S_n(\theta), \hat{\tau}_n)^2}{\mathbb{V}_\theta(S(\theta))\mathbb{V}_\theta(\hat{\tau}_n)}
+& \le 1 \\
+\Leftrightarrow \mathbb{V}_\theta(\hat{\tau}_n)
+& \ge \frac{\mathbb{C}_\theta(S(\theta),\hat{\tau}_n)^2}{J(\theta)}.
+\end{split}
+\end{align}
+Mit dem Translationstheorem für Kovarianzen, $\mathbb{E}_\theta(S(\theta))= 0$ und der Erwartungstreue von  $\hat{\tau}_n$ ergibt sich dann
+\begin{equation}
+\mathbb{C}_\theta(S(\theta),\hat{\tau}_n) = \frac{d}{d\theta}\tau(\theta)
+\end{equation}
+wie unten gezeigt wird. Also gilt
+\begin{equation}
+\mathbb{V}_\theta(\hat{\tau}_n) \ge \frac{\left(\frac{d}{d\theta}\tau(\theta) \right)^2}{J(\theta)}.
+\end{equation}
+Es bleibt also zu zeigen, dass $\mathbb{C}_\theta(S(\theta),\hat{\tau}_n) = \frac{d}{d\theta}\tau(\theta)$.
+Dies ergibt aber ergibt sich mit
+
+
+# Appendix | Cramér-Rao-Ungleichung
+\begin{tiny}
+\begin{align}
+\begin{split}
+\mathbb{C}_\theta(S(\theta),\hat{\tau}_n)
+  = \mathbb{E}_\theta(S(\theta)\hat{\tau}_n)
+   - \mathbb{E}_\theta(S(\theta))\mathbb{E}_\theta(\hat{\tau}_n)
+&  = \mathbb{E}_\theta(S(\theta)\hat{\tau}_n) \\
+& = \int S(\theta)\,\hat{\tau}_n\,p_\theta(x) \,dx \\
+& = \int \frac{d}{d\theta} \ln L(\theta)\,\hat{\tau}_n\,p_\theta(x) \,dx \\
+& = \int \frac{\frac{d}{d\theta} L(\theta)}{L(\theta)}\,\hat{\tau}_n\,p_\theta(x) \,dx \\
+& = \int \frac{\frac{d}{d\theta} L(\theta)}{p_\theta(x)}\,\hat{\tau}_n\,p_\theta(x) \,dx \\
+& = \int \frac{d}{d\theta} L(\theta)\, \hat{\tau}_n  \,dx \\
+& = \frac{d}{d\theta} \int L(\theta)\, \hat{\tau}_n  \,dx \\
+& = \frac{d}{d\theta} \int \hat{\tau}_n\, p_\theta(x) \,dx
+  = \frac{d}{d\theta} \mathbb{E}_\theta(\hat{\tau}_n)
+  = \frac{d}{d\theta} \tau(\theta).
+\end{split}
+\end{align}
+\end{tiny}
+
+#  {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{Appendix | Asymptotische Effizienz}
+\vfill
+
+# \small Appendix | Asymptotische Effizienz
+\small
+\begin{definition}[Asymptotische Effizienz]
+\justifying
+$\ups_1,...,\ups_n \sim p_\theta$ sei die Stichprobe eines parametrischen statistischen
+Produktmodells $\mathcal{M}$ und $\hat{\theta}_n$ sei ein Parameterschätzer für
+$\theta$. Weiterhin sei $J_n(\theta)$ die erwartete Fisher-Information der
+Stichprobe $\ups := \ups_1,...,\ups_n$. Wenn gilt, dass
+\begin{equation}
+\hat{\theta}_n \stackrel{a}{\sim} N\left(\theta, J_n(\theta)^{-1}\right),
+\end{equation}
+dann heißt $\hat{\theta}_n$ \textit{asymptotisch effizient}.
+\end{definition}
+\footnotesize
+Bemerkungen
+
+* Asymptotische Effizienz impliziert asymptotische Normalität.
+* Asymptotische Effizienz impliziert asymptotische Erwartungstreue.
+* Die Varianz der asymptotischen Verteilung heißt \textit{asymptotische Varianz}.
+* Die Varianz eines asymptotisch effizienten Schätzers ist gleich der Cramér-Rao-Schranke.
+* Der Begriff der \textit{Effizienz} wird in der Literatur nicht einheitlich verwendet.
+
+
+# References
+\footnotesize
