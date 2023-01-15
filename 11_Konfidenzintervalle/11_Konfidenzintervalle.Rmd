@@ -1,0 +1,1411 @@
+---
+fontsize: 8pt
+bibliography: 11_Referenzen.bib
+citation_package: natbib
+output:
+  beamer_presentation:
+    keep_tex: true
+    includes:
+      in_header: 11_header.tex
+---
+
+
+```{r, include = F}
+source("11_R_common.R")
+fdir        = file.path(getwd(), "11_Abbildungen")                               
+```
+
+#  {.plain}
+\center
+```{r, echo = FALSE, out.width = "20%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_otto.png")
+```
+
+\vspace{2mm}
+
+\Large
+Wahrscheinlichkeitstheorie und Frequentistische Inferenz
+\vspace{6mm}
+
+\large
+BSc Psychologie WiSe 2022/23
+
+\vspace{6mm}
+\normalsize
+Prof. Dr. Dirk Ostwald
+
+# {.plain}
+\vfill
+\center
+\huge
+\textcolor{black}{(11) Konfidenzintervalle}
+\vfill
+
+#
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_frequentistische_inferenz.pdf")
+```
+
+#
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_frequentistische_inferenz_konfidenzintervalle.pdf")
+```
+
+#
+Standardannahmen Frequentistischer Inferenz
+
+\footnotesize
+$\mathcal{M}$ sei ein statistisches Modell mit Stichprobe $\ups_1,...,\ups_n  \sim p_\theta$.
+**Es wird angenommen, dass ein konkret vorliegender Datensatz $y = (y_1,...,y_n) \in \mathbb{R}^n$
+eine der möglichen Realisierungen von $\ups_1,...,\ups_n \sim p_\theta$ ist.**
+Aus Frequentistischer Sicht kann man eine Studie unter gleichen Umständen unendlich
+oft wiederholen und zu jedem Datensatz Schätzer oder Statistiken auswerten, z.B. das Stichprobenmittel:
+
+\footnotesize
+\begin{itemize}
+\item[] Datensatz (1) : $y^{(1)} = \left(y_1^{(1)}, y_2^{(1)}, ...,y_n^{(1)}\right)$
+						mit $\bar{y}_n^{(1)} = \frac{1}{n}\sum_{i=1}^n y_i^{(1)}$
+\item[] Datensatz (2) : $y^{(2)} = \left(y_1^{(2)}, y_2^{(2)}, ...,y_n^{(2)}\right)$
+                        mit $\bar{y}_n^{(2)} = \frac{1}{n}\sum_{i=1}^n y_i^{(2)}$
+\item[] Datensatz (3) : $y^{(3)} = \left(y_1^{(3)}, y_2^{(3)}, ...,y_n^{(3)}\right)$
+                        mit $\bar{y}_n^{(3)} = \frac{1}{n}\sum_{i=1}^n y_i^{(3)}$
+\item[] Datensatz (4) : $y^{(4)} = \left(y_1^{(4)}, y_2^{(4)}, ...,y_n^{(4)}\right)$
+                        mit $\bar{y}_n^{(4)} = \frac{1}{n}\sum_{i=1}^n y_i^{(4)}$
+\item[] Datensatz (5) : $y^{(5)} = ...$
+\end{itemize}
+
+Um die Qualität statistischer Methoden zu beurteilen betrachtet die Frequentistische
+Statistik deshalb die Wahrscheinlichkeitsverteilungen von Schätzern und Statistiken
+unter Annahme von $\ups_1,...,\ups_n \sim p_\theta$. Was zum Beispiel
+ist die Verteilung der $\bar{y}_n^{(1)}$, $\bar{y}_n^{(2)}$, $\bar{y}_n^{(3)}$, $\bar{y}_n^{(4)}$, ...
+also die Verteilung der Zufallsvariable $\bar{\ups}_n$?
+
+Wenn eine statistische Methode im Sinne der Frequentistischen Standardannahmen "gut" ist, dann heißt das
+also, dass sie bei häufiger Anwendung "im Mittel gut" ist. Im Einzelfall, also
+im Normalfall nur eines vorliegenden Datensatzes, kann sie auch "schlecht" sein.
+
+#
+\setstretch{2.7}
+\large
+Definition
+
+Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+
+Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+Anwendungsbeispiel
+
+Selbstkontrollfragen
+
+#
+\setstretch{2.7}
+\large
+**Definition**
+
+Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+
+Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+Anwendungsbeispiel
+
+Selbstkontrollfragen
+
+# Definition
+\small
+\begin{definition}[$\delta$-Konfidenzintervall]
+\justifying
+Es sei $\ups = \ups_1,...,\ups_n \sim p_\theta$ eine Stichprobe, $\delta \in \,]0,1[$,
+und $G_u(\ups)$ und $G_o(\ups)$ seien zwei Statistiken. Dann ist ein
+$\delta$-\textit{Konfidenzintervall} ein Intervall der Form $\kappa_n := [G_u, G_o]$, so dass
+\begin{equation}
+\mathbb{P}_\theta\left(\kappa_n \ni \theta\right) =
+\mathbb{P}_\theta\left(G_u(\ups) \le \theta \le G_o(\ups) \right) =
+\delta \mbox{ für alle } \theta \in \Theta \mbox{ gilt}.
+\end{equation}
+$\delta$ heißt das \textit{Konfidenzniveau} oder die \textit{Überdeckungswahrscheinlichkeit}
+des Konfidenzintervalls. Die Statistiken $G_u(\ups)$ und $G_o(\ups)$ sind die unteren
+und oberen Grenzen des Konfidenzintervalls.
+\end{definition}
+
+\footnotesize
+Bemerkungen
+
+* $\theta$ ist fest, nicht zufällig, und unbekannt.
+* $\kappa_n$ ist ein zufälliges Intervall, weil $G_u(\ups)$ und $G_o(\ups)$ Zufallsvariablen sind.
+* $\kappa_n \ni \theta$ bedeutet $\theta \in \kappa_n$, aber $\kappa_n$ ist zufällig und steht deshalb vorn (cf. $\mathbb{P}(\xi = x)$).
+* Ein $\delta$-Konfidenzintervall überdeckt den wahren Wert $\theta$ mit Wahrscheinlichkeit $\delta$.
+* Oft wird $\delta = 0.95$ gewählt, also \textit{$95\%$-Konfidenzintervalle} betrachtet.
+
+# Definition
+Zwei Interpretationen von $\delta$-Konfidenzintervallen
+
+\small
+(1) \justifying  Wird ein Zufallsvorgang unter gleichen Umständen häufig wiederholt, so überdeckt
+das zugehörige $\delta$-Konfidenzintervall den wahren, aber unbekannten Parameterwert
+im langfristigen Mittel in $\delta\cdot 100 \%$ der Fälle. Technischer ausgedrückt, für unabhängig und identisch realisierte
+Stichproben einer Verteilung mit wahrem, aber unbekannten, Parameter $\theta$ überdeckt
+im langfristigen Mittel ein entsprechendes $\delta$-Konfidenzintervall $\theta$ in $\delta\cdot 100 \%$ aller Fälle.
+
+(2) Gegeben sei eine Menge von Zufallsvorgängen mit wahren, aber unbekannten,
+Parametern $\theta_1,\theta_2,...$ und realisierte $\delta$-Konfidenzintervalle für
+eben jene Menge von wahren, aber unbekannten Parametern $\theta_1,\theta_2,...$
+Dann überdecken im langfristigen Mittel $\delta\cdot 100 \%$ der Konfidenzintervalle
+den wahren, aber unbekannten, Wert $\theta_i$ für $i = 1,2,...$. Technischer ausgedrückt,
+für unabhängig realisierte Stichproben von Verteilungen mit wahren, aber unbekannten, Parametern
+$\theta_1, \theta_2,...$ überdecken im langfristigen Mittel entsprechende $\delta$-Konfidenzintervalle
+$\theta_i$ für $i = 1,2,...$ in $\delta\cdot 100 \%$ aller Fälle.
+
+Wir demonstrieren im Folgenden beide Interpretationen mithilfe von Simulationen.
+
+# Definition
+\setstretch{1.6}
+
+Allgemeine Konstruktion von Konfidenzintervallen
+
+(1) Definition des statistischen Modells
+(2) Definition der Konfidenzintervallstatistik
+(3) Analyse der Verteilung der Konfidenzintervallstatistik
+(4) Etablierung der Konfidenzbedingung
+(5) Definition des Konfidenzintervalls
+
+\normalsize
+Beispiele
+
+(1) Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+(2) Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+#
+\setstretch{2.7}
+\large
+Definition
+
+\normalsize
+**Konfidenzintervall für den Erwartungswertparameter der Normalverteilung**
+
+\large
+Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+Anwendungsbeispiel
+
+Selbstkontrollfragen
+
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent (1) Definition des statistischen Modells
+
+\small
+Es sei $\ups := \ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ eine Stichprobe mit 
+unbekannten Parametern $\mu$ und $\sigma^2 > 0$. Wir entwickeln ein 
+$\delta$-Konfidenzintervall für den Erwartungswertparameter $\mu$.
+\vspace{2mm}
+
+\normalsize
+\noindent (2) Definition der Statistik
+\small
+
+Wir betrachten die $T$-Konfidenzintervallstatistik
+\begin{equation}
+T := \frac{\sqrt{n}}{S_n}(\bar{\ups}_n - \mu) \mbox{ mit } \bar{\ups}_n := \frac{1}{n}\sum_{i=1}^n \ups_i \mbox{  und } S_n := \sqrt{\frac{1}{n-1}\sum_{i=1}^n(\ups_i - \bar{\ups}_n)^2}.
+\end{equation}
+
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik
+
+\small
+Für die $T$-Konfidenzintervallstatistik gilt $T \sim t(n - 1)$, die $T$-Konfidenzintervallstatistik
+ist also eine $t$-verteilte Zufallsvariable mit Freiheitsgradparameter $n-1$.
+Wir verzichten auf einen Beweis. Die $T$-Konfidenzintervallstatistik
+ist eine Funktion der Stichprobe $\ups_1,...,\ups_n$ (via $\bar{\ups}_n$ und $S_n$),
+während ihre Verteilung weder von $\mu$ noch von $\sigma^2$ abhängt.
+Wir bezeichnen die die WDF einer $t$-verteilten Zufallvariable mit $t$, die KVF 
+einer $t$-verteilten Zufallvariable mit $\Psi$ und die inverse KVF einer 
+$t$-verteilten Zufallvariable mit $\Psi^{-1}$.
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik (fortgeführt)
+\vspace{2mm}
+
+\tiny
+\setstretch{1.1}
+```{r}
+# Modellformulierung
+mu      = 10                                          # w.a.u. Erwartungswertparameter
+sigsqr  = 4                                           # wahrer bekannter Varianzparameter
+n       = 12                                          # Stichprobengroesse
+ns      = 1e4                                         # Anzahl Stichprobenrealisierungen
+res     = 1e3                                         # Ausgangsraumaufloesung
+
+# analytische Definitionen und Resultate
+y_1     = seq(3,17,len = res)                         # y_1 Raum
+t       = seq(-4,4,len = res)                         # t Raum
+p_y_1   = dnorm(y_1,mu,sqrt(sigsqr))                  # y_1 WDF
+p_y_bar = dnorm(y_1,mu,sqrt(sigsqr/n))                # y_bar WDF
+p_t     = dt(t,n-1)                                   # t WDF
+
+# Simulation
+y_i     = rep(NaN,ns)                                 # y_1 Array
+y_bar   = rep(NaN,ns)                                 # \bar{y} Array
+Tee     = rep(NaN,ns)                                 # T Array
+for(s in 1:ns){                              	      # Simulationsiterationen
+  y         = rnorm(n,mu,sqrt(sigsqr))                # Stichprobenrealisierung
+  y_i[s]    = y[1]                                    # \ups_i
+  y_bar[s]  = mean(y)                                 # Stichprobenmittelrealisierung
+  Tee[s]    = sqrt(n)*((y_bar[s] - mu)/sqrt(var(y)))  # T-Statistik Realisierung
+}
+```
+
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik (fortgeführt)
+
+```{r, eval = F, echo = F}
+library(latex2exp)
+dev.new()                                                                        # new figure
+par(                                                                             # figure parameters
+family      = "sans",                                                            # font family
+mfcol       = c(1,3),                                                            # subplot grid
+pty         = "m",                                                               # plot hsape
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.3,                                                               # font magnification factor
+cex.main    = 1.3)                                                               # title magnification factor
+
+# \ups_i
+hist(
+y_i,                                                                             # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(y_1[1],y_1[length(y_1)]),                                        # x-axis limits
+ylim        = c(0,.5),                                                           # y-axis limits
+xlab        = expression("y"[1]),                                                # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+main        = TeX("$\\upsilon_i \\sim N(10,4), \\, i = 1,...,12$"))              # title label
+lines(
+y_1,                                                                             # density support
+p_y_1,                                                                           # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+# y_bar
+hist(
+y_bar,                                                                           # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(y_1[1],y_1[length(y_1)]),                                        # x-axis limits
+ylim        = c(0,.8),                                                           # y-axis limits
+xlab        = TeX("$\\bar{\\upsilon}_n$"),                                       # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+main        = TeX("$\\bar{\\upsilon}_n \\sim N(10,1/3)"))                        # title label
+lines(                                                                           # density
+y_1,                                                                             # density support
+p_y_bar,                                                                         # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+# T
+hist(
+Tee,                                                                             # data
+breaks      = 100,                                                               # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(t[1],t[length(t)]),                                              # x-axis limits
+ylim        = c(0,.4),                                                           # y-axis limits
+xlab        = TeX("$t$"),                                                        # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+main        = TeX("$T \\sim t(11)"))                                             # title label
+
+lines(                                                                           # density
+t,                                                                               # density support
+p_t,                                                                             # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+dev.copy2pdf(                                                                    # export to PDF
+file        = file.path("11_Abbildungen/wtfi_11_t_statistik.pdf"),               # filename
+width       = 15,                                                                # PDF width
+height      = 5)
+```
+
+\vfill
+```{r, echo = FALSE, out.width = "100%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_t_statistik.pdf")
+```
+\vfill
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent (4) Etablierung der Konfidenzbedingung
+
+\small
+Für $\delta \in ]0,1[$ seien
+\begin{equation}
+t_1 := \Psi^{-1}\left(\frac{1 - \delta}{2}; n - 1\right)
+\mbox{ und }
+t_2 := \Psi^{-1}\left(\frac{1 + \delta}{2}; n-1\right)
+\end{equation}
+Es gilt dann $(1 + \delta)/2 - (1 - \delta)/2 = \delta$ und zum Beispiel gilt für $n = 5$ und
+$\delta = 0.95$, $t_1 = \Psi^{-1}(0.025;4) = -2.57$ und $t_2 = \Psi^{-1}(0.975;4) = 2.57$.
+Weiterhin gilt mit der Symmetrie von $t(n-1)$, $t_1 = - t_2$. Es gilt hier also
+per Definition $\mathbb{P}\left(-t_2 \le T \le t_2 \right) = \delta$.
+
+\vspace{2mm}
+
+```{r, eval = F, echo = F}
+delta       = 0.95                                                               # Konfidenzniveau
+n           = 5                                                                  # Freiheitsgrade
+t_2         = qt((1+delta)/2, n-1)                                               # t_2
+tee         = seq(-4,4,length=1e4)                                               # support
+ptee        = dt(tee, n-1)                                                       # density
+Ptee        = pt(tee, n-1)                                                       # cmulative density
+dev.new()                                                                        # new figure
+par(                                                                             # figure parameters
+family      = "sans",                                                            # font family
+mfcol       = c(1,2),                                                            # subplot grid
+pty         = "m",                                                               # plot hsape
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.2,                                                               # font magnification factor
+cex.main    = 1.3)                                                                # title magnification factor
+
+# WDF Perspektive
+plot(                                                                            # original density function
+tee,
+ptee,
+type        = "l",
+ylab        = " ",
+xlab        = "t",
+ylim        = c(0,.4),
+main        = TeX("$t$")
+)
+polygon(                                                                         # gray shading of AUC >= - t_2
+c(tee[tee  >= -t_2], max(tee), -t_2),
+c(ptee[tee >= -t_2],      0, 0),
+col = "gray90",
+border = NA)
+polygon(                                                                         # white shading of AUC >= t_2
+c(tee[tee  >= t_2] , max(tee), t_2),
+c(ptee[tee >= t_2],       0, 0),
+col = "white",
+border = NA)
+lines(                                                                           # density redraw for finish
+tee,
+ptee,
+type        = "l",
+)
+lines(                                                                           # density redraw for finish
+c(-t_2,t_2),
+c(0,0),
+type        = "p",
+pch         = 18,
+xpd         = TRUE,
+)
+abline(tee,0,0)                                                                  # x Achse
+text(0,.15, TeX("$\\delta$"), cex = 1.2)
+text(-t_2,.06, TeX("$-t_2$"))
+text( t_2,.06, TeX("$t_2$"))
+
+# KDF Perspektive
+plot(                                                                            # original density function
+tee,
+Ptee,
+type        = "l",
+ylab        = " ",
+xlab        = "t",
+ylim        = c(0,1),
+main        = TeX("$\\Psi$")
+)
+lines(
+c(-t_2,t_2),
+c(0,0),
+type        = "p",
+pch         = 18,
+xpd         = TRUE,
+)
+text(-t_2,.10, TeX("$-t_2$"), xpd = TRUE)
+text( t_2,.10, TeX("$t_2$") , xpd = TRUE)
+lines(
+c(-4,-4),
+c((1+delta)/2,(1-delta)/2),
+type        = "p",
+pch         = 15,
+xpd         = TRUE,
+)
+text(-5.0, 0.9, TeX("$(1+\\delta)/2$"), xpd = TRUE)
+text(-5.0, 0.1, TeX("$(1-\\delta)/2$"), xpd = TRUE)
+
+
+# Inverse KDF Perspektive
+arrows(
+x0      = min(tee),
+y0      = (1-delta)/2,
+x1      = -t_2,
+y1      = (1-delta)/2,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = min(tee),
+y0      = (1+delta)/2,
+x1      = t_2,
+y1      = (1+delta)/2,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = -t_2,
+y0      = (1-delta)/2,
+x1      = -t_2,
+y1      = 0,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = t_2,
+y0      = (1+delta)/2,
+x1      = t_2,
+y1      = 0,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+
+# PDF Speicherung
+dev.copy2pdf(
+file     = file.path("11_Abbildungen/wtfi_11_ki_t_konfidenzbedingung.pdf"),
+width    = 10,
+height   = 5)
+```
+
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_ki_t_konfidenzbedingung.pdf")
+```
+
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent (4) Etablierung der Konfidenzbedingung (fortgeführt)
+
+\small
+Mit der Definition von $t_2$ wie oben folgt dann aber
+\footnotesize
+\begin{align}
+\begin{split}
+\delta
+& =
+\mathbb{P}\left(-t_2 \le T \le t_2 \right) 																			\\
+& =
+\mathbb{P}\left(-t_2 \le \frac{\sqrt{n}}{S_n}(\bar{\ups}_n - \mu) \le t_2 \right) 										\\
+& =
+\mathbb{P}\left(-\frac{S_n}{\sqrt{n}}t_2 \le \bar{\ups}_n - \mu \le \frac{S_n}{\sqrt{n}}t_2 \right) 					\\
+& =
+\mathbb{P}\left(-\bar{\ups}_n -\frac{S_n}{\sqrt{n}}t_2 \le - \mu \le - \bar{\ups}_n + \frac{S_n}{\sqrt{n}}t_2 \right) 	\\
+& =
+\mathbb{P}\left(\bar{\ups}_n + \frac{S_n}{\sqrt{n}}t_2 \ge \mu \ge \bar{\ups}_n - \frac{S_n}{\sqrt{n}}t_2 \right) 		\\
+& =
+\mathbb{P}\left(\bar{\ups}_n - \frac{S_n}{\sqrt{n}}t_2 \le \mu \le \bar{\ups}_n + \frac{S_n}{\sqrt{n}}t_2 \right) 		\\
+& =
+\mathbb{P}\left(\left[\bar{\ups}_n - \frac{S_n}{\sqrt{n}}t_2, \bar{\ups}_n + \frac{S_n}{\sqrt{n}}t_2\right] \ni \mu \right). 		\\
+\end{split}
+\end{align}
+\small
+Wir können nun das gesuchte Konfidenzintervall definieren.
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls
+\small
+
+Es sei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ mit unbekannten Parametern $\mu$ und $\sigma^2$,
+es sei $\delta \in ]0,1[$, und es sei 
+\begin{equation}
+t_\delta := \Psi^{-1}\left(\frac{1+\delta}{2}; n - 1\right).
+\end{equation}
+Definiere
+\begin{equation}
+\kappa_n :=
+\left[\bar{\ups}_n - \frac{S_n}{\sqrt{n}}t_\delta,
+\bar{\ups}_n + \frac{S_n}{\sqrt{n}}t_\delta\right].
+\end{equation}
+Dann gilt wie oben gezeigt
+\begin{equation}
+\mathbb{P}(\kappa_n \ni \mu) = \delta.
+\end{equation}
+Damit ist $\kappa_n$ ein $\delta$-Konfidenzintervall für $\mu$. Man beachte, dass $\kappa_n$
+ein zufälliges Intervall ist, weil $\bar{\ups}_n$ und $S_n$ Zufallsvariablen sind.
+
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation der ersten Interpretation eines Konfidenzintervalls
+\vspace{2mm}
+
+\setstretch{1}
+\footnotesize
+```{r}
+# Modellformulierung
+set.seed(1)                                        # random number generator seed
+mu      = 2                                        # w.a.u. Erwartungswertparameter
+sigsqr  = 1                                        # w.a.u. Varianzparameter
+sigma   = sqrt(sigsqr)                             # w.a.u. St.Abweichungsparameter
+n       = 12                                       # Stichprobengroesse
+delta   = 0.95                                     # Konfidenzbedingung
+t_delta = qt((1+delta)/2,n-1)                      # \Psi^-1((\delta + 1)/2, n-1)
+
+# Simulation
+ns      = 1e2                                      # Anzahl Simulationen
+y_bar   = rep(NaN,ns)                              # Stichprobenmittelarray
+S       = rep(NaN,ns)                              # St.Abweichungsarray
+kappa   = matrix(rep(NaN,2*ns), ncol = 2)          # Konfidenzintervallarray
+for(i in 1:ns){
+   y          = rnorm(n,mu,sigma)                  # Stichprobenrealisierung
+   y_bar[i]   = mean(y)                            # Stichprobenmittel
+   S[i]       = sd(y)                              # Stichprobenstandardabweichung
+   kappa[i,1] = y_bar[i] - (S[i]/sqrt(n))*t_delta  # untere KI Grenze
+   kappa[i,2] = y_bar[i] + (S[i]/sqrt(n))*t_delta  # obere KI Grenze
+}
+```
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation der ersten Interpretation eines Konfidenzintervalls
+
+\vspace{3mm}
+
+```{r, eval = F, echo = F}
+# Visualisierung
+P_idx       = rep(NaN,ns)                                                        # Nicht überdeckende KIs für Visualisierung
+P_idx[mu < kappa[,1] | mu > kappa[,2]]   = 3.5                                   # Markerpositions
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.1,                                                               # font magnification factor
+cex.main    = 1.2)                                                               # title magnification factor
+
+# Errorbarplot
+plot(
+1:ns,
+y_bar,
+type    = "p",
+ylim    = c(0,4),
+xlim    = c(0,102),
+xlab    = "Simulationen",
+ylab    = "",
+pch     =  19,
+cex     =  .5,
+main    = TeX("$\\mu = 2\\,\\, \\sigma^2 = 2, \\, n = 12,\\, \\delta = 0.95"))
+arrows(
+x0      = 1:ns,
+y0      = kappa[,1],
+x1      = 1:ns,
+y1      = kappa[,2],
+code    = 3,
+angle   = 90,
+length  = 0.01,
+lwd     = .7)
+lines(
+1:ns,
+rep(mu,ns),
+col      = "gray80",
+lty      = 1)
+lines(
+1:ns,
+P_idx,
+type    = "p",
+pch     = 13,
+col     = "darkorange")
+
+# PDF Speicherung
+dev.copy2pdf(
+file     = file.path("11_Abbildungen/wtfi_11_ki_normal_sigsqr_unbekannt.pdf"),
+width    = 8,
+height   = 5)
+```
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_ki_normal_sigsqr_unbekannt.pdf")
+```
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation der zweiten Interpretation eines Konfidenzintervalls
+\vspace{2mm}
+
+\setstretch{1}
+\footnotesize
+```{r}
+# Anzahl Simulationen mit \theta_1, \theta_2,...
+set.seed(2)                                        # random number generator seed
+ns      = 1e2                                      # Anzahl Simulationen
+
+# Modellformulierung
+mu      = 2 * seq(0,1,len = ns)                    # w.a.u. Erwartungswertparameter
+sigsqr  = 1                                        # w.a.u. Varianzparameter
+sigma   = sqrt(sigsqr)                             # w.a.u. St.Abweichungsparameter
+n       = 12                                       # Stichprobengroesse
+delta   = 0.95                                     # Konfidenzbedingung
+t_delta = qt((1+delta)/2,n-1)                      # \Psi^-1((\delta + 1)/2, n-1)
+
+# Simulation
+y_bar   = rep(NaN,ns)                              # Stichprobenmittelarray
+S       = rep(NaN,ns)                              # St.Abweichungsarray
+kappa   = matrix(rep(NaN,2*ns), ncol = 2)          # Konfidenzintervallarray
+for(i in 1:ns){
+   y          = rnorm(n,mu[i],sigma)               # Stichprobenrealisierung
+   y_bar[i]   = mean(y)                            # Stichprobenmittel
+   S[i]       = sd(y)                              # Stichprobenstandardabweichung
+   kappa[i,1] = y_bar[i] - (S[i]/sqrt(n))*t_delta  # untere KI Grenze
+   kappa[i,2] = y_bar[i] + (S[i]/sqrt(n))*t_delta  # obere KI Grenze
+}
+```
+
+# Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation der zweiten Interpretation eines Konfidenzintervalls
+
+\vspace{3mm}
+
+```{r, eval = F, echo = F}
+P_idx                                   = rep(NaN,ns)                            # Nicht überdeckende KIs für Visualisierung
+P_idx[mu < kappa[,1] | mu > kappa[,2]]  = 3.5                                    # Markerpositions
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.1,                                                               # font magnification factor
+cex.main    = 1.2)                                                               # title magnification factor
+
+plot(
+1:ns,
+y_bar,
+type    = "p",
+ylim    = c(-2,4),
+xlim    = c(0,102),
+xlab    = "Simulationen",
+ylab    = "",
+pch     =  19,
+cex     =  .5,
+main    = TeX("$\\mu = 2\\,\\, \\sigma^2 = 2, \\, n = 12,\\, \\delta = 0.95"))
+arrows(
+x0      = 1:ns,
+y0      = kappa[,1],
+x1      = 1:ns,
+y1      = kappa[,2],
+code    = 3,
+angle   = 90,
+length  = 0.01,
+lwd     = .7)
+lines(
+1:ns,
+mu,
+col      = "gray80",
+lty      = 1)
+lines(
+1:ns,
+P_idx,
+type    = "p",
+pch     = 13,
+col     = "darkorange")
+
+# PDF Speicherung
+dev.copy2pdf(
+file     = file.path("11_Abbildungen/wtfi_11_ki_normal_sigsqr_unbekannt_mu_variabel.pdf"),
+width    = 8,
+height   = 5)
+```
+
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_ki_normal_sigsqr_unbekannt_mu_variabel.pdf")
+```
+
+#
+\setstretch{2.7}
+\large
+Definition
+
+Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+
+**Konfidenzintervall für den Varianzparameter der Normalverteilung**
+
+Anwendungsbeispiel
+
+Selbstkontrollfragen
+
+# Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent (1) Definition des statistischen Modells
+
+\small
+Es sei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ eine Stichprobe mit unbekanntem
+Varianzparameter $\sigma^2 > 0$ und bekanntem oder unbekanntem
+Erwartungswertparameter $\mu$. Wir entwickeln ein $\delta$-Konfidenzintervall für
+den Varianzparameter $\sigma^2$.
+
+\normalsize
+\noindent (2) Definition der Statistik
+
+\small
+Wir betrachten die $U$-Konfidenzintervallstatistik
+\begin{equation}
+U := \frac{n-1}{\sigma^2}S^2_n \mbox{ mit } S^2_n := \frac{1}{n-1}\sum_{i=1}^n \left(\ups_i - \bar{\ups}_n\right)^2.
+\end{equation}
+
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik
+
+\small
+Für die  $U$-Konfidenzintervallstatistik gilt $U \sim \chi^2(n-1)$. Für einen Beweis
+dieser Tatsache verweisen wir auf @casella_2012, Abschnitt 5.3. Die $U$-Konfidenzintervallstatistik
+ist eine Funktion von $\ups_1,...,\ups_n$ (via $S^2_n$) und $\sigma^2$, während ihre Verteilung nicht von
+$\sigma^2$ abhängt. Wir bezeichnen die WDF einer $\chi^2$-verteilten Zufallvariable mit $\chi^2$,
+die KVF einer $\chi^2$-verteilten Zufallvariable mit $\Xi$ und die inverse KVF einer
+$\chi^2$-verteilten Zufallvariable mit $\Xi^{-1}$.
+
+# (2) Konfidenzintervall für den Varianzparameter der Normalverteilung
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik (fortgeführt)
+\vspace{2mm}
+
+\tiny
+\setstretch{1}
+
+```{r}
+# Modellformulierung
+mu      = 10                                    # wahrer Erwartungswertparameter
+sigsqr  = 4                                     # wahrer bekannter Varianzparameter
+n       = 12                                    # Stichprobengroesse
+ns      = 1e4                                   # Anzahl Stichprobenrealisierungen
+res     = 1e3                                   # Ausgangsraumaufloesung
+
+# analytische Definitionen und Resultate
+y_1     = seq(3,17,len = res)                   # y_1 Raum
+y_bar   = seq(3,17,len = res)                   # y_bar Raum
+u_1     = seq(0,30,len = res)                   # normalisierte S_n^2 Raum
+p_y_1   = dnorm(y_1,mu,sqrt(sigsqr))            # y_1 WDF
+p_y_bar = dnorm(y_bar,mu,sqrt(sigsqr/n))        # y_bar WDF
+p_u     = dchisq(u_1,n-1)                       # u_1 WDF
+
+# Simulation
+y_i     = rep(NaN,ns)                           # y_1 Array
+y_bar   = rep(NaN,ns)                           # \bar{y} Array
+S_sqr   = rep(NaN,ns)                          	# S^2 Array
+U       = rep(NaN,ns)                           # U Array
+
+for(s in 1:ns){                                 # Simulationsiterationen
+  y         = rnorm(n,mu,sqrt(sigsqr))        	# Stichprobenrealisierung
+  y_i[s]    = y[1]                              # \ups_i
+  y_bar[s]  = mean(y)                           # Stichprobenmittelrealisierung
+  S_sqr[s]  = var(y)                            # Stichprobenvarianzrealisierung
+
+  # U-Statistik Realisiation
+  U[s]      = ((n-1)/sigsqr)*S_sqr[s]
+}
+```
+
+# \small Konfidenzintervall für den Varianzparameter der Normalverteilung
+\normalsize
+\noindent (3) Analyse der Verteilung der Konfidenzintervallstatistik (fortgeführt)
+
+\vspace{1mm}
+```{r, eval = F, echo = F}
+# Visualisierung
+dev.new()                                                                        # new figure
+par(                                                                             # figure parameters
+family      = "sans",                                                            # font family
+mfcol       = c(2,2),                                                            # subplot grid
+pty         = "m",                                                               # plot hsape
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.3,                                                               # font magnification factor
+cex.main    = 1.3)                                                               # title magnification factor
+
+# \ups_i
+hist(
+y_i,                                                                             # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(y_1[1],y_1[length(y_1)]),                                        # x-axis limits
+ylim        = c(0,.5),                                                           # y-axis limits
+xlab        = expression("x"[1]),                                                # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+main        = TeX("$\\upsilon_i \\sim N(10,4), \\, i = 1,...,12$"))              # title label
+lines(
+y_1,                                                                             # density support
+p_y_1,                                                                           # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+# S^2
+hist(
+S_sqr,                                                                           # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(u_1[1],u_1[length(u_1)]),                                        # x-axis limits
+ylim        = c(0,.4),                                                           # y-axis limits
+xlab        = TeX("$S_{12}^2$"),                                                 # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+mgp         = c(3.5,1,0),                                                        # margin line in mex unit
+main        = TeX("$S_{12}^2$"))                                                 # title label
+
+# y_bar
+hist(
+y_bar,                                                                           # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(y_1[1],y_1[length(y_1)]),                                        # x-axis limits
+ylim        = c(0,.8),                                                           # y-axis limits
+xlab        = TeX("$\\bar{y}_{12}$"),                                            # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+main        = TeX("$\\bar{\\upsilon}_{12} \\sim N(10,1/3)"))                      # title label
+lines(                                                                           # density
+y_1,                                                                             # density support
+p_y_bar,                                                                         # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+# U
+hist(
+(n-1)/sigsqr*S_sqr,                                                              # data
+breaks      = 50,                                                                # number of histogram bins
+col         = "gray90",                                                          # bar color
+prob        = TRUE,                                                              # density estimate
+xlim        = c(u_1[1],u_1[length(u_1)]),                                        # x-axis limits
+ylim        = c(0,.4),                                                           # y-axis limits
+xlab        = TeX("$u$"),                                                        # x-axis label
+ylab        = "",                                                                # y-axis label
+cex         = 1.1,                                                               # font magnification factor
+mgp         = c(3.5,1,0),                                                        # margin line in mex unit
+main        = TeX("$U \\sim \\frac{11}{4}S_{12}^2$"))                            # title label
+lines(                                                                           # density
+u_1,                                                                             # density support
+p_u,                                                                             # density values
+lwd         = 2,                                                                 # line width
+col         = "darkorange")                                                      # line color
+
+dev.copy2pdf(                                                                    # export to PDF
+file        = file.path("11_Abbildungen/wtfi_11_u_statistik.pdf"),               # filename
+width       = 13,                                                                # PDF width
+height      = 10)
+
+```
+
+
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_u_statistik.pdf")
+```
+
+
+# Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent (4) Etablierung der Konfidenzbedingung
+
+\small
+Für $\delta \in ]0,1[$ seien
+\begin{equation}
+\xi_1 := \Xi^{-1}\left(\frac{1 - \delta}{2}; n -1  \right)
+\mbox{ und }
+\xi_2 := \Xi^{-1}\left(\frac{1 + \delta}{2};n-1 \right)
+\end{equation}
+Es gilt dann $(1 + \delta)/2 - (1 - \delta)/2 = \delta$ gilt und zum Beispiel
+gilt für $n = 10$ und $\delta = 0.95$, $\xi_1 := \Xi^{-1}\left(0.025;9 \right) = 2.70$
+und $\xi_2 := \Xi^{-1}\left(0.975; 9 \right) = 19.0$. Es gilt hier also per Definition
+$\mathbb{P}\left(\xi_1 \le U \le \xi_2 \right) = \delta$.
+
+
+\vspace{2mm}
+
+```{r, eval = F, echo = F}
+delta       = 0.95                                                               # Konfidenzniveau
+n           = 10                                                                 # Freiheitsgrade
+xi_1        = qchisq((1-delta)/2, n-1)                                           # xi_1
+xi_2        = qchisq((1+delta)/2, n-1)                                           # xi_2
+u           = seq(0,30,length=1e4)                                               # support
+pu          = dchisq(u, n)                                                       # density
+Pu          = pchisq(u, n)                                                       # cmulative density
+dev.new()                                                                        # new figure
+par(                                                                             # figure parameters
+family      = "sans",                                                            # font family
+mfcol       = c(1,2),                                                            # subplot grid
+pty         = "m",                                                               # plot hsape
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.2,                                                               # font magnification factor
+cex.main    = 1.3)                                                               # title magnification factor
+
+# WDF Perspektive
+plot(                                                                            # original density function
+u,
+pu,
+type        = "l",
+ylab        = " ",
+xlab        = "u",# delta       = 0.95                                                               # Konfidenzniveau
+ylim        = c(0,.1),
+main        = TeX("$\\chi^2$")
+)
+polygon(                                                                         # gray shading of AUC >= - t_2
+c(u[u >= xi_1], max(u), xi_1),
+c(pu[u >= xi_1],      0, 0),
+col = "gray90",
+border = NA)
+polygon(                                                                         # white shading of AUC >= t_2
+c(u[u  >= xi_2] , max(u), xi_2),
+c(pu[u >= xi_2],       0, 0),
+col = "white",
+border = NA)
+lines(                                                                           # density redraw for finish
+u,
+pu,
+type        = "l",
+)
+lines(                                                                           # density redraw for finish
+c(xi_1,xi_2),
+c(0,0),
+type        = "p",
+pch         = 18,
+xpd         = TRUE,
+)
+abline(u,0,0)                                                                    # x Achse
+text(0,.15, TeX("$\\delta$"), cex = 1.2)
+text(xi_1,.01, TeX("$\\xi_1$"))
+text(xi_2,.01, TeX("$\\xi_2$"))
+
+# KDF Perspektive
+plot(                                                                            # original density function
+u,
+Pu,
+type        = "l",
+ylab        = " ",
+ylim        = c(0,1),
+main        = TeX("$\\Xi$")
+)
+lines(
+c(xi_1,xi_2),
+c(0,0),
+type        = "p",
+pch         = 18,
+xpd         = TRUE,
+)
+text(xi_1,.10, TeX("$\\xi_1$"), xpd = TRUE)
+text(xi_2,.10, TeX("$\\xi_2$") , xpd = TRUE)
+lines(
+c(0,0),
+c((1+delta)/2,(1-delta)/2),
+type        = "p",
+pch         = 15,
+xpd         = TRUE,
+)
+text(-5.0, 0.9, TeX("$(1+\\delta)/2$"), xpd = TRUE)
+text(-5.0, 0.1, TeX("$(1-\\delta)/2$"), xpd = TRUE)
+
+
+# Inverse KDF Perspektive
+arrows(
+x0      = min(u),
+y0      = (1-delta)/2,
+x1      = xi_1,
+y1      = (1-delta)/2,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = min(u),
+y0      = (1+delta)/2,
+x1      = xi_2,
+y1      = (1+delta)/2,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = xi_1,
+y0      = (1-delta)/2,
+x1      = xi_1,
+y1      = 0,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+arrows(
+x0      = xi_2,
+y0      = (1+delta)/2,
+x1      = xi_2,
+y1      = 0,
+col     = "darkorange",
+angle   = 45,
+length  = .08)
+
+# PDF Speicherung
+dev.copy2pdf(
+file     = file.path("11_Abbildungen/wtfi_11_ki_u_konfidenzbedingung.pdf"),
+width    = 10,
+height   = 5)
+```
+
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_ki_u_konfidenzbedingung.pdf")
+```
+
+# Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent (4) Etablierung der Konfidenzbedingung (fortgeführt)
+
+\small
+Mit der Definition von $\xi_1$ und $\xi_2$ wie oben folgt dann aber
+\footnotesize
+\begin{align}
+\begin{split}
+\delta
+& = \mathbb{P}\left(\xi_1 \le U \le \xi_2 \right)															\\
+& = \mathbb{P}\left(\xi_1 \le \frac{n-1}{\sigma^2}S^2_n  \le \xi_2 \right) 									\\
+& = \mathbb{P}\left(\xi_1^{-1} \ge \frac{\sigma^2}{(n-1)S^2_n} \ge \xi_2^{-1} \right) 						\\
+& = \mathbb{P}\left(\frac{(n-1)S^2_n}{\xi_1} \ge \sigma^2 \ge \frac{(n-1)S^2_n}{\xi_2} \right) 				\\
+& = \mathbb{P}\left(\frac{(n-1)S^2_n}{\xi_2} \le \sigma^2 \le \frac{(n-1)S^2_n)}{\xi_1} \right) 			\\
+& = \mathbb{P}\left(\left[\frac{(n-1)S^2_n}{\xi_2}, \frac{(n-1)S^2_n)}{\xi_1}\right] \ni \sigma^2 \right). 	\\
+\end{split}
+\end{align}
+
+\small
+Wir können nun das gesuchte Konfidenzintervall definieren.
+
+# \small Beispiel (2) Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls
+\small
+
+Es sei $\ups_1,...,\ups_n \sim N(\mu,\sigma^2)$ eine Stichprobe mit unbekanntem
+Varianzparameter $\sigma^2$ und bekanntem oder unbekanntem Erwartungswertparamter
+$\mu$, und es seien weiterhin $\delta \in ]0,1[$ sowie
+\begin{equation}
+\xi_1 := \Xi^{-1}\left(\frac{1 - \delta}{2};n-1 \right) \mbox{ und }
+\xi_2 := \Xi^{-1}\left(\frac{1 + \delta}{2};n-1 \right). 
+\end{equation}
+Definiere
+\begin{equation}
+\kappa_n := \left[\frac{(n-1)S^2_n}{\xi_2}, \frac{(n-1)S^2_n}{\xi_1}\right].
+\end{equation}
+Dann gilt wie oben gezeigt
+\begin{equation}
+\mathbb{P}(\kappa_n \ni \sigma^2) = \delta.
+\end{equation}
+Damit ist $\kappa_n$ ein $\delta$-Konfidenzintervall für $\sigma^2$. Man beachte, dass
+$\kappa_n$ ein zufälliges Intervall ist, weil $S^2_n$ eine Zufallsvariable ist.
+
+# (2) Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation
+\vspace{2mm}
+
+\setstretch{1}
+\footnotesize
+```{r}
+# Modellformulierung
+set.seed(1)                                 # random number generator seed
+mu      = 2                                 # w.a.u. Erwartungswertparameter
+sigsqr  = 2                                 # w.a.u. Varianzparameter
+n       = 12                                # Stichprobengroesse
+delta   = 0.95                              # Konfidenzbedingung
+xi_1    = qchisq((1-delta)/2, n - 1)        # \Xi^2((1-\delta)/2; n - 1)
+xi_2    = qchisq((1+delta)/2, n - 1)        # \Xi^2((1+\delta)/2; n - 1)
+
+# Simulation
+ns      = 1e2                               # Anzahl Simulationen
+y_bar   = rep(NaN,ns)                       # Stichprobenmittelarray
+S2      = rep(NaN,ns)                       # Stichprobenvarianzarray
+kappa   = matrix(rep(NaN,2*ns), ncol = 2)   # Konfidenzintervallarray
+for(i in 1:ns){                             # Simulationsiterationen
+   y        = rnorm(n,mu,sqrt(sigsqr))      # Stichprobenrealisierung
+   S2[i]    = var(y)                        # Stichprobenvarianz
+   kappa[i,1]   = (n-1)*S2[i]/xi_2          # untere KI Grenze
+   kappa[i,2]   = (n-1)*S2[i]/xi_1          # obere KI Grenze
+}
+```
+
+# \small Beispiel (2) Konfidenzintervall für den Varianzparameter der Normalverteilung
+\noindent(5) Definition des Konfidenzintervalls (fortgeführt)
+
+\small
+Simulation
+
+\vspace{3mm}
+
+```{r, eval = F, echo = F}
+P_idx                                          = rep(NaN,ns)                     # Nicht überdeckende KIs für Visualisierung
+P_idx[sigsqr < kappa[,1] | sigsqr > kappa[,2]] = 15                              # Markerpositions
+dev.new()                                                                        # new figure
+fig  = par(                                                                      # figure parameters
+family      = "sans",                                                            # font family
+bty         = "l",                                                               # plot box, o, l, 7, c, or ]
+lwd         = 1,                                                                 # line width
+las         = 1,                                                                 # 0: axis parallel, 1: horizontal, 2: axis perpendicular, 3: vertical
+mgp         = c(2,1,0),                                                          # margin line in mex unit
+xaxs        = "i",                                                               # "internal" (tight) x-axis style
+yaxs        = "i",                                                               # "internal" (tight) y-axis style
+font.main   = 1,                                                                 # title font type
+cex         = 1.1,                                                               # font magnification factor
+cex.main    = 1.2)                                                               # title magnification factor
+
+
+# Errorbarplot
+plot(
+1:ns,
+S2,
+type    = "p",
+ylim    = c(0,16),
+xlim    = c(0,102),
+xlab    = "Simulationen",
+ylab    = "",
+pch     =  19,
+cex     =  .5,
+main    = TeX("$\\mu = 2,\\, \\sigma^2 = 2, \\, n = 12,\\, \\delta = 0.95"))
+arrows(
+x0      = 1:ns,
+y0      = kappa[,1],
+x1      = 1:ns,
+y1      = kappa[,2],
+code    = 3,
+angle   = 90,
+length  = 0.01,
+lwd     = .7)
+abline(
+sigsqr,
+0,
+col      = "gray80",
+lty      = 1)
+lines(
+1:ns,
+P_idx,
+type    = "p",
+pch     = 13,
+col     = "darkorange")
+
+# PDF Speicherung
+dev.copy2pdf(
+file     = file.path("11_Abbildungen/wtfi_11_ki_sigsqr.pdf"),
+width    = 8,
+height   = 5)
+```
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_ki_sigsqr.pdf")
+```
+
+#
+\setstretch{2.7}
+\large
+Definition
+
+Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+
+Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+**Anwendungsbeispiel**
+
+Selbstkontrollfragen
+
+
+# Anwendungsbeispiel {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+```{r, echo = FALSE, out.width = "90%"}
+knitr::include_graphics("11_Abbildungen/wtfi_11_messplan.pdf")
+```
+
+# Anwendungsbeispiel {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+\small
+\vspace{2mm}
+
+\footnotesize
+```{r}
+fname = file.path(getwd(), "11_Konfidenzintervalle.csv")
+D     = read.table(fname, sep = ",", header = T)
+```
+\vspace{2mm}
+
+```{r, echo = F}
+knitr::kable(D, "pipe", align = "rr")
+```
+
+
+# Anwendungsbeispiel {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+\vspace{2mm}
+
+\small
+Für die Pre-Post BDI Score Reduktion $\ups_i$ der $i$ten von $n$ Patient:innen legen wir das Modell
+\begin{equation}
+\ups_{i} = \mu + \varepsilon_{i} \mbox{ mit } \varepsilon_{i} \sim N(0,\sigma^2) \mbox{ u.i.v. für } i = 1,...,n
+\end{equation}
+zugrunde. Dabei wird die Pre-Post BDI Reduktion $\ups_i$ der $i$ten Patient:in also mithilfe einer
+über die Gruppe von Patient:innen identischen Pre-Post BDI Score Reduktion $\mu \in \mathbb{R}$
+und einer Patient:innen-spezifischen normalverteilten Pre-Post BDI Score Reduktionsabweichung
+$\varepsilon_{i}$ erklärt
+
+Wie gezeigt ist dieses Modell äquivalent zum Normalverteilungsmodell
+\begin{equation}
+\ups_1,...,\ups_n \sim N(\mu,\sigma^2).
+\end{equation}
+
+Die Standardprobleme der Frequentistischen Inferenz führen in diesem Szenario auf folgende Fragen:
+
+(1) Was sind sinnvolle Tipps für die wahren, aber unbekannten, Parameterwerte $\mu$ und $\sigma^2$?
+(2) Wie hoch ist im Frequentistischen Sinn die mit diesen Tipps assoziierte Unsicherheit?
+(3) Entscheiden wir uns sinnvollerweise für die Hypothese, dass gilt $\mu\neq 0$ ?
+
+
+# Anwendungsbeispiel {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+
+\vspace{2mm}
+\footnotesize
+```{r}
+# Einlesen und Auswahl der Daten
+fname = file.path(getwd(), "11_Konfidenzintervalle.csv")
+D     = read.table(fname, sep = ",", header = T)
+y     = D$BDI.Reduktion
+```
+
+Wir haben in (10) Parameterschätzung gesehen, dass unverzerrte Schätzer für den
+Erwartungswertparameter $\mu$ und den Varianzparameter $\sigma^2$ durch das
+Stichprobenmittel und die Stichprobenvarianz gegeben sind.
+
+\vspace{3mm}
+```{r}
+mu_hat     = mean(y)    # Stichprobenmittel als Erwartungswertparameterschätzer
+sigsqr_hat = var(y)     # Stichprobenvarianz als Varianzparameterschätzer
+```
+
+Es sind also $\hat{\mu} = 3.17$ und $\hat{\sigma}^{2} = 13.8$ sinnvolle Tipps
+für $\mu$ und $\sigma^2$ basierend auf den vorliegenden 12 Datenpunkten.
+
+Um die mit diesen Tipps assoziierte Unsicherheit zu quantifizieren, geht die
+Frequentistische Inferenz zur Intervallschätzung mithilfe von $\delta$-Konfidenzintervallen
+über, für die die assoziierte Unsicherheit dann ein ein prädefiniertes Level von 1 - $\delta$
+hat. Im langfristigen Mittel überdeckt ein angegebenes $\delta$-Konfidenzintervall
+den wahren, aber unbekannten Parameterwert in (nur) $1-\delta\cdot$ 100 von 100 Fällen
+nicht. Für ein großes $\delta$ wie $\delta = 0.95$ ist die mit dieser Intervallschätzung
+assoziierte Unsicherheit also mit $1 - 0.95 = 0.05$ also eher gering.
+
+# Anwendungsbeispiel {.t}
+Beispiel | Evidenzbasierte Evaluation von Psychotherapie bei Depression
+\vspace{2mm}
+
+\tiny
+\setstretch{1}
+```{r}
+# Konfidenzintervall für den Erwartungswertparameter
+delta    = 0.95                                 # Konfidenzlevel
+n        = length(y)                            # Anzahl Datenpunkte
+t_delta  = qt((1+delta)/2,n-1)                  # \psi^-1((\delta + 1)/2, n-1)
+y_bar    = mean(y)                              # Stichprobenmittel
+s        = sd(y)                                # Stichprobenstandardabweichung
+mu_hat   = y_bar                                # Erwartungswertparameterschätzer
+mu_hat_u = y_bar - (s/sqrt(n))*t_delta          # untere KI Grenze
+mu_hat_o = y_bar + (s/sqrt(n))*t_delta          # obere  KI Grenze
+```
+
+\footnotesize
+\setstretch{1.4}
+Das 0.95-Konfidenzintervall für den Erwartungswertparameter ist $[0.80,5.52]$. Im
+langfristigen Mittel überdeckt so berechnetes Konfidenzintervall
+den wahren, aber unbekannten, Erwartungswertparameter in 95 von 100 Fällen.
+
+\vspace{2mm}
+
+\tiny
+\setstretch{1}
+```{r}
+# Konfidenzintervall für den Erwartungswertparameter
+delta         = 0.95                            # Konfidenzlevel
+n            = length(y)                        # Anzahl Datenpunkte
+xi_1         = qchisq((1-delta)/2, n - 1)       # \Xi^2((1-\delta)/2; n - 1)
+xi_2         = qchisq((1+delta)/2, n - 1)       # \Xi^2((1+\delta)/2; n - 1)
+s2           = var(y)                           # Stichprobenstandardabweichung
+sigsqr_hat   = s2                               # Varianzparameterschätzer
+sigsqr_hat_u = (n-1)*s2/xi_2                    # untere KI Grenze
+sigsqr_hat_o = (n-1)*s2/xi_1                    # obere KI Grenze
+```
+
+\footnotesize
+\setstretch{1.4}
+Das 0.95-Konfidenzintervall für den Varianzparameter ist $[6.91, 39.74]$. Im
+langfristigen Mittel überdeckt ein so berechnetes Konfidenzintervall
+den wahren, aber unbekannten, Varianzparameter in 95 von 100 Fällen.
+
+
+#
+\setstretch{2.7}
+\large
+Definition
+
+Konfidenzintervall für den Erwartungswertparameter der Normalverteilung
+
+Konfidenzintervall für den Varianzparameter der Normalverteilung
+
+Anwendungsbeispiel
+
+**Selbstkontrollfragen**
+
+# Selbstkontrollfragen
+\setstretch{3}
+\small
+1. Definieren Sie den Begriff des $\delta$-Konfidenzintervalls.
+2. Geben Sie zwei Interpretationen eines $\delta$-Konfidenzintervalls.
+3. Erläutern Sie die typischen Schritte zur Konstruktion eines $\delta$-Konfidenzintervalls.
+4. Definieren Sie die $T$-Konfidenzintervallstatistik und geben Sie ihre Verteilung an.
+5. Geben Sie das $\delta$-Konfidenzintervall für den Erwartungswert der Normalverteilung an.
+6. Definieren Sie die $U$-Konfidenzintervallstatistik und geben Sie ihre Verteilung an.
+7. Geben Sie das $\delta$-Konfidenzintervall für den Varianzparameter der Normalverteilung an.
+
+
+# References
+\footnotesize
+
+
